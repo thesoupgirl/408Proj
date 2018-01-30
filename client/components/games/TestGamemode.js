@@ -5,6 +5,8 @@ function GameMode() {
     for (var k = 0; k < 20; k++) {
       var fred = new GameObject(new Vector3(Math.random() * canvas.width, Math.random() * canvas.height, 0), new Vector2(10,10), "Fred", true);
       //console.log(fred);
+      fred.physics.gravityScale = 50;
+      fred.physics.drag = 0.001;
       fred.physics.addForce(new Vector3(((Math.random() * 2) - 1) * 100, ((Math.random() * 2) - 1) * 100, 0));
       fred.onTick = function() {
         //console.log("I am fred, my position is " + this.position.x);

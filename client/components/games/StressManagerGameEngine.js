@@ -73,14 +73,8 @@ function PhysicsProperties() {
   this.gravityScale = 0;              // How much this object is affected by gravity
   this.mass = 1;                      // Uh, mass
   this.velocity = new Vector3(0, 0, 0); // Velocity is measured in pixels per second
+  this.drag = 0;                      // Velocity lost per second
 
-  // Float, Vector3
-  this.physicsTick = function (position) {
-    //if (time == 0) console.log(position);
-    //console.log(timeInc / 1000);
-    //console.log(position.x);
-    return position.add(this.velocity.times(timeInc / 1000)); // since time inc is in ms, we want seconds
-  }
   // Vector3
   this.setVelocity = function (newVelocity) {
     this.velocity = newVelocity;
@@ -91,6 +85,17 @@ function PhysicsProperties() {
     // Acceleration = Force / Mass
     this.setVelocity(this.velocity.add(velocityDiff.dividedBy(this.mass)));
     //console.log("New velocity: " + this.velocity.x + " " + (timeInc));
+  }
+
+  // Float, Vector3
+  // Return the position of the object
+  this.physicsTick = function (position) {
+    //console.log(timeInc / 1000);
+    //console.log(position.x);
+    var timeDiffS = timeInc / 1000;
+    this.setVelocity(this.velocity.add(new Vector3(0, 9.8, 0).times(timeDiffS * this.gravityScale)));
+    this.setVelocity(this.velocity.add(this.velocity.times(timeDiffS * -1 * this.drag)));
+    return position.add(this.velocity.times(timeDiffS)); // since time inc is in ms, we want seconds
   }
 };
 
@@ -120,7 +125,9 @@ function GameObject(position, bounds, name, hasPhysics) {
   this.tick = function () {
     this.draw();
     this.onTick();
-    if (this.hasPhysics) this.position = this.physics.physicsTick(this.position)
+    if (this.hasPhysics) {
+      this.position = this.physics.physicsTick(this.position);
+    }
   };
 
   // int, int, world position of the click on this element
