@@ -104,15 +104,16 @@ function GameObject(position, bounds, name, hasPhysics) {
   this.position = position;               // Vector3
   this.bounds = bounds;                   // Vector2
   this.hasPhysics = hasPhysics;
+  this.clickThrough = false;
   if (hasPhysics) this.physics = new PhysicsProperties();
   this.name = name;
 
   this.draw = function () {
     // Can be overridden by whoever creates this,
     // but for now we only draw a tiny circle
-    context.beginPath();
-    context.arc(this.position.x,this. position.y,5,0,2*Math.PI);
-    context.stroke();
+    context.fillStyle = "#FF0000";
+    context.fillRect(this.position.x,this.position.y,this.bounds.x,this.bounds.y);
+
   }
 
   this.onTick = function () {
@@ -131,10 +132,21 @@ function GameObject(position, bounds, name, hasPhysics) {
   };
 
   // int, int, world position of the click on this element
-  this.click = function (x, y) {
+  this.onMousedown = function (x, y) {
     // Can be overridden by whoever creates this,
     // but for now we just print the name of this object
-    console.log(name + " clicked at ()" + x + "," + y + ")")
+    //console.log(name + " mouse down at (" + x + "," + y + ")");
+  }
+  // int, int, world position of the click on this element
+  this.onMouseup = function (x, y) {
+    // Can be overridden by whoever creates this,
+    // but for now we just print the name of this object
+    //console.log(name + " mouse up at (" + x + "," + y + ")");
+  }
+  this.onMousemove = function (x, y) {
+    // Can be overridden by whoever creates this,
+    // but for now we just print the name of this object
+    //console.log(name + " mouse move at (" + x + "," + y + ")");
   }
 }
 
@@ -163,13 +175,43 @@ function tick() {
 	time+=timeInc;
 };
 
-function click(event) {
+
+function mousemove(event) {
   var x = event.pageX - canvas.offsetLeft;
   var y = event.pageY - canvas.offsetTop;
-
   //console.log("clicked on " + x + " " + y);
-
-  // TODO iterate through game objects, send click event
+  // Click top level first
+  for (var i = gameObjects.length - 1, len = gameObjects.length; i >= 0; i--) {
+    if (gameObjects[i].position.x < x && gameObjects[i].position.x + gameObjects[i].bounds.x > x &&
+      gameObjects[i].position.y < y && gameObjects[i].position.y + gameObjects[i].bounds.y > y) {
+        gameObjects[i].onMousemove(x, y);
+        if (!gameObjects[i].clickThrough) break;
+      }
+  }
+}
+function mousedown(event) {
+  var x = event.pageX - canvas.offsetLeft;
+  var y = event.pageY - canvas.offsetTop;
+  //console.log("clicked on " + x + " " + y);
+  for (var i = gameObjects.length - 1, len = gameObjects.length; i >= 0; i--) {
+    if (gameObjects[i].position.x < x && gameObjects[i].position.x + gameObjects[i].bounds.x > x &&
+      gameObjects[i].position.y < y && gameObjects[i].position.y + gameObjects[i].bounds.y > y) {
+        gameObjects[i].onMousedown(x, y);
+        if (!gameObjects[i].clickThrough) break;
+      }
+  }
+}
+function mouseup(event) {
+  var x = event.pageX - canvas.offsetLeft;
+  var y = event.pageY - canvas.offsetTop;
+  //console.log("clicked on " + x + " " + y);
+  for (var i = gameObjects.length - 1, len = gameObjects.length; i >= 0; i--) {
+    if (gameObjects[i].position.x < x && gameObjects[i].position.x + gameObjects[i].bounds.x > x &&
+      gameObjects[i].position.y < y && gameObjects[i].position.y + gameObjects[i].bounds.y > y) {
+        gameObjects[i].onMouseup(x, y);
+        if (!gameObjects[i].clickThrough) break;
+      }
+  }
 }
 
 /*function draw() {
@@ -177,4 +219,6 @@ function click(event) {
 };*/
 
 window.onload = onPageLoaded;
-canvas.addEventListener('click', click);
+canvas.addEventListener('mousedown', mousedown);
+canvas.addEventListener('mouseup', mouseup);
+canvas.addEventListener('mousemove', mousemove)
