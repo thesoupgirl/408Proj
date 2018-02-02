@@ -118,7 +118,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		} else {
 		  System.out.println("Invalid ID token.");
 		}
-
+		System.out.println("meow: " + oauth2ClientContext.getAccessToken().toString());
 		return oauth2ClientContext.getAccessToken().toString();
 	}
 
