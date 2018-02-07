@@ -248,7 +248,7 @@ function GameMode() {
 
     // restart
     var restartWidth = 300;
-    var restartHeight = 100;
+    var restartHeight = 100; 
     var restartGameObject = new GameObject(new Vector3((canvas.width / 2) - restartWidth/2, (canvas.height / 2) - (restartHeight/2) + 100, 0), new Vector2(restartWidth, restartHeight), "Restart button", false);
     restartGameObject.clickThrough = true;
     restartGameObject.draw = function () {
