@@ -101,12 +101,13 @@ function PhysicsProperties() {
 
 // Core gameobjects that draw images, receive events, etc
 function GameObject(position, bounds, name, hasPhysics) {
+  this.name = name;
+  this.destroy = false; // To destroy at the end of each tick
   this.position = position;               // Vector3
   this.bounds = bounds;                   // Vector2
   this.hasPhysics = hasPhysics;
-  this.clickThrough = false;
+  this.clickThrough = true; // Some objects may not even register a click method, so we click through by default
   if (hasPhysics) this.physics = new PhysicsProperties();
-  this.name = name;
 
   this.draw = function () {
     // Can be overridden by whoever creates this,
@@ -157,6 +158,21 @@ var timeInc = 10;                                  // time increment in ms
 var gameObjects = [];                              // list of gameobjects to handle clicking, physics, and
 var gameMode = new GameMode();
 
+function addGameObject(gameObject) {
+  gameObjects.push(gameObject);
+  gameObjects.sort(function (a, b) {
+    console.log("sorting " + a.name + ", " + a.position.z + " " + b.name + ", " + b.position.z);
+    var posA = a.position.z;
+    var posB = b.position.z;
+    if (posA < posB) return -1;
+    if (posA > posB) return 1;
+    return 0;
+  });
+}
+function deleteGameObject(gameObject) {
+  gameObject.destroy = true;
+}
+
 function onPageLoaded() {
 	context.font = "30px Arial";
 	setInterval(tick, timeInc);
@@ -171,6 +187,19 @@ function tick() {
     //console.log(gameObjects[i]);
     gameObjects[i].tick();
   }
+  var hitEnd = false;
+  // Continuously loop through gameobjects and splice all gameobjects that we must destroy
+  while (!hitEnd) {
+    for (var i = 0, len = gameObjects.length; i < len; i++) {
+      if (gameObjects[i].destroy) {
+        gameObjects.splice(i, 1);
+        break;
+      }
+      if (i == len - 1) hitEnd = true;
+    }
+  }
+
+
   gameMode.tick();
 	time+=timeInc;
 };
