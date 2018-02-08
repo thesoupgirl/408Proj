@@ -107,6 +107,7 @@ function GameObject(position, bounds, name, hasPhysics) {
   this.bounds = bounds;                   // Vector2
   this.hasPhysics = hasPhysics;
   this.clickThrough = true; // Some objects may not even register a click method, so we click through by default
+  this.lastZ = position.z; // Used to see if we should sort the gameobject array again
   if (hasPhysics) this.physics = new PhysicsProperties();
 
   this.draw = function () {
@@ -157,17 +158,19 @@ var time = 0;                                      // to calculate last time, in
 var timeInc = 10;                                  // time increment in ms
 var gameObjects = [];                              // list of gameobjects to handle clicking, physics, and
 var gameMode = new GameMode();
-
-function addGameObject(gameObject) {
-  gameObjects.push(gameObject);
+function sortGameObjectArray() {
   gameObjects.sort(function (a, b) {
-    console.log("sorting " + a.name + ", " + a.position.z + " " + b.name + ", " + b.position.z);
+    //console.log("sorting " + a.name + ", " + a.position.z + " " + b.name + ", " + b.position.z);
     var posA = a.position.z;
     var posB = b.position.z;
     if (posA < posB) return -1;
     if (posA > posB) return 1;
     return 0;
   });
+}
+function addGameObject(gameObject) {
+  gameObjects.push(gameObject);
+  sortGameObjectArray();
 }
 function deleteGameObject(gameObject) {
   gameObject.destroy = true;
@@ -183,9 +186,23 @@ function onPageLoaded() {
 function tick() {
 	context.clearRect(0, 0, canvas.width, canvas.height);
   // For each gameobject, tick
+  var mustSort = false;
   for (var i = 0, len = gameObjects.length; i < len; i++) {
     //console.log(gameObjects[i]);
+    // Call the individual game object tick
     gameObjects[i].tick();
+    // Scan for changes in depth
+    if (gameObjects[i].lastZ != gameObjects[i].position.z) {
+      //console.log(gameObjects[i].name + " " + gameObjects[i].lastZ + " " + gameObjects[i].position.z + " " + gameObjects[i].position + " " + gameObjects[i].physics.velocity);
+      mustSort = true;
+    }
+    // Update the last depth
+    gameObjects[i].lastZ = gameObjects[i].position.z;
+  }
+  // Sort once, if necessary
+  if (mustSort) {
+    console.log("restorting");
+    sortGameObjectArray();
   }
   var hitEnd = false;
   // Continuously loop through gameobjects and splice all gameobjects that we must destroy
@@ -198,8 +215,7 @@ function tick() {
       if (i == len - 1) hitEnd = true;
     }
   }
-
-
+  // Tell the gamemode to continue
   gameMode.tick();
 	time+=timeInc;
 };
@@ -242,10 +258,13 @@ function mouseup(event) {
       }
   }
 }
-
-/*function draw() {
-	context.fillText("Time: " + time,10,50);
-};*/
+var lastTimeInc = timeInc;
+function pause() {
+  timeInc = 0;
+}
+function resume() {
+  timeInc = lastTimeInc;
+}
 
 window.onload = onPageLoaded;
 canvas.addEventListener('mousedown', mousedown);
