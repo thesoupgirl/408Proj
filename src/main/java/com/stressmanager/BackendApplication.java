@@ -58,6 +58,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 
+import java.util.UUID;
+
+import org.springframework.ui.Model;
+import com.outlook.dev.auth.AuthHelper;
+
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
@@ -87,6 +92,23 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	//static Credentials credz;
 
 	static com.google.api.services.calendar.Calendar service;
+
+	//starting point for outlook, spawns auth
+	@RequestMapping({ "/outlooksignin" })
+	@ResponseBody
+	public String outlookSignIn(HttpServletRequest request) throws Exception{
+		UUID state = UUID.randomUUID();
+  		UUID nonce = UUID.randomUUID();
+
+  		// Save the state and nonce in the session so we can
+		// verify after the auth process redirects back
+		HttpSession session = request.getSession();
+		session.setAttribute("expected_state", state);
+		session.setAttribute("expected_nonce", nonce);
+		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
+		
+  		return "";
+	}
 
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
