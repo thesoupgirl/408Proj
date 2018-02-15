@@ -1,4 +1,4 @@
-package com.outlook.dev.auth;
+package com.stressmanager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
