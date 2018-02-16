@@ -168,7 +168,7 @@ function GameMode() {
     animalGameObject.draw = function () {
       // We still render the image, just out of bounds
       // That way we don't have gif resource loading issues
-      var maxFrames = this.animalSelect == 0 ? this.unstableTime > 0 ? 7 : 7 : this.unstableTime > 0 ? 13 : 5;
+      var maxFrames = this.animalSelect == 0 ? this.unstableTime > 0 ? 10 : 7 : this.unstableTime > 0 ? 13 : 5;
         if (time - this.lastTime > this.animFrames && self.gameState != 3) {
           if (self.gameState <= 1 && this.animIndex == maxFrames) {
             this.animalSelect++; // Iterate through all animals to load each sprite in the beginning5
