@@ -25,6 +25,7 @@ function GameMode() {
     self.animalGameObject.physics.drag = 0;
     self.animalGameObject.position = new Vector3(100, 400, 50);
     self.animalGameObject.unstableTime = 0;
+    self.animalGameObject.physics.velocity = new Vector3(0,0,0);
     self.backgroundVelocity = self.startBackgroundVelocity;
 
   }
@@ -401,8 +402,8 @@ function GameMode() {
         switch (parseInt(decorType)) {
           case 0:
           // DOOR
-            decorY = 40;
-            decorDimensions = new Vector2(200, 342);
+            decorY = 75;
+            decorDimensions = new Vector2(180, 307);
             decorPath = "../src/game1/decor1.png";
             break;
           case 1:
@@ -502,7 +503,7 @@ function GameMode() {
             chosenLaneOffset = 530 - chosenLaneOffset;
             break;
           case 3:
-            chosenLaneOffset = 585 - chosenLaneOffset;
+            chosenLaneOffset = 595 - chosenLaneOffset;
             break;
           default:
 
@@ -673,6 +674,7 @@ function GameMode() {
         var playablePath = "";
         var playableBrokenDimensions = new Vector2(0, 0);
         var playableBrokenPath = "";
+        var playableBrokenYOffset = 0;
 
         switch (parseInt(playableType)) {
           case 0:
@@ -680,22 +682,24 @@ function GameMode() {
           if (self.animalGameObject.animalSelect == 1) {
             playableDimensions = new Vector2(50, 125);
             playablePath = "../src/game1/playable1.png";
-            playableBrokenDimensions = new Vector2(50, 125);
-            playableBrokenPath = "../src/game1/playable1.png";
+            playableBrokenDimensions = new Vector2(125, 50);
+            playableBrokenPath = "../src/game1/playable1_2.png";
+            playableBrokenYOffset = 75;
           } else {
-            playableDimensions = new Vector2(75, 20);
-            playablePath = "../src/game1/playable3.png";
-            playableBrokenDimensions = new Vector2(75, 20);
-            playableBrokenPath = "../src/game1/playable3.png";
+            // playable
+            playableDimensions = new Vector2(100, 51);
+            playablePath = "../src/game1/playable5.png";
+            playableBrokenDimensions = new Vector2(133.2, 67);
+            playableBrokenPath = "../src/game1/playable5_2.png";
           }
             break;
           case 1:
           // playable
           if (self.animalGameObject.animalSelect == 1) {
-            playableDimensions = new Vector2(50, 40);
+            playableDimensions = new Vector2(70, 56);
             playablePath = "../src/game1/playable2.png";
-            playableBrokenDimensions = new Vector2(50, 40);
-            playableBrokenPath = "../src/game1/playable2.png";
+            playableBrokenDimensions = new Vector2(56, 70);
+            playableBrokenPath = "../src/game1/playable2_2.png";
           } else {
             playableDimensions = new Vector2(75, 36);
             playablePath = "../src/game1/playable4.png";
@@ -705,18 +709,21 @@ function GameMode() {
 
             break;
           case 2:
-          // playable
-          playableDimensions = new Vector2(100, 51);
-          playablePath = "../src/game1/playable5.png";
-          playableBrokenDimensions = new Vector2(133.2, 67);
-          playableBrokenPath = "../src/game1/playable5_2.png";
-            break;
-          case 3:
+          if (self.animalGameObject.animalSelect == 1) {
+            playableDimensions = new Vector2(75, 20);
+            playablePath = "../src/game1/playable3.png";
+            playableBrokenDimensions = new Vector2(75, 20);
+            playableBrokenPath = "../src/game1/playable3.png";
+          } else {
           // playable
           playableDimensions = new Vector2(50,46);
           playablePath = "../src/game1/playable6.png";
           playableBrokenDimensions = new Vector2(136, 44);
           playableBrokenPath = "../src/game1/playable6_2.png";
+
+          }
+            break;
+          case 3:
             break;
 
           default:
@@ -752,7 +759,7 @@ function GameMode() {
         playableGameObject.bounds2 = playableBrokenDimensions;
         playableGameObject.chosenLane = chosenLane;
         playableGameObject.used = false;
-
+        playableGameObject.playableBrokenYOffset = playableBrokenYOffset;
         playableGameObject.spriteType = 0;
         playableGameObject.draw = function () {
           var img=new Image();
@@ -763,7 +770,7 @@ function GameMode() {
               break;
             case 1:
               img.src = this.image2;
-              context.drawImage(img,this.position.x,this.position.y, this.bounds2.x, this.bounds2.y);
+              context.drawImage(img,this.position.x,this.position.y + playableBrokenYOffset, this.bounds2.x, this.bounds2.y);
               break;
             default:
 
