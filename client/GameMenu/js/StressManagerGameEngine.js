@@ -13,28 +13,28 @@ function Vector2(x, y) {
 
  this.add = function (v2) {
    return new Vector2(this.x + v2.x, this.y + v2.y);
- }
+ };
 
  this.subtract = function (v2) {
    return new Vector2(this.x - v2.x, this.y - v2.y);
- }
+ };
 
  this.times = function (value) {
    return new Vector2(this.x * value, this.y * value);
- }
+ };
 
  this.dividedBy = function (value) {
    return new Vector2(this.x / value, this.y / value);
- }
+ };
 
  this.cross = function (v1, v2) {
    return new Vector2(0,0); // TODO
- }
+ };
 
  this.dot = function (v1, v2) {
    return new Vector2(0,0); // TODO
- }
-}
+ };
+};
 
 // A three-dimensional vector
 function Vector3(x, y, z) {
@@ -44,28 +44,28 @@ function Vector3(x, y, z) {
 
  this.add = function (v2) {
    return new Vector3(this.x + v2.x, this.y + v2.y, this.z + v2.z);
- }
+ };
 
  this.subtract = function (v2) {
    return new Vector3(this.x - v2.x, this.y - v2.y, this.z - v2.z);
- }
+ };
 
  this.times = function (value) {
    return new Vector3(this.x * value, this.y * value, this.z * value);
- }
+ };
 
  this.dividedBy = function (value) {
    return new Vector3(this.x / value, this.y / value, this.z / value);
- }
+ };
 
  this.cross = function (v2) {
    return new Vector3(0,0,0); // TODO
- }
+ };
 
  this.dot = function (v2) {
    return new Vector3(0,0,0); // TODO
- }
-}
+ };
+};
 
 // Physics for any sort of object that would retain speed
 function PhysicsProperties() {
@@ -78,14 +78,14 @@ function PhysicsProperties() {
   // Vector3
   this.setVelocity = function (newVelocity) {
     this.velocity = newVelocity;
-  }
+  };
   // Vector3
   this.addForce = function (velocityDiff) {
     // Force = Mass * Acceleration
     // Acceleration = Force / Mass
     this.setVelocity(this.velocity.add(velocityDiff.dividedBy(this.mass)));
     //console.log("New velocity: " + this.velocity.x + " " + (timeInc));
-  }
+  };
 
   // Float, Vector3
   // Return the position of the object
@@ -96,7 +96,7 @@ function PhysicsProperties() {
     this.setVelocity(this.velocity.add(new Vector3(0, 9.8, 0).times(timeDiffS * this.gravityScale)));
     this.setVelocity(this.velocity.add(this.velocity.times(timeDiffS * -1 * this.drag)));
     return position.add(this.velocity.times(timeDiffS)); // since time inc is in ms, we want seconds
-  }
+  };
 };
 
 // Core gameobjects that draw images, receive events, etc
@@ -115,13 +115,12 @@ function GameObject(position, bounds, name, hasPhysics) {
     // but for now we only draw a tiny circle
     context.fillStyle = "#FF0000";
     context.fillRect(this.position.x,this.position.y,this.bounds.x,this.bounds.y);
-
-  }
+  };
 
   this.onTick = function () {
     // Can be overridden by whoever creates this,
     // But for now we do nothing
-  }
+  };
 
   // int, int
   // Called by core gamemode loop
@@ -138,19 +137,19 @@ function GameObject(position, bounds, name, hasPhysics) {
     // Can be overridden by whoever creates this,
     // but for now we just print the name of this object
     //console.log(name + " mouse down at (" + x + "," + y + ")");
-  }
+  };
   // int, int, world position of the click on this element
   this.onMouseup = function (x, y) {
     // Can be overridden by whoever creates this,
     // but for now we just print the name of this object
     //console.log(name + " mouse up at (" + x + "," + y + ")");
-  }
+  };
   this.onMousemove = function (x, y) {
     // Can be overridden by whoever creates this,
     // but for now we just print the name of this object
     //console.log(name + " mouse move at (" + x + "," + y + ")");
-  }
-}
+  };
+};
 
 var canvas = document.getElementById("myCanvas");  // canvas to draw on
 var context = canvas.getContext("2d");             // canvas context to draw on
@@ -167,14 +166,14 @@ function sortGameObjectArray() {
     if (posA > posB) return 1;
     return 0;
   });
-}
+};
 function addGameObject(gameObject) {
   gameObjects.push(gameObject);
   sortGameObjectArray();
-}
+};
 function deleteGameObject(gameObject) {
   gameObject.destroy = true;
-}
+};
 
 function onPageLoaded() {
 	context.font = "30px Arial";
@@ -215,6 +214,8 @@ function tick() {
       if (i == len - 1) hitEnd = true;
     }
   }
+
+
   // Tell the gamemode to continue
   gameMode.tick();
 	time+=timeInc;
@@ -233,7 +234,7 @@ function mousemove(event) {
         if (!gameObjects[i].clickThrough) break;
       }
   }
-}
+};
 function mousedown(event) {
   var x = event.pageX - canvas.offsetLeft;
   var y = event.pageY - canvas.offsetTop;
@@ -245,7 +246,7 @@ function mousedown(event) {
         if (!gameObjects[i].clickThrough) break;
       }
   }
-}
+};
 function mouseup(event) {
   var x = event.pageX - canvas.offsetLeft;
   var y = event.pageY - canvas.offsetTop;
@@ -257,14 +258,14 @@ function mouseup(event) {
         if (!gameObjects[i].clickThrough) break;
       }
   }
-}
+};
 var lastTimeInc = timeInc;
 function pause() {
   timeInc = 0;
-}
+};
 function resume() {
   timeInc = lastTimeInc;
-}
+};
 
 window.onload = onPageLoaded;
 canvas.addEventListener('mousedown', mousedown);

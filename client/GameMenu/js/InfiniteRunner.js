@@ -28,12 +28,12 @@ function GameMode() {
     self.animalGameObject.physics.velocity = new Vector3(0,0,0);
     self.backgroundVelocity = self.startBackgroundVelocity;
 
-  }
+  };
   this.restart = function () {
     //console.log("starting game");
     self.gameState = 2;
     self.clearGame();
-  }
+  };
   this.gameOver = function () {
     self.gameState = 3; // Game over
     self.animalGameObject.physics.drag = 10;
@@ -41,7 +41,7 @@ function GameMode() {
     self.animalGameObject.unstableTime = 0;
     self.animalGameObject.inputs = new Vector2(0,0);
     self.animalGameObject.unstableInput = new Vector2(0,0);
-  }
+  };
   this.loadImages = function () {
     for (var i = 1; i <= 11; i++) {
       var img1 = new Image();
@@ -63,7 +63,7 @@ function GameMode() {
       img1.src = "../src/game1/cat_roll/" + i + ".png";
       context.drawImage(img1, -100, -100, 101, 101);
     }
-  }
+  };
   this.start = function() {
     // Called when the game starts
     this.loadImages();
@@ -94,7 +94,7 @@ function GameMode() {
         context.fillText("Bullshit",this.position.x + 120,this.position.y + 160);
 
       }
-    }
+    };
 
     // Start button
     var startWidth = 300;
@@ -110,12 +110,12 @@ function GameMode() {
         context.font = "30px Arial";
         context.fillText("Start",this.position.x + 120,this.position.y + 60);
       }
-    }
+    };
     startGameObject.onMouseup = function () {
       if (self.gameState == 0) {
         self.gameState = 1;
       }
-    }
+    };
 
     addGameObject(titleGameObject);
     addGameObject(startGameObject);
@@ -135,7 +135,7 @@ function GameMode() {
         context.font = "30px Arial";
         context.fillText("Dog",this.position.x + 120,this.position.y + (this.bounds.y/2));
       }
-    }
+    };
     dogOptionGameObject.onMouseup = function () {
       if (self.gameState == 1) {
         self.gameState = 2;
@@ -143,7 +143,7 @@ function GameMode() {
         animalGameObject.animalSelect = 0;
         self.restart();
       }
-    }
+    };
     // cat selector
     var catWidth = 300;
     var catHeight = 300;
@@ -158,7 +158,7 @@ function GameMode() {
         context.font = "30px Arial";
         context.fillText("Cat",this.position.x + 120,this.position.y + (this.bounds.y/2));
       }
-    }
+    };
     catOptionGameObject.onMouseup = function () {
       if (self.gameState == 1) {
         self.gameState = 2;
@@ -166,7 +166,7 @@ function GameMode() {
         animalGameObject.animalSelect = 1;
         self.restart();
       }
-    }
+    };
     addGameObject(dogOptionGameObject);
     addGameObject(catOptionGameObject);
 
@@ -203,7 +203,7 @@ function GameMode() {
         img.src = "../src/game1/" + animalType + "_" + movementType + "/" + (this.animIndex+1) + ".png";
         context.drawImage(img,this.position.x - 20,this.position.y - 20, this.bounds.x + 40, this.bounds.y + 40);
 
-    }
+    };
     animalGameObject.onTick = function () {
       if (self.gameState == 2 || self.gameState == 3) {
         // Idk do the bounds checking thing
@@ -274,7 +274,7 @@ function GameMode() {
         this.input = new Vector2(0,0);
         this.unstableInput = new Vector2(0,0);
       }
-    }
+    };
     this.checkKeyDown = function (e) {
       if (self.gameState != 2) return;
       var code = e.keyCode;
@@ -285,7 +285,7 @@ function GameMode() {
           case 40: if (animalGameObject.canBottom) animalGameObject.input.y = self.baseSpeed * 1; break; //Down key
           default: //Everything else
       }
-    }
+    };
     this.checkKeyUp = function (e) {
       if (self.gameState != 2) return;
       var code = e.keyCode;
@@ -296,7 +296,7 @@ function GameMode() {
           case 40: if (animalGameObject.input.y >= 0) animalGameObject.input.y = 0; break; //Down key
           default: //Everything else
       }
-    }
+    };
     window.addEventListener('keydown',this.checkKeyDown,false);
     window.addEventListener('keyup',this.checkKeyUp,false);
 
@@ -316,7 +316,7 @@ function GameMode() {
         context.font = "30px Arial";
         context.fillText("Score: " + parseInt(this.score),this.position.x + 20,this.position.y + (this.bounds.y/2) + 10);
       }
-    }
+    };
     scoreCounterGameObject.onTick = function () {
       if (self.gameState != 2) {
         this.startTime = time;
@@ -324,7 +324,7 @@ function GameMode() {
         this.score += (time - this.lastTime)/50;
       }
       this.lastTime = time;
-    }
+    };
     self.animalGameObject = animalGameObject;
     addGameObject(animalGameObject);
     addGameObject(scoreCounterGameObject);
@@ -344,7 +344,7 @@ function GameMode() {
         context.fillText("Game",this.position.x + 140,this.position.y + 80);
         context.fillText("Over",this.position.x + 160,this.position.y + 160);
       }
-    }
+    };
 
     // restart
     var restartWidth = 300;
@@ -360,20 +360,20 @@ function GameMode() {
         context.font = "30px Arial";
         context.fillText("Restart",this.position.x + 100,this.position.y + 60);
       }
-    }
+    };
     restartGameObject.onMouseup = function () {
       if (self.gameState == 3) {
         self.clearGame();
         self.gameState = 1; // Back to animal select
       }
-    }
+    };
 
     addGameObject(gameOverGameObject);
     addGameObject(restartGameObject);
 
 
 
-  }
+  };
   // Nextspawn is for ensuring that the next item isn't colliding
   // Rate is, of course, rate. The higher, the less spawned.
   self.nextSpawnNoCollide = 0;
@@ -464,7 +464,7 @@ function GameMode() {
           var img=new Image();
           img.src = decorPath;
           context.drawImage(img,this.position.x,this.position.y, this.bounds.x, this.bounds.y);
-        }
+        };
         noCollideGameObject.onTick = movingTicking;
         addGameObject(noCollideGameObject);
         this.deleteOnRestart.push(noCollideGameObject)
@@ -547,7 +547,7 @@ function GameMode() {
           var img=new Image();
           img.src = this.image;
           context.drawImage(img,this.position.x,this.position.y, this.bounds.x, this.bounds.y);
-        }
+        };
         obstacleGameObject.movingTicking = movingTicking;
         obstacleGameObject.onTick = function () {
           this.movingTicking();
@@ -561,7 +561,7 @@ function GameMode() {
               if (self.gameState == 2) self.gameOver();
             }
           }
-        }
+        };
         addGameObject(obstacleGameObject);
         this.deleteOnRestart.push(obstacleGameObject);
       }
@@ -643,7 +643,7 @@ function GameMode() {
           var img=new Image();
           img.src = this.image;
           context.drawImage(img,this.position.x,this.position.y, this.bounds.x, this.bounds.y);
-        }
+        };
         treatGameObject.movingTicking = movingTicking;
         treatGameObject.onTick = function () {
           this.movingTicking();
@@ -669,7 +669,7 @@ function GameMode() {
                 if (time - this.spawnTime > this.scoreLifetime) {
                   deleteGameObject(this);
                 }
-              }
+              };
               scoreGameObject.draw = function () {
                 var fontFactor = Math.sqrt(this.scoreFontSize * ((-((time - this.spawnTime)/this.scoreLifetime)) + 1));
                 //console.log(fontFactor);
@@ -677,14 +677,14 @@ function GameMode() {
                 var fontSize = 10 * fontFactor;
                 context.font = (fontSize) + "px Arial";
                 context.fillText("+" + this.score, this.position.x, this.position.y);
-              }
+              };
               scoreGameObject.physics.addForce(new Vector3(0, -100, 0));
               addGameObject(scoreGameObject);
               self.deleteOnRestart.push(scoreGameObject);
               deleteGameObject(this);
             }
           }
-        }
+        };
         addGameObject(treatGameObject);
         this.deleteOnRestart.push(treatGameObject);
       }
@@ -801,7 +801,7 @@ function GameMode() {
             default:
 
           }
-        }
+        };
         playableGameObject.movingTicking = movingTicking;
         playableGameObject.onTick = function () {
           this.movingTicking();
@@ -827,7 +827,7 @@ function GameMode() {
                 if (time - this.spawnTime > this.scoreLifetime) {
                   deleteGameObject(this);
                 }
-              }
+              };
               scoreGameObject.draw = function () {
                 var fontFactor = Math.sqrt(this.scoreFontSize * ((-((time - this.spawnTime)/this.scoreLifetime)) + 1));
                 //console.log(fontFactor);
@@ -835,7 +835,7 @@ function GameMode() {
                 var fontSize = 10 * fontFactor;
                 context.font = (fontSize) + "px Arial";
                 context.fillText("+" + this.score, this.position.x, this.position.y);
-              }
+              };
               scoreGameObject.physics.addForce(new Vector3(0, -100, 0));
               addGameObject(scoreGameObject);
               self.deleteOnRestart.push(scoreGameObject);
@@ -849,12 +849,12 @@ function GameMode() {
               //deleteGameObject(this);
             }
           }
-        }
+        };
         addGameObject(playableGameObject);
         this.deleteOnRestart.push(playableGameObject);
       }
 
 
     }
-  }
-}
+  };
+};
