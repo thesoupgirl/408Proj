@@ -61,7 +61,7 @@ import org.springframework.http.HttpStatus;
 import java.util.UUID;
 
 import org.springframework.ui.Model;
-import com.outlook.dev.auth.AuthHelper;
+import com.stressmanager.AuthHelper;
 
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TokenResponse {
+public class TokenResp {
   @JsonProperty("token_type")
   private String tokenType;
   private String scope;
