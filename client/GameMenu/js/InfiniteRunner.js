@@ -24,6 +24,8 @@ function GameMode() {
     self.scoreCounterGameObject.score = 0;
     self.animalGameObject.physics.drag = 0;
     self.animalGameObject.position = new Vector3(100, 400, 50);
+    self.animalGameObject.unstableTime = 0;
+    self.backgroundVelocity = self.startBackgroundVelocity;
 
   }
   this.restart = function () {
@@ -34,6 +36,8 @@ function GameMode() {
   this.gameOver = function () {
     self.gameState = 3; // Game over
     self.animalGameObject.physics.drag = 10;
+    self.animalGameObject.physics.addForce(new Vector3(300, 0, 0));
+    self.animalGameObject.unstableTime = 0;
   }
   this.start = function() {
     // Called when the game starts
@@ -156,20 +160,26 @@ function GameMode() {
     animalGameObject.lastTime = time;
     animalGameObject.animFrames = 80; // New animation frame every 100 ms
     animalGameObject.animIndex = 1;
+    animalGameObject.unstableTime = 0;
+    animalGameObject.unstableInput = new Vector2(0,0);
+    animalGameObject.input = new Vector2(0,0);
+
     animalGameObject.draw = function () {
       // We still render the image, just out of bounds
       // That way we don't have gif resource loading issues
+      var maxFrames = this.animalSelect == 0 ? this.unstableTime > 0 ? 7 : 7 : this.unstableTime > 0 ? 13 : 5;
         if (time - this.lastTime > this.animFrames && self.gameState != 3) {
-          if (self.gameState <= 1 && this.animIndex == (this.animalSelect == 0 ? 7 : 5)) {
+          if (self.gameState <= 1 && this.animIndex == maxFrames) {
             this.animalSelect++; // Iterate through all animals to load each sprite in the beginning5
           }
-          this.animIndex = (this.animIndex + 1) % ((this.animalSelect == 0 ? 7 : 5) + 1);
+          this.animIndex = (this.animIndex + 1) % (maxFrames + 1);
           this.lastTime = time;
         }
         var img=new Image();
         var animalType = this.animalSelect == 0 ? "dog" : "cat";
-        img.src = "../src/game1/" + animalType + "_run/" + animalType + (this.animIndex+1) + ".png";
-        context.drawImage(img,this.position.x - 10,this.position.y - 10, this.bounds.x + 20, this.bounds.y + 20);
+        var movementType = this.unstableTime > 0 ? "roll" : "run";
+        img.src = "../src/game1/" + animalType + "_" + movementType + "/" + (this.animIndex+1) + ".png";
+        context.drawImage(img,this.position.x - 20,this.position.y - 20, this.bounds.x + 40, this.bounds.y + 40);
 
     }
     animalGameObject.onTick = function () {
@@ -178,7 +188,17 @@ function GameMode() {
         var depth = parseInt(((this.position.y - 390)/55).toFixed(0)) + 1;
         this.position.z = parseInt(depth); // So we have the image constnatly moving in the foreground/background
         //console.log("Position: " + this.position.x + " " + this.position.y + " " + depth);
-
+        // unstable
+        if (this.unstableTime > 0) {
+          this.unstableTime = this.unstableTime - timeInc;
+          //this.unstableInput = new Vector2(Math.random(), Math.random());
+          this.unstableInput = new Vector2(self.baseSpeed * ((Math.random() * 2) - 1), self.baseSpeed * ((Math.random() * 2) - 1));
+          this.unstableInput = this.unstableInput.times(2);
+          //console.log(this.unstableInput.x + " " + this.unstableInput.y);
+        } else {
+          this.unstableTime = 0;
+          this.unstableInput = new Vector2(0,0);
+        }
         // Top: 335
         var top = 335;
         var bottom = canvas.height - animalHeight - 10;
@@ -213,6 +233,16 @@ function GameMode() {
           this.canRight = true;
         }
 
+        // TODO if no collisions, do the thing
+        var inputs = this.input.add(this.unstableInput);
+        this.physics.velocity.x = inputs.x;
+        this.physics.velocity.y = inputs.y;
+        if (this.physics.velocity.y > 0 && !this.canBottom) this.physics.velocity.y = 0;
+        if (this.physics.velocity.y < 0 && !this.canTop) this.physics.velocity.y = 0;
+        if (this.physics.velocity.x < 0 && !this.canLeft) this.physics.velocity.x = 0;
+        if (this.physics.velocity.x > 0 && !this.canRight) this.physics.velocity.x = 0;
+        //console.log(this.unstableTime + " Velcity: " + this.physics.velocity.x + " " + this.physics.velocity.y);
+
       } else {
         this.physics.velocity = new Vector3(0,0,0);
         this.position.x = -500;
@@ -222,10 +252,10 @@ function GameMode() {
       if (self.gameState != 2) return;
       var code = e.keyCode;
       switch (code) {
-          case 37: if (animalGameObject.canLeft) animalGameObject.physics.velocity.x = self.baseSpeed * -1; break; //Left key
-          case 38: if (animalGameObject.canTop) animalGameObject.physics.velocity.y = self.baseSpeed * -1; break; //Up key
-          case 39: if (animalGameObject.canRight) animalGameObject.physics.velocity.x = self.baseSpeed * 1; break; //Right key
-          case 40: if (animalGameObject.canBottom) animalGameObject.physics.velocity.y = self.baseSpeed * 1; break; //Down key
+          case 37: if (animalGameObject.canLeft) animalGameObject.input.x = self.baseSpeed * -1; break; //Left key
+          case 38: if (animalGameObject.canTop) animalGameObject.input.y = self.baseSpeed * -1; break; //Up key
+          case 39: if (animalGameObject.canRight) animalGameObject.input.x = self.baseSpeed * 1; break; //Right key
+          case 40: if (animalGameObject.canBottom) animalGameObject.input.y = self.baseSpeed * 1; break; //Down key
           default: //Everything else
       }
     }
@@ -233,10 +263,10 @@ function GameMode() {
       if (self.gameState != 2) return;
       var code = e.keyCode;
       switch (code) {
-          case 37: if (animalGameObject.physics.velocity.x <= 0) animalGameObject.physics.velocity.x = 0; break; //Left key
-          case 38: if (animalGameObject.physics.velocity.y <= 0) animalGameObject.physics.velocity.y = 0; break; //Up key
-          case 39: if (animalGameObject.physics.velocity.x >= 0) animalGameObject.physics.velocity.x = 0; break; //Right key
-          case 40: if (animalGameObject.physics.velocity.y >= 0) animalGameObject.physics.velocity.y = 0; break; //Down key
+          case 37: if (animalGameObject.input.x <= 0) animalGameObject.input.x = 0; break; //Left key
+          case 38: if (animalGameObject.input.y <= 0) animalGameObject.input.y = 0; break; //Up key
+          case 39: if (animalGameObject.input.x >= 0) animalGameObject.input.x = 0; break; //Right key
+          case 40: if (animalGameObject.input.y >= 0) animalGameObject.input.y = 0; break; //Down key
           default: //Everything else
       }
     }
@@ -329,13 +359,21 @@ function GameMode() {
   self.treatRate = 15;
 
   self.nextSpawnPlayable = 0;
-  self.playableRate = 2;
+  self.playableRate = 20;
 
+  self.startBackgroundVelocity = -120;
   self.backgroundVelocity = -120;
+  self.increaseTime = 0;
+
   this.obstacles = [];
   this.tick = function() {
     // Called every frame update
-
+    var speedIncreaseInterval = 5000; // Every 50 ms we increase speed by 1
+    if (time > self.increaseTime + speedIncreaseInterval && self.gameState == 2) {
+      self.increaseTime = time;
+      self.backgroundVelocity -= 10;
+      console.log("Speeding up");
+    }
     // if game state is game, spawn (nocollides, collides, treats) that move and despawn
     if (self.gameState == 2) {
       var movingTicking = function() {
@@ -423,7 +461,7 @@ function GameMode() {
             break;
           case 1:
           // Low table
-            obstacleDimensions = new Vector2(441, 150);
+            obstacleDimensions = new Vector2(220, 75);
             obstaclePath = "../src/game1/obstacle2.png";
             break;
           case 2:
@@ -436,12 +474,12 @@ function GameMode() {
             obstacleDimensions = new Vector2(298, 150);
             obstaclePath = "../src/game1/obstacle4.png";
             break;
-          case 5:
+          case 4:
           // Cabinet
             obstacleDimensions = new Vector2(124, 150);
             obstaclePath = "../src/game1/obstacle5.png";
             break;
-          case 6:
+          case 5:
           // Cubby?
             obstacleDimensions = new Vector2(252, 150);
             obstaclePath = "../src/game1/obstacle6.png";
@@ -469,7 +507,7 @@ function GameMode() {
           default:
 
         }
-        console.log("spawning in lane " + chosenLane)
+        //console.log("spawning in lane " + chosenLane)
 
         this.nextSpawnObstacle = time + (-1000 * obstacleDimensions.x / self.backgroundVelocity);
         var obstacleGameObject = new GameObject(new Vector3(canvas.width,chosenLaneOffset,parseInt(chosenLane)), obstacleDimensions, "Obstacle" + time, true);
@@ -532,12 +570,12 @@ function GameMode() {
             treatDimensions = new Vector2(50, 50);
             treatPath = "../src/game1/treat4.png";
             break;
-          case 5:
+          case 4:
           // Treat
             treatDimensions = new Vector2(50, 22);
             treatPath = "../src/game1/treat5.png";
             break;
-          case 6:
+          case 5:
           // Treat?
             treatDimensions = new Vector2(50, 43);
             treatPath = "../src/game1/treat6.png";
@@ -607,7 +645,7 @@ function GameMode() {
               }
               scoreGameObject.draw = function () {
                 var fontFactor = Math.sqrt(this.scoreFontSize * ((-((time - this.spawnTime)/this.scoreLifetime)) + 1));
-                console.log(fontFactor);
+                //console.log(fontFactor);
                 if (fontFactor < 1 || isNaN(fontFactor)) fontFactor = 0; //Workaround
                 var fontSize = 10 * fontFactor;
                 context.font = (fontSize) + "px Arial";
@@ -623,6 +661,166 @@ function GameMode() {
         addGameObject(treatGameObject);
         this.deleteOnRestart.push(treatGameObject);
       }
+
+      // Playables
+      var playableScore = 1000;
+
+      if (time >= this.nextSpawnPlayable && Math.random() <= (0.2/(timeInc * self.playableRate))) {
+        var playableType = (Math.random() * 3).toFixed(0);
+        // console.log("Spawning an treat of type " + treatType);
+        // Defaults
+        var playableDimensions = new Vector2(0, 0);
+        var playablePath = "";
+        var playableBrokenDimensions = new Vector2(0, 0);
+        var playableBrokenPath = "";
+
+        switch (parseInt(playableType)) {
+          case 0:
+          // playable
+          if (self.animalGameObject.animalSelect == 1) {
+            playableDimensions = new Vector2(50, 125);
+            playablePath = "../src/game1/playable1.png";
+            playableBrokenDimensions = new Vector2(50, 125);
+            playableBrokenPath = "../src/game1/playable1.png";
+          } else {
+            playableDimensions = new Vector2(75, 20);
+            playablePath = "../src/game1/playable3.png";
+            playableBrokenDimensions = new Vector2(75, 20);
+            playableBrokenPath = "../src/game1/playable3.png";
+          }
+            break;
+          case 1:
+          // playable
+          if (self.animalGameObject.animalSelect == 1) {
+            playableDimensions = new Vector2(50, 40);
+            playablePath = "../src/game1/playable2.png";
+            playableBrokenDimensions = new Vector2(50, 40);
+            playableBrokenPath = "../src/game1/playable2.png";
+          } else {
+            playableDimensions = new Vector2(75, 36);
+            playablePath = "../src/game1/playable4.png";
+            playableBrokenDimensions = new Vector2(75, 36);
+            playableBrokenPath = "../src/game1/playable4.png";
+          }
+
+            break;
+          case 2:
+          // playable
+          playableDimensions = new Vector2(100, 51);
+          playablePath = "../src/game1/playable5.png";
+          playableBrokenDimensions = new Vector2(133.2, 67);
+          playableBrokenPath = "../src/game1/playable5_2.png";
+            break;
+          case 3:
+          // playable
+          playableDimensions = new Vector2(50,46);
+          playablePath = "../src/game1/playable6.png";
+          playableBrokenDimensions = new Vector2(136, 44);
+          playableBrokenPath = "../src/game1/playable6_2.png";
+            break;
+
+          default:
+
+        }
+        var chosenLane = parseInt((Math.random() * 3).toFixed(0)); //up to 4 options
+        var chosenLaneOffset = playableDimensions.y;
+        switch (parseInt(chosenLane)) {
+          case 0:
+            chosenLaneOffset = 420 - chosenLaneOffset;
+            break;
+          case 1:
+            chosenLaneOffset = 475 - chosenLaneOffset;
+            break;
+          case 2:
+            chosenLaneOffset = 530 - chosenLaneOffset;
+            break;
+          case 3:
+            chosenLaneOffset = 585 - chosenLaneOffset;
+            break;
+          default:
+
+        }
+        //console.log("spawning in lane " + chosenLane)
+
+        this.nextSpawnplayable = time + (-1000 * playableDimensions.x / self.backgroundVelocity);
+        var playableGameObject = new GameObject(new Vector3(canvas.width,chosenLaneOffset,parseInt(chosenLane)), playableDimensions, "playable " + time, true);
+        //console.log("Spawned game object at " + chosenLane);
+        playableGameObject.physics.drag = 0;
+        playableGameObject.physics.gravityScale = 0;
+        playableGameObject.image = playablePath;
+        playableGameObject.image2 = playableBrokenPath;
+        playableGameObject.bounds2 = playableBrokenDimensions;
+        playableGameObject.chosenLane = chosenLane;
+        playableGameObject.used = false;
+
+        playableGameObject.spriteType = 0;
+        playableGameObject.draw = function () {
+          var img=new Image();
+          switch (parseInt(this.spriteType)) {
+            case 0:
+              img.src = this.image;
+              context.drawImage(img,this.position.x,this.position.y, this.bounds.x, this.bounds.y);
+              break;
+            case 1:
+              img.src = this.image2;
+              context.drawImage(img,this.position.x,this.position.y, this.bounds2.x, this.bounds2.y);
+              break;
+            default:
+
+          }
+        }
+        playableGameObject.movingTicking = movingTicking;
+        playableGameObject.onTick = function () {
+          this.movingTicking();
+          // Search for collision for animal
+          if (!this.used && ((self.animalGameObject.position.x >= this.position.x && self.animalGameObject.position.x <= this.position.x + this.bounds.x) || (self.animalGameObject.position.x +  self.animalGameObject.bounds.x >= this.position.x && self.animalGameObject.position.x + self.animalGameObject.bounds.x <= this.position.x + this.bounds.x))) {
+            // Lined up horizontally, now vertically?
+            var top = this.position.y  + this.bounds.y;
+            var bottom = top - 55;
+            if ((self.animalGameObject.position.y >= this.position.y && self.animalGameObject.position.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y +  self.animalGameObject.bounds.y >= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= this.position.y + this.bounds.y)) {
+              //console.log("PHAT COLLISION: bottom: " + bottom + ", top: " + top + ", pos: " + (self.animalGameObject.position.y + self.animalGameObject.bounds.y));
+              self.scoreCounterGameObject.score += playableScore;
+              // Floaty up score
+              var scoreGameObject = new GameObject(this.position, new Vector2(200, 100), "Score thingy", true);
+              scoreGameObject.physics.drag = 3;
+              scoreGameObject.physics.gravityScale = 0;
+              scoreGameObject.movingTicking = movingTicking;
+              scoreGameObject.score = playableScore;
+              scoreGameObject.spawnTime = time;
+              scoreGameObject.scoreLifetime = 3000;
+              scoreGameObject.scoreFontSize = 20;
+              scoreGameObject.onTick = function () {
+                this.movingTicking();
+                if (time - this.spawnTime > this.scoreLifetime) {
+                  deleteGameObject(this);
+                }
+              }
+              scoreGameObject.draw = function () {
+                var fontFactor = Math.sqrt(this.scoreFontSize * ((-((time - this.spawnTime)/this.scoreLifetime)) + 1));
+                //console.log(fontFactor);
+                if (fontFactor < 1 || isNaN(fontFactor)) fontFactor = 0; //Workaround
+                var fontSize = 10 * fontFactor;
+                context.font = (fontSize) + "px Arial";
+                context.fillText("+" + this.score, this.position.x, this.position.y);
+              }
+              scoreGameObject.physics.addForce(new Vector3(0, -100, 0));
+              addGameObject(scoreGameObject);
+              self.deleteOnRestart.push(scoreGameObject);
+
+              // change sprite
+              this.spriteType = 1;
+              // add player game object time disoriented
+              self.animalGameObject.unstableTime += 3000;
+              self.animalGameObject.animIndex = 0;
+              this.used = true;
+              //deleteGameObject(this);
+            }
+          }
+        }
+        addGameObject(playableGameObject);
+        this.deleteOnRestart.push(playableGameObject);
+      }
+
 
     }
   }
