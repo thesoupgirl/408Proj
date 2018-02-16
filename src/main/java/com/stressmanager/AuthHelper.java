@@ -6,6 +6,11 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class AuthHelper {
