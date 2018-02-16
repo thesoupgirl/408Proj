@@ -39,10 +39,34 @@ function GameMode() {
     self.animalGameObject.physics.drag = 10;
     self.animalGameObject.physics.addForce(new Vector3(300, 0, 0));
     self.animalGameObject.unstableTime = 0;
+    self.animalGameObject.inputs = new Vector2(0,0);
+    self.animalGameObject.unstableInput = new Vector2(0,0);
+  }
+  this.loadImages = function () {
+    for (var i = 1; i <= 11; i++) {
+      var img1 = new Image();
+      img1.src = "../src/game1/dog_roll/" + i + ".png";
+      context.drawImage(img1, -100, -100, 101, 101);
+    }
+    for (var i = 1; i <= 8; i++) {
+      var img1 = new Image();
+      img1.src = "../src/game1/dog_run/" + i + ".png";
+      context.drawImage(img1, -100, -100, 101, 101);
+    }
+    for (var i = 1; i <= 6; i++) {
+      var img1 = new Image();
+      img1.src = "../src/game1/cat_run/" + i + ".png";
+      context.drawImage(img1, -100, -100, 101, 101);
+    }
+    for (var i = 1; i <= 14; i++) {
+      var img1 = new Image();
+      img1.src = "../src/game1/cat_roll/" + i + ".png";
+      context.drawImage(img1, -100, -100, 101, 101);
+    }
   }
   this.start = function() {
     // Called when the game starts
-
+    this.loadImages();
     // Canvas with base house images
     var canvasGameObject = new GameObject(new Vector3(0,0,-15), new Vector2(canvas.width, canvas.height), "Canvas", false);
     canvasGameObject.draw = function () {
@@ -170,9 +194,6 @@ function GameMode() {
       // That way we don't have gif resource loading issues
       var maxFrames = this.animalSelect == 0 ? this.unstableTime > 0 ? 10 : 7 : this.unstableTime > 0 ? 13 : 5;
         if (time - this.lastTime > this.animFrames && self.gameState != 3) {
-          if (self.gameState <= 1 && this.animIndex == maxFrames) {
-            this.animalSelect++; // Iterate through all animals to load each sprite in the beginning5
-          }
           this.animIndex = (this.animIndex + 1) % (maxFrames + 1);
           this.lastTime = time;
         }
@@ -234,10 +255,13 @@ function GameMode() {
           this.canRight = true;
         }
 
-        // TODO if no collisions, do the thing
+        //  if no collisions, do the thing
         var inputs = this.input.add(this.unstableInput);
-        this.physics.velocity.x = inputs.x;
-        this.physics.velocity.y = inputs.y;
+        if (self.gameState != 3) {
+          this.physics.velocity.x = inputs.x;
+          this.physics.velocity.y = inputs.y;
+        }
+        //console.log("inputs: " + this.input.x + " " + this.input.y);
         if (this.physics.velocity.y > 0 && !this.canBottom) this.physics.velocity.y = 0;
         if (this.physics.velocity.y < 0 && !this.canTop) this.physics.velocity.y = 0;
         if (this.physics.velocity.x < 0 && !this.canLeft) this.physics.velocity.x = 0;
@@ -247,6 +271,8 @@ function GameMode() {
       } else {
         this.physics.velocity = new Vector3(0,0,0);
         this.position.x = -500;
+        this.input = new Vector2(0,0);
+        this.unstableInput = new Vector2(0,0);
       }
     }
     this.checkKeyDown = function (e) {
@@ -544,7 +570,7 @@ function GameMode() {
       var treatScore = 500;
 
       if (time >= this.nextSpawnTreat && Math.random() <= (0.2/(timeInc * self.treatRate))) {
-        var treatType = (Math.random() * 5).toFixed(0);
+        var treatType = (Math.random() * 2).toFixed(0);
         // console.log("Spawning an treat of type " + treatType);
         // Defaults
         var treatDimensions = new Vector2(0, 0);
@@ -553,36 +579,36 @@ function GameMode() {
         switch (parseInt(treatType)) {
           case 0:
           // Treat
-            treatDimensions = new Vector2(50, 37);
-            treatPath = "../src/game1/treat1.png";
+            if (self.animalGameObject.animalSelect == 1) {
+              treatDimensions = new Vector2(50, 37);
+              treatPath = "../src/game1/treat1.png";
+
+            } else {
+              treatDimensions = new Vector2(50, 50);
+              treatPath = "../src/game1/treat4.png";
+
+            }
             break;
           case 1:
           // Treat
-            treatDimensions = new Vector2(50, 35);
-            treatPath = "../src/game1/treat2.png";
+            if (self.animalGameObject.animalSelect == 1) {
+              treatDimensions = new Vector2(50, 35);
+              treatPath = "../src/game1/treat2.png";
+            } else {
+              treatDimensions = new Vector2(50, 22);
+              treatPath = "../src/game1/treat5.png";
+            }
             break;
           case 2:
           // Treat
-            treatDimensions = new Vector2(50, 34);
-            treatPath = "../src/game1/treat3.png";
+            if (self.animalGameObject.animalSelect == 1) {
+                treatDimensions = new Vector2(50, 34);
+                treatPath = "../src/game1/treat3.png";
+            } else {
+                treatDimensions = new Vector2(50, 43);
+                treatPath = "../src/game1/treat6.png";
+            }
             break;
-          case 3:
-          // Treat
-            treatDimensions = new Vector2(50, 50);
-            treatPath = "../src/game1/treat4.png";
-            break;
-          case 4:
-          // Treat
-            treatDimensions = new Vector2(50, 22);
-            treatPath = "../src/game1/treat5.png";
-            break;
-          case 5:
-          // Treat?
-            treatDimensions = new Vector2(50, 43);
-            treatPath = "../src/game1/treat6.png";
-
-            break;
-
           default:
 
         }
@@ -626,7 +652,7 @@ function GameMode() {
             // Lined up horizontally, now vertically?
             var top = this.position.y  + this.bounds.y;
             var bottom = top - 55;
-            if ((self.animalGameObject.position.y >= this.position.y && self.animalGameObject.position.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y +  self.animalGameObject.bounds.y >= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= this.position.y + this.bounds.y)) {
+            if ((self.animalGameObject.position.y >= this.position.y && self.animalGameObject.position.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y +  self.animalGameObject.bounds.y >= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y <= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y > this.position.y + this.bounds.y)) {
               //console.log("PHAT COLLISION: bottom: " + bottom + ", top: " + top + ", pos: " + (self.animalGameObject.position.y + self.animalGameObject.bounds.y));
               self.scoreCounterGameObject.score += treatScore;
               // Floaty up score
@@ -701,18 +727,18 @@ function GameMode() {
             playableBrokenDimensions = new Vector2(56, 70);
             playableBrokenPath = "../src/game1/playable2_2.png";
           } else {
-            playableDimensions = new Vector2(75, 36);
+            playableDimensions = new Vector2(65, 31);
             playablePath = "../src/game1/playable4.png";
-            playableBrokenDimensions = new Vector2(75, 36);
+            playableBrokenDimensions = new Vector2(65, 31);
             playableBrokenPath = "../src/game1/playable4.png";
           }
 
             break;
           case 2:
           if (self.animalGameObject.animalSelect == 1) {
-            playableDimensions = new Vector2(75, 20);
+            playableDimensions = new Vector2(150, 39);
             playablePath = "../src/game1/playable3.png";
-            playableBrokenDimensions = new Vector2(75, 20);
+            playableBrokenDimensions = new Vector2(150, 39);
             playableBrokenPath = "../src/game1/playable3.png";
           } else {
           // playable
@@ -784,7 +810,7 @@ function GameMode() {
             // Lined up horizontally, now vertically?
             var top = this.position.y  + this.bounds.y;
             var bottom = top - 55;
-            if ((self.animalGameObject.position.y >= this.position.y && self.animalGameObject.position.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y +  self.animalGameObject.bounds.y >= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= this.position.y + this.bounds.y)) {
+            if ((self.animalGameObject.position.y >= this.position.y && self.animalGameObject.position.y <= this.position.y + this.bounds.y) || (self.animalGameObject.position.y +  self.animalGameObject.bounds.y >= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= this.position.y + this.bounds.y)  || (self.animalGameObject.position.y <= this.position.y && self.animalGameObject.position.y + self.animalGameObject.bounds.y > this.position.y + this.bounds.y)) {
               //console.log("PHAT COLLISION: bottom: " + bottom + ", top: " + top + ", pos: " + (self.animalGameObject.position.y + self.animalGameObject.bounds.y));
               self.scoreCounterGameObject.score += playableScore;
               // Floaty up score
