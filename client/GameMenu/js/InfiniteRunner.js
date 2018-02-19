@@ -65,6 +65,7 @@ function GameMode() {
   };
   this.start = function() {
     // Called when the game starts
+    clearScreen = false;
     this.loadImages();
     // Canvas with base house images
     var canvasGameObject = new GameObject(new Vector3(0, 0, -15), new Vector2(canvas.width, canvas.height), "Canvas", false);
@@ -84,10 +85,13 @@ function GameMode() {
     var titleGameObject = new GameObject(new Vector3((canvas.width / 2) - titleWidth / 2, (canvas.height / 2) - (titleHeight / 2) - 100, 0), new Vector2(titleWidth, titleHeight), "Main Title", false);
     titleGameObject.draw = function() {
       if (self.gameState == 0) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+        var img = new Image();
+        img.src = "../src/game1/UI_title.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "60px Arial";
         context.fillText("Cute Animal", this.position.x + 50, this.position.y + 80);
         context.fillText("Bullshit", this.position.x + 120, this.position.y + 160);
@@ -102,10 +106,13 @@ function GameMode() {
     startGameObject.clickThrough = true;
     startGameObject.draw = function() {
       if (self.gameState == 0) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+        var img = new Image();
+        img.src = "../src/game1/UI_play.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "30px Arial";
         context.fillText("Start", this.position.x + 120, this.position.y + 60);
       }
@@ -127,10 +134,13 @@ function GameMode() {
     dogOptionGameObject.clickThrough = true;
     dogOptionGameObject.draw = function() {
       if (self.gameState == 1) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+        var img = new Image();
+        img.src = "../src/game1/UI_choice.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "30px Arial";
         context.fillText("Dog", this.position.x + 120, this.position.y + (this.bounds.y / 2));
       }
@@ -150,10 +160,13 @@ function GameMode() {
     catOptionGameObject.clickThrough = true;
     catOptionGameObject.draw = function() {
       if (self.gameState == 1) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+        var img = new Image();
+        img.src = "../src/game1/UI_choice.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "30px Arial";
         context.fillText("Cat", this.position.x + 120, this.position.y + (this.bounds.y / 2));
       }
@@ -214,7 +227,7 @@ function GameMode() {
           this.unstableTime = this.unstableTime - timeInc;
           //this.unstableInput = new Vector2(Math.random(), Math.random());
           this.unstableInput = new Vector2(self.baseSpeed * ((Math.random() * 2) - 1), self.baseSpeed * ((Math.random() * 2) - 1));
-          this.unstableInput = this.unstableInput.times(2);
+          this.unstableInput = this.unstableInput.times(4);
           //console.log(this.unstableInput.x + " " + this.unstableInput.y);
         } else {
           this.unstableTime = 0;
@@ -255,7 +268,8 @@ function GameMode() {
         }
 
         //  if no collisions, do the thing
-        var inputs = this.input.add(this.unstableInput);
+        // Add a force 1 in 4 frames
+        var inputs = this.input.add(this.unstableInput.times(time % 4 == 0 ? 0 : 1));
         if (self.gameState != 3) {
           this.physics.velocity.x = inputs.x;
           this.physics.velocity.y = inputs.y;
@@ -324,10 +338,14 @@ function GameMode() {
     scoreCounterGameObject.score = 0;
     scoreCounterGameObject.draw = function() {
       if (self.gameState == 2 || self.gameState == 3) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+
+        var img = new Image();
+        img.src = "../src/game1/UI_scoreboard.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "30px Arial";
         context.fillText("Score: " + parseInt(this.score), this.position.x + 20, this.position.y + (this.bounds.y / 2) + 10);
       }
@@ -351,10 +369,14 @@ function GameMode() {
     var gameOverGameObject = new GameObject(new Vector3((canvas.width / 2) - gameOverWidth / 2, (canvas.height / 2) - (gameOverHeight / 2) - 100, 10), new Vector2(gameOverWidth, gameOverHeight), "Game Over Title", false);
     gameOverGameObject.draw = function() {
       if (self.gameState == 3) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+
+        var img = new Image();
+        img.src = "../src/game1/UI_title.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "60px Arial";
         context.fillText("Game", this.position.x + 140, this.position.y + 80);
         context.fillText("Over", this.position.x + 160, this.position.y + 160);
@@ -368,10 +390,13 @@ function GameMode() {
     restartGameObject.clickThrough = true;
     restartGameObject.draw = function() {
       if (self.gameState == 3) {
-        context.fillStyle = "#FFFFFF";
+        /*context.fillStyle = "#FFFFFF";
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.fillStyle = "#000000";
-        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+        context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);*/
+        var img = new Image();
+        img.src = "../src/game1/UI_choice.png";
+        context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "30px Arial";
         context.fillText("Restart", this.position.x + 100, this.position.y + 60);
       }

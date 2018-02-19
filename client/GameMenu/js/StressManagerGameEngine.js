@@ -183,9 +183,9 @@ function onPageLoaded() {
 
   gameMode.start();
 };
-
+var clearScreen = false;
 function tick() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  if (!this.clearScreen) context.clearRect(0, 0, canvas.width, canvas.height);
   // For each gameobject, tick
   var mustSort = false;
   for (var i = 0, len = gameObjects.length; i < len; i++) {
