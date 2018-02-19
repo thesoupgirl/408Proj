@@ -78,6 +78,7 @@ function GameMode() {
   };
   this.start = function() {
     // Called when the game starts
+    context.fillStyle = "#FFFFFF";
     clearScreen = false;
     this.loadImages();
     // Canvas with base house images
@@ -611,7 +612,7 @@ function GameMode() {
             var bottom = top - 55;
             if ((self.animalGameObject.position.y + self.animalGameObject.bounds.y >= bottom && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= top)) {
               //console.log("PHAT COLLISION: bottom: " + bottom + ", top: " + top + ", pos: " + (self.animalGameObject.position.y + self.animalGameObject.bounds.y));
-              //if (self.gameState == 2) self.gameOver();
+              if (self.gameState == 2) self.gameOver();
             }
           }
         };
