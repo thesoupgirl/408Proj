@@ -185,7 +185,7 @@ function onPageLoaded() {
 };
 var clearScreen = false;
 function tick() {
-  if (!this.clearScreen) context.clearRect(0, 0, canvas.width, canvas.height);
+  if (this.clearScreen) context.clearRect(0, 0, canvas.width, canvas.height);
   // For each gameobject, tick
   var mustSort = false;
   for (var i = 0, len = gameObjects.length; i < len; i++) {
@@ -266,11 +266,21 @@ function mouseup(event) {
 var lastTimeInc = timeInc;
 
 function pause() {
-  timeInc = 0;
+  // Unpause
+  if (timeInc == 0) {
+    resume();
+  } else {
+    console.log(timeInc);
+    lastTimeInc = timeInc;
+    timeInc = 0;
+      console.log(timeInc);
+  }
 };
 
 function resume() {
+  console.log(timeInc);
   timeInc = lastTimeInc;
+    console.log(timeInc);
 };
 
 window.onload = onPageLoaded;

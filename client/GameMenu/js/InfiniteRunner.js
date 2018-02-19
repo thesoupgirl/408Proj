@@ -14,6 +14,19 @@ function GameMode() {
    * Dog = 0, Cat = 1 cuz dogs are better
    */
   var animalSelect = 0;
+  this.checkPause = function(e) {
+    if (self.gameState != 2) return;
+    var code = e.keyCode;
+    switch (code) {
+      case 80: // P
+      case 27: // Escape
+        //pause(); // Pausing has a few issues that we didn't account for here
+        break;
+      default: //Everything else
+    }
+  };
+  window.addEventListener('keydown', this.checkPause, false);
+
   this.deleteOnRestart = [];
   this.clearGame = function() {
     for (var i = 0, len = self.deleteOnRestart.length; i < len; i++) {
@@ -93,8 +106,8 @@ function GameMode() {
         img.src = "../src/game1/UI_title.png";
         context.drawImage(img, this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.font = "60px Arial";
-        context.fillText("Cute Animal", this.position.x + 50, this.position.y + 80);
-        context.fillText("Bullshit", this.position.x + 120, this.position.y + 160);
+        context.fillText("Home", this.position.x + 140, this.position.y + 80);
+        context.fillText("Runner", this.position.x + 125, this.position.y + 160);
 
       }
     };
