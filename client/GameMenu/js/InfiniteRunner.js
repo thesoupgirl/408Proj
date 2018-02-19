@@ -232,9 +232,9 @@ function GameMode() {
     animalGameObject.onTick = function() {
       if (self.gameState == 2 || self.gameState == 3) {
         // Idk do the bounds checking thing
-        var depth = parseInt(((this.position.y - 390) / 55).toFixed(0)) + 1;
-        this.position.z = parseInt(depth); // So we have the image constnatly moving in the foreground/background
-        //console.log("Position: " + this.position.x + " " + this.position.y + " " + depth);
+        var depth = /*parseInt*/((((this.position.y - (335 + this.bounds.y)) / 55))/*.toFixed(0)*/) + 0.5;
+        this.position.z = parseFloat(depth); // So we have the image constnatly moving in the foreground/background
+        //console.log("Position: " + this.position.x + " " + this.position.y + " " + this.position.z);
         // unstable
         if (this.unstableTime > 0) {
           this.unstableTime = this.unstableTime - timeInc;
@@ -611,7 +611,7 @@ function GameMode() {
             var bottom = top - 55;
             if ((self.animalGameObject.position.y + self.animalGameObject.bounds.y >= bottom && self.animalGameObject.position.y + self.animalGameObject.bounds.y <= top)) {
               //console.log("PHAT COLLISION: bottom: " + bottom + ", top: " + top + ", pos: " + (self.animalGameObject.position.y + self.animalGameObject.bounds.y));
-              if (self.gameState == 2) self.gameOver();
+              //if (self.gameState == 2) self.gameOver();
             }
           }
         };

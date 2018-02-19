@@ -152,6 +152,8 @@ function GameObject(position, bounds, name, hasPhysics) {
 
 var canvas = document.getElementById("myCanvas"); // canvas to draw on
 var context = canvas.getContext("2d"); // canvas context to draw on
+context.font = "30px Arial";
+context.fillText("Loading...", (canvas.width/2)  - 50, canvas.height/2);
 var time = 0; // to calculate last time, in case of frame droppage
 var timeInc = 10; // time increment in ms
 var gameObjects = []; // list of gameobjects to handle clicking, physics, and
@@ -178,12 +180,12 @@ function deleteGameObject(gameObject) {
 };
 
 function onPageLoaded() {
-  context.font = "30px Arial";
+
   setInterval(tick, timeInc);
 
   gameMode.start();
 };
-var clearScreen = false;
+var clearScreen = true;
 function tick() {
   if (this.clearScreen) context.clearRect(0, 0, canvas.width, canvas.height);
   // For each gameobject, tick
@@ -202,7 +204,7 @@ function tick() {
   }
   // Sort once, if necessary
   if (mustSort) {
-    console.log("restorting");
+    //console.log("restorting");
     sortGameObjectArray();
   }
   var hitEnd = false;
@@ -270,17 +272,19 @@ function pause() {
   if (timeInc == 0) {
     resume();
   } else {
-    console.log(timeInc);
+    //console.log(timeInc);
     lastTimeInc = timeInc;
     timeInc = 0;
-      console.log(timeInc);
+    setInterval(tick, timeInc);
+      //console.log(timeInc);
   }
 };
 
 function resume() {
-  console.log(timeInc);
+  //console.log(timeInc);
   timeInc = lastTimeInc;
-    console.log(timeInc);
+  setInterval(tick, timeInc);
+    //console.log(timeInc);
 };
 
 window.onload = onPageLoaded;
