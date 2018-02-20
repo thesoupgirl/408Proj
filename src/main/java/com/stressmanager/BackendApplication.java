@@ -107,7 +107,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		session.setAttribute("expected_nonce", nonce);
 		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
 		model.addAttribute("loginUrl", loginUrl);
-  		return "index";
+  		return loginUrl;
 	}
 
 	//set up the access token and check that is works

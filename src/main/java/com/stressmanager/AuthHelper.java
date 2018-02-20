@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.Calendar;
+import org.springframework.beans.factory.annotation.Value;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -27,11 +28,15 @@ public class AuthHelper {
     "Calendars.Read"
   };
 
-  private static String appId = null;
+  @Value("${outlook.client.appId}")
+  private static String appId;
+
   private static String appPassword = null;
   private static String redirectUrl = null;
 
   private static String getAppId() {
+    System.out.println("nuuuu");
+    System.out.println(appId);
     if (appId == null) {
       try {
         loadConfig();
@@ -79,6 +84,8 @@ public class AuthHelper {
       Properties authProps = new Properties();
       try {
         authProps.load(authConfigStream);
+        System.out.println("mayyyyyybe");
+        System.out.println(appId);
         appId = authProps.getProperty("appId");
         appPassword = authProps.getProperty("appPassword");
         redirectUrl = authProps.getProperty("redirectUrl");
