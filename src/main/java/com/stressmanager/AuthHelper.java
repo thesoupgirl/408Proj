@@ -70,7 +70,7 @@ public class AuthHelper {
   }
 
   private static void loadConfig() throws IOException {
-    String authConfigFile = "auth.properties";
+    String authConfigFile = "../../resources/application.yml";
     InputStream authConfigStream = AuthHelper.class.getClassLoader().getResourceAsStream(authConfigFile);
 
     if (authConfigStream != null) {
@@ -102,4 +102,33 @@ public class AuthHelper {
 
     return urlBuilder.toUriString();
   }
+
+  public static TokenResp getTokenFromAuthCode(String authCode, String tenantId) {
+  // Create a logging interceptor to log request and responses
+  HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+  interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+  OkHttpClient client = new OkHttpClient.Builder()
+      .addInterceptor(interceptor).build();
+
+  // Create and configure the Retrofit object
+  Retrofit retrofit = new Retrofit.Builder()
+      .baseUrl(authority)
+      .client(client)
+      .addConverterFactory(JacksonConverterFactory.create())
+      .build();
+
+  // Generate the token service
+  TokenService tokenService = retrofit.create(TokenService.class);
+
+  try {
+    return tokenService.getAccessTokenFromAuthCode(tenantId, getAppId(), getAppPassword(), 
+        "authorization_code", authCode, getRedirectUrl()).execute().body();
+  } catch (IOException e) {
+    TokenResp error = new TokenResp();
+    error.setError("IOException");
+    error.setErrorDescription(e.getMessage());
+    return error;
+  }
+}
 }
