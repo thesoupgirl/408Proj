@@ -107,7 +107,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		session.setAttribute("expected_nonce", nonce);
 		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
 		model.addAttribute("loginUrl", loginUrl);
-  		return "";
+  		return loginUrl;
 	}
 
 	//set up the access token and check that is works
@@ -593,7 +593,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		//temp = http;
 		// @formatter:off
-		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**").permitAll().anyRequest()
+		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/outlooksignin", "/webjars/**").permitAll().anyRequest()
 				.authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
 				.logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -609,6 +609,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		public void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http.antMatcher("/me").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/outlooksignin").authorizeRequests().anyRequest().authenticated();
 			// @formatter:on
 		}
 	}

@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthorizeController {
+  @RequestMapping("/logout")
+  public String logout(HttpServletRequest request) {
+    HttpSession session = request.getSession();
+    session.invalidate();
+    return "redirect:/index.html";
+  }
 
   @RequestMapping(value="/authorize", method=RequestMethod.POST)
   public String authorize(
@@ -28,13 +34,21 @@ public class AuthorizeController {
     // Make sure that the state query parameter returned matches
     // the expected state
     if (state.equals(expectedState)) {
-      session.setAttribute("authCode", code);
-      session.setAttribute("idToken", idToken);
+      IdToken idTokenObj = IdToken.parseEncodedToken(idToken, expectedNonce.toString());
+      if (idTokenObj != null) {
+        TokenResp tokenResponse = AuthHelper.getTokenFromAuthCode(code, idTokenObj.getTenantId());
+        session.setAttribute("tokens", tokenResponse);
+        session.setAttribute("userConnected", true);
+        session.setAttribute("userName", idTokenObj.getName());
+        session.setAttribute("userTenantId", idTokenObj.getTenantId());
+      } else {
+        session.setAttribute("error", "ID token failed validation.");
+      }
     }
     else {
       session.setAttribute("error", "Unexpected state returned from authority.");
     }
-    return "";
+    return "meow";
   }
 }
 }

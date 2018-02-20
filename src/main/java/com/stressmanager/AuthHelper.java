@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.Calendar;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,7 +23,8 @@ public class AuthHelper {
     "offline_access",
     "profile", 
     "User.Read",
-    "Mail.Read"
+    "Mail.Read",
+    "Calendars.Read"
   };
 
   private static String appId = null;
@@ -88,6 +90,44 @@ public class AuthHelper {
       throw new FileNotFoundException("Property file '" + authConfigFile + "' not found in the classpath.");
     }
   }
+
+  public static TokenResp ensureTokens(TokenResp tokens, String tenantId) {
+  // Are tokens still valid?
+  Calendar now = Calendar.getInstance();
+  if (now.getTime().before(tokens.getExpirationTime())) {
+    // Still valid, return them as-is
+    return tokens;
+  }
+  else {
+    // Expired, refresh the tokens
+    // Create a logging interceptor to log request and responses
+    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+    interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+    OkHttpClient client = new OkHttpClient.Builder()
+        .addInterceptor(interceptor).build();
+
+    // Create and configure the Retrofit object
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(authority)
+        .client(client)
+        .addConverterFactory(JacksonConverterFactory.create())
+        .build();
+
+    // Generate the token service
+    TokenService tokenService = retrofit.create(TokenService.class);
+
+    try {
+      return tokenService.getAccessTokenFromRefreshToken(tenantId, getAppId(), getAppPassword(), 
+          "refresh_token", tokens.getRefreshToken(), getRedirectUrl()).execute().body();
+    } catch (IOException e) {
+      TokenResp error = new TokenResp();
+      error.setError("IOException");
+      error.setErrorDescription(e.getMessage());
+      return error;
+    }
+  }
+}
 
   public static String getLoginUrl(UUID state, UUID nonce) {
 
