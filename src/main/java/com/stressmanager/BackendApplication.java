@@ -60,6 +60,7 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -243,6 +244,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 		return false;
 	}
+
+	public 
 
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
@@ -527,7 +530,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	//Get events for SPECIFIC CALENDARID for android
 	@RequestMapping(value = "/api/calendar/androidevents/calId")
 	@ResponseBody
-	public ResponseEntity<String> gettingAndroidEventsSpecfic(@RequestBody GenericJson request) throws Exception {
+	public ResponseEntity<String> gettingAndroidEventsSpecfic(@RequestHeader(value="email") String email, @RequestHeader(value="idToken") String idToken, @RequestHeader(value="calId") String calId) throws Exception {
 		final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 		HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		final HttpHeaders httpHeaders = new HttpHeaders();
@@ -540,10 +543,10 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					.build();
 
 
-		System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
+		//System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
 		//get the Username and eventID
-		String userName = (String)request.get("userName");
-		String callID = (String)request.get("calID");
+		String userName = email;
+		String callID = calId;
 		System.out.println(Colors.ANSI_BLUE+"userName "+userName);
 		//String eventID = (String)request.get("eventID");
 
@@ -563,7 +566,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		//get the User Table and user's data from there
 		Table t = DBSetup.getUsersTable();
 		GetItemSpec spec = new GetItemSpec()
-			   .withPrimaryKey("userID", userName);
+			   .withPrimaryKey("username", userName);
 		Item got = t.getItem(spec);
 
 
@@ -768,14 +771,14 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     //Get events for ALL OF THE USERS CALENDARIDs
     @RequestMapping(value = "/api/calendar/androidevents")
     @ResponseBody
-    public ResponseEntity<String> gettingAndroidEvents(String idToken, String email) throws Exception {
+    public ResponseEntity<String> gettingAndroidEvents(@RequestHeader(value="idToken") String idToken, @RequestHeader(value="email") String email) throws Exception {
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        if (!validateAndroidToken(idToken, email)) {
-            return new ResponseEntity<String>("Invalid ID token", httpHeaders, HttpStatus.FORBIDDEN);
-        }
+        // if (!validateAndroidToken(idToken, email)) {
+        //     return new ResponseEntity<String>("Invalid ID token", httpHeaders, HttpStatus.FORBIDDEN);
+        // }
 
         //service = getAndroidCal(idToken);
 
