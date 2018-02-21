@@ -89,6 +89,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	DBHelper db = new DBHelper();
 
+	@Value("${outlook.client.appId}")
+  	private static String appId;
+
 	//static Credentials credz;
 
 	static com.google.api.services.calendar.Calendar service;
@@ -99,13 +102,14 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	public String outlookSignIn(Model model, HttpServletRequest request) throws Exception{
 		UUID state = UUID.randomUUID();
   		UUID nonce = UUID.randomUUID();
-
+  		System.out.println("app id is..." + appId);
   		// Save the state and nonce in the session so we can
 		// verify after the auth process redirects back
 		HttpSession session = request.getSession();
 		session.setAttribute("expected_state", state);
 		session.setAttribute("expected_nonce", nonce);
 		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
+
 		model.addAttribute("loginUrl", loginUrl);
   		return loginUrl;
 	}
