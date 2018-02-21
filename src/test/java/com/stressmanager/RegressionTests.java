@@ -58,7 +58,7 @@ public class RegressionTests {
 		DBSetup.remoteDB();
 		Table re = DBSetup.getUsersTable();
 		Item im = new Item();
-		im.withString("userID","Test_User");
+		im.withString("username","Test_User");
 		im.withString("calID","Test_cal");
 		re.putItem(im);
 

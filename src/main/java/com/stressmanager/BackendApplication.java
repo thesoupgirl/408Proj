@@ -6,6 +6,10 @@ import java.util.*;
 import javax.servlet.Filter;
 import javax.servlet.http.*;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.json.JsonFactory;
@@ -88,6 +92,89 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	static com.google.api.services.calendar.Calendar service;
 
+	@RequestMapping({ "/androidlogin" })
+	@ResponseBody
+	public String androidLogin(String androidIdToken) throws Exception{
+		final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+		HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(HTTP_TRANSPORT, JSON_FACTORY)
+		    .setAudience(Collections.singletonList("319724472283-tqcoogggi701pj1tjpp5v8r7ja38i243.apps.googleusercontent.com"))
+		    .build();
+
+		GoogleIdToken idToken = verifier.verify(androidIdToken);
+		if (idToken != null) {
+		  Payload payload = idToken.getPayload();
+
+		  // Print user identifier
+		  String userId = payload.getSubject();
+		  System.out.println("User ID: " + userId);
+
+		  // Get profile information from payload
+		  String email = payload.getEmail();
+		  boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+		  String name = (String) payload.get("name");
+
+		} else {
+		  System.out.println("Invalid ID token.");
+		}
+
+		return oauth2ClientContext.getAccessToken().toString();
+	}
+
+	//set up the access token and check that is works
+	@RequestMapping({ "/androiduser", "/androidme" })
+	@ResponseBody
+	public Map<String, String> user(String idToken) throws Exception{
+		Map<String, String> map = new LinkedHashMap<>();
+	// 	service = getCalendarService();
+
+	// 	DateTime now = new DateTime(System.currentTimeMillis());
+	// 	//now.set(java.util.Calendar.DATE, 1);
+
+
+	// 	Events events = service.events().list("primary")
+	// 		.setMaxResults(50)
+	// 		.setTimeMin(now)
+	// 		.setSingleEvents(false)
+	// 		.execute();
+
+	// 	List<Event> items = events.getItems();
+	// 	if (items.size() == 0) {
+	// 		System.out.println("No upcoming events found.");
+	// 	}
+	// 	else {
+	// 		System.out.println(Colors.ANSI_PURPLE+"Upcoming events (Me route)"+Colors.ANSI_WHITE);
+	// 		for (Event event : items) {
+	// 			String str = event.getId();
+	// 			System.out.printf("%s (%s)\n", str, event.getSummary());
+	// 		}
+
+	// 		//System.out.println(Colors.ANSI_YELLOW+events.toPrettyString());
+
+	// 	}
+
+	// 	//set-up the DB
+	// 	DBSetup.remoteDB();
+
+	// 	//check if the Table for that UserName exists
+	// 	Table tab = DBSetup.getTable(principal.getName().replaceAll(" ", "_"));
+	// 	if(tab == null) { //the Table doesn't Exist!!!
+	// 		System.out.println("Creating a table for "+principal.getName()+"\'s events");
+	// 		//make the table! :D
+	// 		DBSetup.createTable(principal.getName().replaceAll(" ", "_"));
+	// 	}
+
+	// 	tab = DBSetup.getUsersTable();
+	// 	GetItemSpec spec = new GetItemSpec()
+	// 		   .withPrimaryKey("username", principal.getName());
+	// 	Item got = tab.getItem(spec);
+	// 	if(got == null)
+	// 		tab.putItem(new Item().withString("username", principal.getName()).withString("calID","primary"));
+
+		return map;
+	}
+
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
 	@ResponseBody
@@ -143,10 +230,10 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 		tab = DBSetup.getUsersTable();
 		GetItemSpec spec = new GetItemSpec()
-			   .withPrimaryKey("userID", principal.getName());
+			   .withPrimaryKey("username", principal.getName());
 		Item got = tab.getItem(spec);
 		if(got == null)
-			tab.putItem(new Item().withString("userID", principal.getName()).withString("calID","primary"));
+			tab.putItem(new Item().withString("username", principal.getName()).withString("calID","primary"));
 
 		return map;///list.get(1).getColorId();
 	}
@@ -400,7 +487,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		//get the User Table and user's data from there
 		Table t = DBSetup.getUsersTable();
 		GetItemSpec spec = new GetItemSpec()
-               .withPrimaryKey("userID", userName);
+               .withPrimaryKey("username", userName);
         Item got = t.getItem(spec);
 
 
