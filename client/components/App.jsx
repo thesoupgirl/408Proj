@@ -10,6 +10,7 @@ import LoginPage from './LoginPage'
 import MainLayout from './MainLayout'
 import UserPage from './UserPage'
 import StressFormPage from './StressFormPage'
+import Games from './Games'
 
 class App extends React.Component {
   constructor(props) {

@@ -17,7 +17,7 @@ const config = {
       APP_DIR,
       'node_modules'
     ],
-    extensions: ['.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less', '.html']
   },
   module: {
     rules: [
@@ -26,6 +26,12 @@ const config = {
         loader: 'babel-loader',
         exclude: /node_modules/
       },
+      {
+        test: /\.html$/,
+        loader: 'html-loader' 
+      },
+      
+
       {
         test: /\.less$/,
         loader: ExtractTextPlugin.extract({

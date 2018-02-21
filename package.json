@@ -12,7 +12,7 @@
     "heroku-postbuild": "webpack --config webpack.prod.config.js",
     "cleanup": "rm -r client/__tests__/__snapshots__/",
     "test": "jest",
-    "test-game": "jasmine" 
+    "test-game": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -64,6 +64,7 @@
     "preset": "react-native"
   },
   "devDependencies": {
+    "html-loader": "^0.5.5",
     "jasmine": "^3.0.0",
     "jest": "^17.0.3",
     "jsdom": "9.10.0",
