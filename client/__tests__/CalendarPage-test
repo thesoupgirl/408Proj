@@ -4,6 +4,7 @@ import UserPage from '../components/UserPage';
 import BigCalendar from 'react-big-calendar'
 import { has } from 'lodash'
 import moment from 'moment'
+import CalendarPage from '../components/CalendarPage';
 
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
