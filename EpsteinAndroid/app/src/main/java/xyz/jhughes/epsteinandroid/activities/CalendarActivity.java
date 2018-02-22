@@ -1,10 +1,10 @@
 package xyz.jhughes.epsteinandroid.activities;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.graphics.RectF;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,10 +24,13 @@ import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import xyz.jhughes.epsteinandroid.R;
+import xyz.jhughes.epsteinandroid.models.Advice;
 import xyz.jhughes.epsteinandroid.models.Events.Event;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
@@ -97,7 +100,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
                 break;
             case R.id.advice:
-
+                getAndDisplayAdvice();
                 break;
             case R.id.import_calendar:
 
@@ -199,14 +202,53 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
 
     @Override
-    public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        // Nothing yet!
-    }
-
-    @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, dayOfMonth);
         weekView.goToDate(calendar);
+    }
+
+    @Override
+    public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        // Nothing yet!
+    }
+
+    private void getAndDisplayAdvice() {
+        EpsteinApiHelper.getInstance().getAdvice(
+                SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
+                SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
+        ).enqueue(new Callback<Advice>() {
+            @Override
+            public void onResponse(Call<Advice> call, Response<Advice> response) {
+                if (response.body() != null && response.code() == 202) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalendarActivity.this);
+                    alertDialogBuilder.setTitle("Dose of Advice");
+                    alertDialogBuilder.setMessage(response.body().advice);
+                    alertDialogBuilder.setCancelable(false);
+                    alertDialogBuilder.setPositiveButton("Woohoo!", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Advice> call, Throwable t) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalendarActivity.this);
+                alertDialogBuilder.setTitle("Dose of Advice");
+                alertDialogBuilder.setMessage("You are awesome and can do whatever you set your mind to!");
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("Woohoo!", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
     }
 }
