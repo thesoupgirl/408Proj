@@ -245,8 +245,6 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		return false;
 	}
 
-	public 
-
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
 	@ResponseBody
@@ -784,8 +782,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
         //System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
         //get the Username and eventID
-        String userName = dbCreds.get(idToken);
-
+        String userName = email;
         System.out.println(Colors.ANSI_BLUE + "username " + userName);
         //String eventID = (String)request.get("eventID");
 
@@ -1045,7 +1042,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
