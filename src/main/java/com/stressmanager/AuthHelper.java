@@ -44,6 +44,7 @@ public class AuthHelper {
         return null;
       }
     }
+    appId="d47db936-04fe-446f-8e69-a0c52e86d8b1";
     return appId;
   }
   private static String getAppPassword() {
@@ -86,9 +87,12 @@ public class AuthHelper {
         authProps.load(authConfigStream);
         System.out.println("mayyyyyybe");
         System.out.println(appId);
-        appId = authProps.getProperty("appId");
-        appPassword = authProps.getProperty("appPassword");
-        redirectUrl = authProps.getProperty("redirectUrl");
+        //appId = authProps.getProperty("appId");
+        appId = "d47db936-04fe-446f-8e69-a0c52e86d8b1";
+        //appPassword = authProps.getProperty("appPassword");
+        appPassword="jMO11819%]cqmchtNOZKF$!";
+        //redirectUrl = authProps.getProperty("redirectUrl");
+        redirectUrl = "http:localhost:8080/authorize.html";
       } finally {
         authConfigStream.close();
       }
@@ -139,8 +143,10 @@ public class AuthHelper {
   public static String getLoginUrl(UUID state, UUID nonce) {
 
     UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(authorizeUrl);
-    urlBuilder.queryParam("client_id", getAppId());
-    urlBuilder.queryParam("redirect_uri", getRedirectUrl());
+    // urlBuilder.queryParam("client_id", getAppId());
+    urlBuilder.queryParam("client_id", "d47db936-04fe-446f-8e69-a0c52e86d8b1");
+    urlBuilder.queryParam("redirect_uri", "http://localhost:8080/authorize");
+    // urlBuilder.queryParam("redirect_uri", getRedirectUrl());
     urlBuilder.queryParam("response_type", "code id_token");
     urlBuilder.queryParam("scope", getScopes());
     urlBuilder.queryParam("state", state);

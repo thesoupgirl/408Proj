@@ -30,6 +30,8 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -81,6 +83,7 @@ import com.google.gson.reflect.*;
 @EnableAuthorizationServer
 @SpringBootApplication
 @EnableAutoConfiguration
+@PropertySource("classpath:application.yml")
 @Order(6)
 public class BackendApplication extends WebSecurityConfigurerAdapter {
 
@@ -88,9 +91,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	OAuth2ClientContext oauth2ClientContext;
 
 	DBHelper db = new DBHelper();
-
 	@Value("${outlook.client.appId}")
-  	private static String appId;
+  	public static String appId;
 
 	//static Credentials credz;
 
@@ -103,6 +105,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		UUID state = UUID.randomUUID();
   		UUID nonce = UUID.randomUUID();
   		System.out.println("app id is..." + appId);
+  		System.out.println("app id is..." + System.getenv("APP_ID"));
   		// Save the state and nonce in the session so we can
 		// verify after the auth process redirects back
 		HttpSession session = request.getSession();
@@ -597,7 +600,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		//temp = http;
 		// @formatter:off
-		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/outlooksignin", "/webjars/**").permitAll().anyRequest()
+		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/webjars/**").permitAll().anyRequest()
 				.authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
 				.logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -614,6 +617,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			// @formatter:off
 			http.antMatcher("/me").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlooksignin").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/authorize").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/outlook/logout").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/outlook/events").authorizeRequests().anyRequest().authenticated();
 			// @formatter:on
 		}
 	}

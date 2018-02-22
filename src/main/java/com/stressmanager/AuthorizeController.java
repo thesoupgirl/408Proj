@@ -5,15 +5,17 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
+//@Controller
+@RestController
 public class AuthorizeController {
-  @RequestMapping("/logout")
+  @RequestMapping("/outlook/logout")
   public String logout(HttpServletRequest request) {
     HttpSession session = request.getSession();
     session.invalidate();
@@ -27,6 +29,7 @@ public class AuthorizeController {
       @RequestParam("state") UUID state,
       HttpServletRequest request) { {
     // Get the expected state value from the session
+    System.out.println("arrrrrf");
     HttpSession session = request.getSession();
     UUID expectedState = (UUID) session.getAttribute("expected_state");
     UUID expectedNonce = (UUID) session.getAttribute("expected_nonce");
@@ -42,11 +45,13 @@ public class AuthorizeController {
         session.setAttribute("userName", idTokenObj.getName());
         session.setAttribute("userTenantId", idTokenObj.getTenantId());
       } else {
-        session.setAttribute("error", "ID token failed validation.");
+        return "Id token failed validation";
+        //session.setAttribute("error", "ID token failed validation.");
       }
     }
     else {
-      session.setAttribute("error", "Unexpected state returned from authority.");
+      return "Unexpected state";
+      //session.setAttribute("error", "Unexpected state returned from authority.");
     }
     return "meow";
   }

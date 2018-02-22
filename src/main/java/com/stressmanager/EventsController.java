@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class EventsController {
 
-  @RequestMapping("/events")
+  @RequestMapping("/outlook/events")
   public String events(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
     HttpSession session = request.getSession();
     TokenResp tokens = (TokenResp)session.getAttribute("tokens");
