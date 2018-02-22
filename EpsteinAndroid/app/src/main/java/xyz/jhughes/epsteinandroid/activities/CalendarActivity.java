@@ -3,6 +3,7 @@ package xyz.jhughes.epsteinandroid.activities;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.RectF;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +46,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     Events events;
 
-
+    public static final int IMPORTED_CALENDAR = 280;
+    public static final int FAILED_IMPORT_CALENDAR = 281;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         weekView.setOnEventClickListener(this);
         weekView.setMonthChangeListener(this);
 
+        getCalendarDataAndUpdateUi();
+    }
+
+    private void getCalendarDataAndUpdateUi() {
         dialog = ProgressDialog.show(this, "", "Loading your calendar. Please wait...", true);
         dialog.show();
 
@@ -103,7 +109,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 getAndDisplayAdvice();
                 break;
             case R.id.import_calendar:
-
+                startActivityForResult(new Intent(this, CalendarImportActivity.class), IMPORTED_CALENDAR);
                 break;
             case R.id.rate_events:
 
@@ -113,6 +119,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         }
 
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == IMPORTED_CALENDAR) {
+            getCalendarDataAndUpdateUi();
+        }
     }
 
     @Override
@@ -221,34 +234,30 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             @Override
             public void onResponse(Call<Advice> call, Response<Advice> response) {
                 if (response.body() != null && response.code() == 202) {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalendarActivity.this);
-                    alertDialogBuilder.setTitle("Dose of Advice");
-                    alertDialogBuilder.setMessage(response.body().advice);
-                    alertDialogBuilder.setCancelable(false);
-                    alertDialogBuilder.setPositiveButton("Woohoo!", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
+                    advicePopup(response.body().advice);
+                } else {
+                    advicePopup("You are awesome and can do whatever you set your mind to!");
                 }
             }
 
             @Override
             public void onFailure(Call<Advice> call, Throwable t) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CalendarActivity.this);
-                alertDialogBuilder.setTitle("Dose of Advice");
-                alertDialogBuilder.setMessage("You are awesome and can do whatever you set your mind to!");
-                alertDialogBuilder.setCancelable(false);
-                alertDialogBuilder.setPositiveButton("Woohoo!", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                advicePopup("You are awesome and can do whatever you set your mind to!");
             }
         });
+    }
+
+    private void advicePopup(String message) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Dose of Advice");
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Woohoo!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

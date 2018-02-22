@@ -129,7 +129,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     SharedPrefsHelper.getSharedPrefs(getApplicationContext()).edit().putString("idToken", response.body()).apply();
 
-                    startActivity(new Intent(getApplicationContext(), CalendarActivity.class));
+                    Intent i = new Intent(getApplicationContext(), CalendarActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "Couldn't sign in to Epstein", Toast.LENGTH_LONG).show();
                 }
