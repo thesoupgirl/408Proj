@@ -196,6 +196,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				GoogleIdToken.Payload payload = idToken.getPayload();
 				userId = payload.getSubject();  // Use this value as a key to identify a user.
 				email = payload.getEmail();
+				email = email.replace("@", "");
 				boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 				String name = (String) payload.get("name");
 				String pictureUrl = (String) payload.get("picture");
@@ -210,13 +211,11 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				if(tab == null) { //the Table doesn't Exist!!!
 					System.out.println("Creating a table for "+ email +"\'s events");
 					//make the table! :D
-					DBSetup.createTable(email.replace("@", ""));
+					DBSetup.createTable(email);
 				}
 
 				tab = DBSetup.getUsersTable();
-				tab.putItem(new Item().withString("username", email).withString("calID","primary"));
-				tab.putItem(new Item().withString("username", email).withString("token",accessToken));
-				tab.putItem(new Item().withString("username", email).withString("idtoken", idToken));
+				tab.putItem(new Item().withString("username", email).withString("calID","primary").withString("token",accessToken).withString("idtoken", androidIdToken));
 
 
 		return new ResponseEntity<String>(accessToken, httpHeaders, HttpStatus.ACCEPTED);
