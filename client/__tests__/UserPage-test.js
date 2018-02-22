@@ -17,6 +17,31 @@ test('Check to see if big calendar exists', () => {
 	expect(page.contains('BigCalendar'));
 });
 
+//tests to see if day view exists
+test('Check to see if day view exists', () => {
 
+  	const page = shallow(
+	  	<UserPage />
+    );
+	expect(page.contains('day'));
+});
+
+//tests to see if week view exists
+test('Check to see if week view exists', () => {
+
+  	const page = shallow(
+	  	<UserPage />
+    );
+	expect(page.contains('week'));
+});
+
+//tests to see if month view exists
+test('Check to see if month view exists', () => {
+
+  	const page = shallow(
+	  	<UserPage />
+    );
+	expect(page.contains('month'));
+});
 
 
