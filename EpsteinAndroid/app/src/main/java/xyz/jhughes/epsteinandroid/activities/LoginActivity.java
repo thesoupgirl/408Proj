@@ -76,11 +76,9 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-        if (account != null
-                && SharedPrefsHelper.getSharedPrefs(this).contains("idToken")
-                && SharedPrefsHelper.getSharedPrefs(this).contains("email")) {
+        if (account != null) {
             Log.d("TAG", "Got cached sign-in");
-            startActivity(new Intent(getApplicationContext(), CalendarActivity.class));
+            onClickSignIn();
         }
     }
 

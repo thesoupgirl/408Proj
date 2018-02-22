@@ -11,12 +11,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class EpsteinApiHelper {
-    private static EpsteinApi coRecApi;
+    private static EpsteinApi epsteinApi;
 
     public static EpsteinApi getInstance() {
-        if (coRecApi == null) {
-            Gson gson = new GsonBuilder().setLenient().create();
-
+        if (epsteinApi == null) {
             OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder()
                     .connectTimeout(60 * 5, TimeUnit.SECONDS)
                     .readTimeout(60 * 5, TimeUnit.SECONDS)
@@ -25,15 +23,15 @@ public class EpsteinApiHelper {
             okHttpClient.interceptors().add(new LoggingInterceptor());
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.186.84.129:8080/")
+                    .baseUrl("http://10.186.94.109:8080/")
                     .client(okHttpClient.build())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            coRecApi = retrofit.create(EpsteinApi.class);
+            epsteinApi = retrofit.create(EpsteinApi.class);
         }
 
-        return coRecApi;
+        return epsteinApi;
     }
 }
