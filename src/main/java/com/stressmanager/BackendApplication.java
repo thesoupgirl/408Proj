@@ -210,12 +210,14 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				if(tab == null) { //the Table doesn't Exist!!!
 					System.out.println("Creating a table for "+ email +"\'s events");
 					//make the table! :D
-					DBSetup.createTable(email);
+					DBSetup.createTable(email.replace("@", ""));
 				}
 
 				tab = DBSetup.getUsersTable();
 				tab.putItem(new Item().withString("username", email).withString("calID","primary"));
 				tab.putItem(new Item().withString("username", email).withString("token",accessToken));
+				tab.putItem(new Item().withString("username", email).withString("idtoken", idToken));
+
 
 		return new ResponseEntity<String>(accessToken, httpHeaders, HttpStatus.ACCEPTED);
 	}
@@ -337,7 +339,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	//get events from @calID Calendar
 	public List<Event> getEventsMultiCal(String calID, DateTime start, DateTime end, boolean tableExists, String user) throws Exception {
-
+		System.out.println("arf " + service.toString());
 		Events events = service.events().list(calID) // Get events from calendar calID...
 			.setTimeMin(start) // Starting at the beginning of the month
 			.setTimeMax(end) // and ending at the last day of the month
@@ -784,10 +786,11 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         //get the Username and eventID
         String userName = email;
         System.out.println(Colors.ANSI_BLUE + "username " + userName);
+                System.out.println(Colors.ANSI_BLUE + "username " + userName.replace("@", ""));
         //String eventID = (String)request.get("eventID");
-
+        DBSetup.remoteDB();
         //get the Table
-        boolean exists = tableCheck(userName);
+        boolean exists = tableCheck(userName.replace("@", ""));
 
         //Set up Calendar request
         java.util.Calendar currentDate = java.util.Calendar.getInstance();
