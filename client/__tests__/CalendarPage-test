@@ -1,0 +1,29 @@
+import React from 'react';
+import {shallow} from 'enzyme';
+import UserPage from '../components/UserPage';
+import BigCalendar from 'react-big-calendar'
+import { has } from 'lodash'
+import moment from 'moment'
+
+// Note: test renderer must be required after react-native.
+import renderer from 'react-test-renderer';
+
+//tests to see if Google button exists
+test('Check to see if Google button exists', () => {
+
+  	const page = shallow(
+	  	<CalendarPage />
+    );
+	signButton.simulate('click');
+	expect(signButton.contains('Google'));
+});
+
+//tests to see if Outlook button exists
+test('Check to see if Outlook button exists', () => {
+
+  	const page = shallow(
+	  	<CalendarPage />
+    );
+	signButton.simulate('click');
+	expect(signButton.contains('Outlook'));
+});
