@@ -2,8 +2,7 @@ package com.stressmanager;
 
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,11 +22,11 @@ public class AuthorizeController {
   }
 
   @RequestMapping(value="/authorize", method=RequestMethod.POST)
-  public String authorize(
+  public void authorize(
       @RequestParam("code") String code, 
       @RequestParam("id_token") String idToken,
       @RequestParam("state") UUID state,
-      HttpServletRequest request) { {
+      HttpServletRequest request, HttpServletResponse response) { {
     // Get the expected state value from the session
     System.out.println("arrrrrf");
     HttpSession session = request.getSession();
@@ -45,15 +44,20 @@ public class AuthorizeController {
         session.setAttribute("userName", idTokenObj.getName());
         session.setAttribute("userTenantId", idTokenObj.getTenantId());
       } else {
-        return "Id token failed validation";
+        //return "Id token failed validation";
         //session.setAttribute("error", "ID token failed validation.");
       }
     }
     else {
-      return "Unexpected state";
+      //return "Unexpected state";
       //session.setAttribute("error", "Unexpected state returned from authority.");
     }
-    return "meow";
+    try {
+      response.sendRedirect("/");
+    }
+    catch(Exception e) {
+      
+    }
   }
 }
 }
