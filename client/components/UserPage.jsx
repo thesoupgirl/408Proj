@@ -46,6 +46,8 @@ class UserPage extends React.Component {
         )
     }
     renderCalendar() {
+        //console.log("arf" + this.props.eventList)
+        //console.log("meow" + this.props.eventy)
         const { alert } = this.props
         if (!alert) {
             return (
