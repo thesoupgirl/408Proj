@@ -1,0 +1,21 @@
+security:
+  oauth2:
+    client:
+      client-id: acme
+      client-secret: acmesecret
+      scope: read,write
+      auto-approve-scopes: '.*'
+google:
+    client:
+      clientId: 319724472283-nv9mk2qh67riopurf37tm8i3b5jib7u3.apps.googleusercontent.com
+      clientSecret: UE6CGrkEAQ9_woCwlzvIDHEc
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope: profile, email, https://www.googleapis.com/auth/calendar	
+    resource:
+      userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+      preferTokenInfo: true
+logging:
+  level:
+    org.springframework.security: DEBUG
