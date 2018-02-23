@@ -1,7 +1,0 @@
-import React from 'react';
-import {shallow} from 'enzyme';
-import UserPage from '../components/UserPage';
-import BigCalendar from 'react-big-calendar'
-import { has } from 'lodash'
-import moment from 'moment'
-import CalendarPage from '../components/CalendarPage';
