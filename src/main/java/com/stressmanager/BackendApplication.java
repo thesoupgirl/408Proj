@@ -99,6 +99,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	static com.google.api.services.calendar.Calendar service;
 
 	//starting point for outlook, spawns auth
+	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping({ "/outlooksignin" })
 	@ResponseBody
 	public void outlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
