@@ -1,7 +1,10 @@
 package xyz.jhughes.epsteinandroid.activities;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,6 +26,8 @@ public class CalendarImportActivity extends AppCompatActivity {
     @BindView(R.id.calendar_import_listview)
     ListView listView;
 
+    ProgressDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,24 +35,30 @@ public class CalendarImportActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        dialog = ProgressDialog.show(this, "", "Looking for calendars. Please wait...", true);
+        dialog.show();
+
         EpsteinApiHelper.getInstance().getCalendarImportList(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
                 SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
         ).enqueue(new Callback<Calendars>() {
             @Override
             public void onResponse(Call<Calendars> call, Response<Calendars> response) {
-                if (response.code() == 202 && response.body() != null) {
-                    ArrayAdapter<Calendar> itemsAdapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, response.body().items);
+                if (response.code() == 200 && response.body() != null) {
+                    ArrayAdapter<Calendar> itemsAdapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_single_choice, response.body().items);
                     listView.setAdapter(itemsAdapter);
                 } else {
                     Toast.makeText(getApplicationContext(), "Looks like we had a problem getting your calendars", Toast.LENGTH_LONG).show();
                     setResult(CalendarActivity.FAILED_IMPORT_CALENDAR);
                     finish();
                 }
+
+                dialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<Calendars> call, Throwable t) {
+                dialog.dismiss();
                 t.printStackTrace();
                 Toast.makeText(getApplicationContext(), "Looks like we had a problem getting your calendars", Toast.LENGTH_LONG).show();
                 setResult(CalendarActivity.FAILED_IMPORT_CALENDAR);
@@ -62,12 +73,13 @@ public class CalendarImportActivity extends AppCompatActivity {
             Toast.makeText(this, "Looks like you don't have any other calendars", Toast.LENGTH_LONG).show();
             return;
         }
-        if (listView.getSelectedItem() == null) {
+        if (listView.getCheckedItemPosition() == AdapterView.INVALID_POSITION) {
             Toast.makeText(this, "Please select a calendar", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Calendar calendar = (Calendar) listView.getSelectedItem();
+        Calendar calendar = (Calendar) listView.getItemAtPosition(listView.getCheckedItemPosition());
+
         EpsteinApiHelper.getInstance().importCalendar(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
                 SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null),

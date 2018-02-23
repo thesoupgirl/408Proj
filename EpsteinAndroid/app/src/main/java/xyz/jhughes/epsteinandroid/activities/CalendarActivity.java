@@ -17,11 +17,9 @@ import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +70,13 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         ).enqueue(new Callback<Events>() {
             @Override
             public void onResponse(Call<Events> call, Response<Events> response) {
-                System.out.println(response.body());
+                if (response.body() == null || response.code() != 200) {
+                    Toast.makeText(getApplicationContext(), "We had trouble getting your calendar", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                CalendarActivity.this.events = response.body();
+
                 dialog.cancel();
 
                 weekView.notifyDatasetChanged();
@@ -112,6 +116,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 startActivityForResult(new Intent(this, CalendarImportActivity.class), IMPORTED_CALENDAR);
                 break;
             case R.id.rate_events:
+                if (events.items.size() == 0) {
+                    Toast.makeText(this, "You don't have any events to rate", Toast.LENGTH_LONG).show();
+                    break;
+                }
 
                 break;
             default:
@@ -132,32 +140,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
 
         // Populate the week view with some events.
-        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        List<WeekViewEvent> events = new ArrayList<>();
 
-        if (this.events == null) {
-            Toast.makeText(this, "Looks like nothing was returned by the server or there was an error.", Toast.LENGTH_LONG).show();
-
-            // For debugging purposes
-            Calendar startTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, 3);
-            startTime.set(Calendar.MINUTE, 0);
-            startTime.set(Calendar.MONTH, newMonth - 1);
-            startTime.set(Calendar.YEAR, newYear);
-
-            Calendar endTime = (Calendar) startTime.clone();
-            endTime.add(Calendar.HOUR, 1);
-            endTime.set(Calendar.MONTH, newMonth - 1);
-
-            WeekViewEvent event = new WeekViewEvent("First", "Test Event", startTime, endTime);
-            event.setColor(getResources().getColor(R.color.colorPrimary));
-            events.add(event);
-
-            return events;
-        }
-
-        if (this.events.items.size() == 0) {
-            Toast.makeText(this, "Looks like you don't have anything! Stress free!", Toast.LENGTH_LONG).show();
-
+        if (this.events == null || this.events.items.size() == 0 || this.events.items.size() == 0) {
             return events;
         }
 
@@ -166,20 +151,14 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             // Start time for event
             // ---------------------------------------------------------------------------
 
-            Calendar startTimeCal = Calendar.getInstance();
-            startTimeCal.setTimeZone(TimeZone.getTimeZone(event.start.timeZone));
-
+            // Splitting date from time
             String[] startTimes = event.start.dateTime.split("T");
 
             // Date
-            String startDate = startTimes[0];
-            startTimeCal.setTime(Date.valueOf(startDate));
+            String[] startDate = startTimes[0].split("-");
 
             // Time
             String[] timeForStart = startTimes[1].split(":");
-
-            startTimeCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeForStart[0]));
-            startTimeCal.set(Calendar.MINUTE, Integer.parseInt(timeForStart[1]));
 
             // ---------------------------------------------------------------------------
             // End start time for event
@@ -187,27 +166,27 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             // End time for event
             // ---------------------------------------------------------------------------
 
-            Calendar endTimeCal = Calendar.getInstance();
-            endTimeCal.setTimeZone(TimeZone.getTimeZone(event.start.timeZone));
-
-            String[] endTimes = event.start.dateTime.split("T");
+            // Splitting date from time
+            String[] endTimes = event.end.dateTime.split("T");
 
             // Date
-            String endDate = endTimes[0];
-            endTimeCal.setTime(Date.valueOf(endDate));
+            String[] endDate = endTimes[0].split("-");
 
             // Time
             String[] timeForEnd = endTimes[1].split(":");
-
-            endTimeCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeForEnd[0]));
-            endTimeCal.set(Calendar.MINUTE, Integer.parseInt(timeForEnd[1]));
 
             // ---------------------------------------------------------------------------
             // End end time for event
             // ---------------------------------------------------------------------------
 
-            WeekViewEvent calendarEventToAdd = new WeekViewEvent(event.id, event.summary, startTimeCal, endTimeCal);
-            calendarEventToAdd.setColor(getResources().getColor(R.color.colorPrimary));
+            WeekViewEvent calendarEventToAdd = new WeekViewEvent(event.id, event.summary,
+                    Integer.valueOf(startDate[0]), Integer.valueOf(startDate[1]), Integer.valueOf(startDate[2]), // Start date
+                    Integer.parseInt(timeForStart[0]), Integer.parseInt(timeForStart[1]),                        // Start time
+                    Integer.valueOf(endDate[0]), Integer.valueOf(endDate[1]), Integer.valueOf(endDate[2]),       // End date
+                    Integer.parseInt(timeForEnd[0]), Integer.parseInt(timeForEnd[1])                             // End time
+            );
+            calendarEventToAdd.setColor(getResources().getColor(R.color.colorPrimaryDark));
+
             events.add(calendarEventToAdd);
         }
 
@@ -233,7 +212,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         ).enqueue(new Callback<Advice>() {
             @Override
             public void onResponse(Call<Advice> call, Response<Advice> response) {
-                if (response.body() != null && response.code() == 202) {
+                if (response.body() != null && response.code() == 200) {
                     advicePopup(response.body().advice);
                 } else {
                     advicePopup("You are awesome and can do whatever you set your mind to!");

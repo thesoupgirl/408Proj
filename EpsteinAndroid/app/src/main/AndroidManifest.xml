@@ -17,8 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.CalendarActivity"></activity>
-        <activity android:name=".activities.CalendarImportActivity"></activity>
+        <activity android:name=".activities.CalendarActivity" />
+        <activity android:name=".activities.CalendarImportActivity" />
+        <activity android:name=".activities.EventRating"></activity>
     </application>
 
 </manifest>

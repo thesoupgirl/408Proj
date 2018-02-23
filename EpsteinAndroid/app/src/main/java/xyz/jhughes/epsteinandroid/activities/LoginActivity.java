@@ -124,17 +124,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.code() == 202) {
-                    dialog = ProgressDialog.show(LoginActivity.this, "", "Logging in. Please wait...", true);
-                    dialog.show();
-
                     SharedPrefsHelper.getSharedPrefs(getApplicationContext()).edit().putString("idToken", response.body()).apply();
 
                     Intent i = new Intent(getApplicationContext(), CalendarActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
+                    dialog.cancel();
+
                     startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "Couldn't sign in to Epstein", Toast.LENGTH_LONG).show();
+                    dialog.cancel();
                 }
             }
 
