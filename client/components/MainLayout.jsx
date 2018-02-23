@@ -10,6 +10,7 @@ class MainLayout extends React.Component {
           advice={this.props.advice}
           authorized={this.props.authorized}
           getCalendars={() => this.props.getCalendars()}
+          getOutlook={() => this.props.getOutlook()}
           getLogout={() => this.props.getLogout()}
           setActiveView={activeView => this.props.setActiveView(activeView)}
           user={this.props.user}
@@ -23,6 +24,9 @@ class MainLayout extends React.Component {
           postCalendarEvent={(calEvent, stressValue, navigateTo) => this.props.postCalendarEvent(calEvent, stressValue, navigateTo)}
           unratedEvents={this.props.unratedEvents}
           user={this.props.user}
+          setActiveView={activeView => this.props.setActiveView(activeView)}
+          getCalendars={() => this.props.getCalendars()}
+          getOutlook={() => this.props.getOutlook()}
         />
       </div>
     )

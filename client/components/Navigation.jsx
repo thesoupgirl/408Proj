@@ -10,6 +10,7 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 import ImportPage from './ImportPage'
 import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
+import CalendarPage from './CalendarPage'
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -44,6 +45,9 @@ class Navigation extends React.Component {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+             <MenuItem onClick={() =>  setActiveView(CalendarPage)}>
+              Choose Calendar Service
+              </MenuItem>
             <MenuItem onClick={() => getCalendars()}>
               Import Calendar
             </MenuItem>

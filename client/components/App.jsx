@@ -124,6 +124,23 @@ class App extends React.Component {
       }
     })
   }
+   getOutlook() {
+    ajax({
+      url: '/outlooksignin',
+      type: 'get',
+      success: (data) => {
+       // this.setActiveView(UserPage)
+        console.log("outlook success")
+        console.log(data)
+        window.location = data
+       
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log(response)
+      }
+    })
+}
   getLogout() {
       ajax({
           url: '/logout',
@@ -218,6 +235,7 @@ class App extends React.Component {
           eventList={this.state.eventList}
           getEventList={() => this.getEventList()}
           getCalendars={() => this.getCalendars()}
+          getOutlook={() => this.getOutlook()}
           getLogout={() => this.getLogout()}
           postCalendarAdd={calId => this.postCalendarAdd(calId)}
           postCalendarEvent={(calEvent, stressValue, navigateTo) => this.postCalendarEvent(calEvent, stressValue, navigateTo)}
