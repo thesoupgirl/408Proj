@@ -170,11 +170,12 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		}
 
 		tab = DBSetup.getUsersTable();
+		System.out.println("nameo: " + principal.getName());
 		GetItemSpec spec = new GetItemSpec()
-			   .withPrimaryKey("userID", principal.getName());
+			   .withPrimaryKey("username", principal.getName());
 		Item got = tab.getItem(spec);
 		if(got == null)
-			tab.putItem(new Item().withString("userID", principal.getName()).withString("calID","primary"));
+			tab.putItem(new Item().withString("username", principal.getName()).withString("calID","primary"));
 
 		return map;///list.get(1).getColorId();
 	}
