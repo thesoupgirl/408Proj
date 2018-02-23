@@ -28,6 +28,7 @@ class CalendarPage extends React.Component {
      //this.setActiveView = this.setActiveView.bind(this);
     console.log("choose calendar service")
     console.log(this.props)
+    console.log(this.props.eventList)
      
       this.calendarType = ''
       this.calendarExist =  false
