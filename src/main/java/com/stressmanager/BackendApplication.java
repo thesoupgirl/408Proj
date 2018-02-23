@@ -14,7 +14,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential; 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -60,6 +60,7 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -112,7 +113,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	@Value("${google.client.clientSecret}")
 	static String clientSecret;
-        
+
     private static String email = "";
 
 	static String access = "";
@@ -127,13 +128,13 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     @RequestMapping({"/androidlogin"})
     @ResponseBody
-    public ResponseEntity<String> androidLogin(String androidIdToken) throws Exception {
+    public ResponseEntity<String> androidLogin(@RequestHeader String androidIdToken) throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders();
         access = "";
         email = "";
         String userId = "";
         httpHeaders.setContentType(MediaType.TEXT_PLAIN);
-        System.out.println("\narf\n\n");
+        System.out.println("\narf\n\n" +androidIdToken);
 
         if (androidIdToken == null) {
             String nope = "No token...";
@@ -144,77 +145,81 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
 		GoogleClientSecrets clientSecrets =
-    	GoogleClientSecrets.load(
+    	   GoogleClientSecrets.load(
         	JacksonFactory.getDefaultInstance(), new FileReader("client_secrets.json"));
-			GoogleTokenResponse tokenResponse =
-          		new GoogleAuthorizationCodeTokenRequest(
-	              HTTP_TRANSPORT,
-	              JSON_FACTORY,
-	              "https://www.googleapis.com/oauth2/v4/token",
-	              clientSecrets.getDetails().getClientId(),
-	              clientSecrets.getDetails().getClientSecret(),
-	              androidIdToken,
-	              "http://localhost:8080/login/google")  // Specify the same redirect URI that you use with your web
-	                             // app. If you don't have a web version of your app, you can
-	                             // specify an empty string.
-	              .execute();
+    	GoogleTokenResponse tokenResponse =
+      		new GoogleAuthorizationCodeTokenRequest(
+              HTTP_TRANSPORT,
+              JSON_FACTORY,
+              "https://www.googleapis.com/oauth2/v4/token",
+              clientSecrets.getDetails().getClientId(),
+              clientSecrets.getDetails().getClientSecret(),
+              androidIdToken,
+              "https://theepstein.herokuapp.com/login/google")  // Specify the same redirect URI that you use with your web
+                             // app. If you don't have a web version of your app, you can
+                             // specify an empty string.
+              .execute();
 
-				String accessToken = tokenResponse.getAccessToken();
-				access = accessToken;
+		String accessToken = tokenResponse.getAccessToken();
+		access = accessToken;
 
-				// Use access token to call API
-				GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-				service = new com.google.api.services.calendar.Calendar.Builder(
-					HTTP_TRANSPORT, JSON_FACTORY, credential)
-					.setApplicationName("Epstein")
-					.build();
+		// Use access token to call API
+		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+		com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(
+			HTTP_TRANSPORT, JSON_FACTORY, credential)
+			.setApplicationName("Epstein")
+			.build();
 
-				DateTime now = new DateTime(System.currentTimeMillis());
+		DateTime now = new DateTime(System.currentTimeMillis());
 
-				Events events = service.events().list("primary")
-					.setMaxResults(50)
-					.setTimeMin(now)
-					.setSingleEvents(false)
-					.execute();
+		Events events = service.events().list("primary")
+			.setMaxResults(50)
+			.setTimeMin(now)
+			.setSingleEvents(false)
+			.execute();
 
-				List<Event> items = events.getItems();
-				if (items.size() == 0) {
-					System.out.println("No upcoming events found.");
-				}
-				else {
-					System.out.println(Colors.ANSI_PURPLE+"Upcoming events (Me route)"+Colors.ANSI_WHITE);
-					for (Event event : items) {
-						String str = event.getId();
-						System.out.printf("%s (%s)\n", str, event.getSummary());
-					}
+		List<Event> items = events.getItems();
+		if (items.size() == 0) {
+			System.out.println("No upcoming events found.");
+		}
+		else {
+			System.out.println(Colors.ANSI_PURPLE+"Upcoming events (Me route)"+Colors.ANSI_WHITE);
+			for (Event event : items) {
+				String str = event.getId();
+				System.out.printf("%s (%s)\n", str, event.getSummary());
+			}
 
-				}
+		}
 
-				// Get profile info from ID token
-				GoogleIdToken idToken = tokenResponse.parseIdToken();
-				GoogleIdToken.Payload payload = idToken.getPayload();
-				userId = payload.getSubject();  // Use this value as a key to identify a user.
-				email = payload.getEmail();
-				boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-				String name = (String) payload.get("name");
-				String pictureUrl = (String) payload.get("picture");
-				String locale = (String) payload.get("locale");
-				String familyName = (String) payload.get("family_name");
-				String givenName = (String) payload.get("given_name");
+		// Get profile info from ID token
+		GoogleIdToken idToken = tokenResponse.parseIdToken();
+		GoogleIdToken.Payload payload = idToken.getPayload();
+		userId = payload.getSubject();  // Use this value as a key to identify a user.
+		email = payload.getEmail();
+		email = email.replace("@", "");
+		boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+		String name = (String) payload.get("name");
+		String pictureUrl = (String) payload.get("picture");
+		String locale = (String) payload.get("locale");
+		String familyName = (String) payload.get("family_name");
+		String givenName = (String) payload.get("given_name");
 
-				DBSetup.remoteDB();
+		DBSetup.remoteDB();
 
-				//check if the Table for that UserName exists
-				Table tab = DBSetup.getTable(email);
-				if(tab == null) { //the Table doesn't Exist!!!
-					System.out.println("Creating a table for "+ email +"\'s events");
-					//make the table! :D
-					DBSetup.createTable(email);
-				}
+		//check if the Table for that UserName exists
+		Table tab = DBSetup.getTable(email);
+		if(tab == null) { //the Table doesn't Exist!!!
+			System.out.println("Creating a table for "+ email +"\'s events");
+			//make the table! :D
+			DBSetup.createTable(email);
+		}
 
-				tab = DBSetup.getUsersTable();
-				tab.putItem(new Item().withString("username", email).withString("calID","primary"));
-				tab.putItem(new Item().withString("username", email).withString("token",accessToken));
+		tab = DBSetup.getUsersTable();
+		tab.putItem(new Item().withString("username", email)
+            .withString("calID","primary")
+            .withString("token",accessToken)
+            .withString("idtoken", androidIdToken));
+
 
 		return new ResponseEntity<String>(accessToken, httpHeaders, HttpStatus.ACCEPTED);
 	}
@@ -240,7 +245,6 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		if(token.equals(dbToken)) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -259,7 +263,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		System.out.println("========================================");
 		System.out.println("authenticated!!!!");
 
-		service = getCalendarService();
+        //TODO Check for androidIdToken somehow. Shouldn't be hit on Mobile version
+		service = getCalendarService(""+-1);
 
 		DateTime now = new DateTime(System.currentTimeMillis());
 		//now.set(java.util.Calendar.DATE, 1);
@@ -308,35 +313,68 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	}
 
 	//get the Credz for the new User
-	public Credential authorize() throws Exception {
+	public Credential authorize(String androidIdToken) throws Exception {
 		final List<String> SCOPES =
         	Arrays.asList(CalendarScopes.CALENDAR);
+        	TokenResponse tolkien = new TokenResponse();
+       if(androidIdToken.compareTo(""+-1) == 0) {
+       
+    		tolkien.setAccessToken(oauth2ClientContext.getAccessToken().toString());
+    		Credential credz = new Credential(BearerToken.authorizationHeaderAccessMethod())
+    			.setFromTokenResponse(tolkien);
+    		System.out.println("authorized!!!");
+    		return credz;
+       }
+       else {
+           // final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+           // HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+           //  GoogleClientSecrets clientSecrets =
+           //     GoogleClientSecrets.load(
+           //      JacksonFactory.getDefaultInstance(), new FileReader("client_secrets.json"));
+           //  GoogleTokenResponse tokenResponse =
+           //      new GoogleAuthorizationCodeTokenRequest(
+           //        HTTP_TRANSPORT,
+           //        JSON_FACTORY,
+           //        "https://www.googleapis.com/oauth2/v4/token",
+           //        clientSecrets.getDetails().getClientId(),
+           //        clientSecrets.getDetails().getClientSecret(),
+           //        androidIdToken,
+           //        "http://localhost:8080/login/google")  // Specify the same redirect URI that you use with your web
+           //                       // app. If you don't have a web version of your app, you can
+           //                       // specify an empty string.
+           //        .execute();
+           //
+           //    TokenResponse tolkien = new TokenResponse();
+              tolkien.setAccessToken(access);
 
-		TokenResponse tolkien = new TokenResponse();
-		tolkien.setAccessToken(oauth2ClientContext.getAccessToken().toString());
-
-		Credential credz = new Credential(BearerToken.authorizationHeaderAccessMethod())
-			.setFromTokenResponse(tolkien);
-		System.out.println("authorized!!!");
-		return credz;
+              Credential credz = new Credential(BearerToken.authorizationHeaderAccessMethod())
+                  .setFromTokenResponse(tolkien);
+                  System.out.println("creds...maybe?" + credz.getAccessToken());
+            return credz;
+        }
 
 	}
 
 	//get and instance of Google Calendar API services
-	public com.google.api.services.calendar.Calendar getCalendarService() throws Exception {
+	public com.google.api.services.calendar.Calendar getCalendarService(String androidIdToken) throws Exception {
 		final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 		HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-		Credential credz = authorize();
+		Credential credz = authorize(androidIdToken);
+		System.out.println("Creds..." + credz.getAccessToken());
 		return new com.google.api.services.calendar.Calendar.Builder(
 			HTTP_TRANSPORT, JSON_FACTORY, credz)
-			.setApplicationName("Stressmanager")
+			.setApplicationName("Epstein")
 			.build();
 	}
-
-
 	//get events from @calID Calendar
-	public List<Event> getEventsMultiCal(String calID, DateTime start, DateTime end, boolean tableExists, String user) throws Exception {
+	public List<Event> getEventsMultiCal(String calID, DateTime start, DateTime end, boolean tableExists, String user, String androidIdToken) throws Exception {
+		System.out.println("android id token: "  + androidIdToken);
+        if(service == null) {
+            service = getCalendarService(androidIdToken);
+        }
 
+
+        System.out.println("arf " + service.toString());
 		Events events = service.events().list(calID) // Get events from calendar calID...
 			.setTimeMin(start) // Starting at the beginning of the month
 			.setTimeMax(end) // and ending at the last day of the month
@@ -414,7 +452,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 		final HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		service = getCalendarService();
+		String token = (String)request.get("idToken");
+		service = getCalendarService(""+-1);
 
 		System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
 		//get the Username and eventID
@@ -527,23 +566,27 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	//Get events for SPECIFIC CALENDARID for android
 	@RequestMapping(value = "/api/calendar/androidevents/calId")
 	@ResponseBody
-	public ResponseEntity<String> gettingAndroidEventsSpecfic(@RequestBody GenericJson request) throws Exception {
+	public ResponseEntity<String> gettingAndroidEventsSpecfic(
+        @RequestHeader(value="email") String email,
+        @RequestHeader(value="idToken") String idToken,
+        @RequestHeader(value="calId") String calId) throws Exception {
+
 		final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 		HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		final HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		
+
 		GoogleCredential credential = new GoogleCredential().setAccessToken(access);
-		com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(
+		service =
+            new com.google.api.services.calendar.Calendar.Builder(
 					HTTP_TRANSPORT, JSON_FACTORY, credential)
 					.setApplicationName("Epstein")
 					.build();
 
-
-		System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
+		//System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
 		//get the Username and eventID
-		String userName = (String)request.get("userName");
-		String callID = (String)request.get("calID");
+		String userName = email;
+		String callID = calId;
 		System.out.println(Colors.ANSI_BLUE+"userName "+userName);
 		//String eventID = (String)request.get("eventID");
 
@@ -563,7 +606,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		//get the User Table and user's data from there
 		Table t = DBSetup.getUsersTable();
 		GetItemSpec spec = new GetItemSpec()
-			   .withPrimaryKey("userID", userName);
+			   .withPrimaryKey("username", userName);
 		Item got = t.getItem(spec);
 
 
@@ -778,27 +821,29 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     //Get events for ALL OF THE USERS CALENDARIDs
     @RequestMapping(value = "/api/calendar/androidevents")
     @ResponseBody
-    public ResponseEntity<String> gettingAndroidEvents(String idToken, String email) throws Exception {
+    public ResponseEntity<String> gettingAndroidEvents(
+    @RequestHeader(value="idToken") String idToken,
+    @RequestHeader(value="email") String email) throws Exception {
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        if (!validateAndroidToken(idToken, email)) {
-            return new ResponseEntity<String>("Invalid ID token", httpHeaders, HttpStatus.FORBIDDEN);
-        }
+        // if (!validateAndroidToken(idToken, email)) {
+        //     return new ResponseEntity<String>("Invalid ID token", httpHeaders, HttpStatus.FORBIDDEN);
+        // }
 
         //service = getAndroidCal(idToken);
 
         //System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
         //get the Username and eventID
-        String userName = dbCreds.get(idToken);
-
+        String userName = email.replace("@", "");
         System.out.println(Colors.ANSI_BLUE + "username " + userName);
+        System.out.println(Colors.ANSI_BLUE + "username " + userName.replace("@", ""));
         //String eventID = (String)request.get("eventID");
-
+        DBSetup.remoteDB();
         //get the Table
-        boolean exists = tableCheck(userName);
-
+        boolean exists = tableCheck(userName.replace("@", ""));
+        System.out.println(Colors.ANSI_BLUE + "Table is " +exists);
         //Set up Calendar request
         java.util.Calendar currentDate = java.util.Calendar.getInstance();
         currentDate.set(java.util.Calendar.DATE, 1);
@@ -815,10 +860,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
                 .withPrimaryKey("username", userName);
         Item got = t.getItem(spec);
 
-
         //get a list of Calendar IDs
         String str = got.getString("calID");
-        System.out.println(Colors.ANSI_CYAN + "The User Has: " + str);
+        System.out.println(Colors.ANSI_CYAN + "The User Has: " + got.toString());
         String[] calIDs = str.split("split");
 
         List<Event> target = new LinkedList<>();
@@ -826,7 +870,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         for (String val : calIDs) {
             System.out.println(Colors.ANSI_CYAN + "The calid now is: " + val);
             //get the events for each of these
-            List<Event> addThis = getEventsMultiCal(val, beginningOfMonth, endOfMonth, true, userName);
+            List<Event> addThis = getEventsMultiCal(val, beginningOfMonth, endOfMonth, true, userName, idToken);
             //add it to a list of all the events retrieved
             if (addThis != null)
                 target.addAll(addThis);
@@ -850,7 +894,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        service = getCalendarService();
+        //TODO Check for androidIdToken in JSON
+        service = getCalendarService(""+-1);
 
         System.out.println(Colors.ANSI_BLUE + "JSON " + request.toPrettyString());
         //get the Username and eventID
@@ -889,7 +934,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         for (String val : calIDs) {
             System.out.println(Colors.ANSI_CYAN + "The calid now is: " + val);
             //get the events for each of these
-            List<Event> addThis = getEventsMultiCal(val, beginningOfMonth, endOfMonth, true, userName);
+            List<Event> addThis = getEventsMultiCal(val, beginningOfMonth, endOfMonth, true, userName, ""+-1);
             //add it to a list of all the events retrieved
             if (addThis != null)
                 target.addAll(addThis);
@@ -937,7 +982,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         // Returns all events in the current month
-        service = getCalendarService();
+        //TODO Check for androidIdToken in JSON
+        service = getCalendarService(""+-1);
 
         System.out.println(Colors.ANSI_BLUE + "JSON " + request.toPrettyString());
         //get the Username and eventID
@@ -1035,8 +1081,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
         db.accessDB();
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        service = getCalendarService();
+        //TODO Check for androidIdToken in JSON
+        service = getCalendarService(""+-1);
         String calID = (String) request.get("calID");
         String eventID = (String) request.get("eventID");
 
@@ -1052,7 +1098,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -1071,7 +1117,11 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
             http.antMatcher("/androidlogin").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/androidme").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/api/calendar/androidevents").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/list").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/advice").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/event").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/add").authorizeRequests().anyRequest().authenticated();
             // @formatter:on
         }
     }

@@ -7,17 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
@@ -30,7 +25,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import xyz.jhughes.epsteinandroid.R;
-import xyz.jhughes.epsteinandroid.models.Me;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 
@@ -76,11 +70,9 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-        if (account != null
-                && SharedPrefsHelper.getSharedPrefs(this).contains("idToken")
-                && SharedPrefsHelper.getSharedPrefs(this).contains("email")) {
+        if (account != null) {
             Log.d("TAG", "Got cached sign-in");
-            startActivity(new Intent(getApplicationContext(), CalendarActivity.class));
+            onClickSignIn();
         }
     }
 
@@ -126,14 +118,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.code() == 202) {
-                    dialog = ProgressDialog.show(LoginActivity.this, "", "Logging in. Please wait...", true);
-                    dialog.show();
-
                     SharedPrefsHelper.getSharedPrefs(getApplicationContext()).edit().putString("idToken", response.body()).apply();
 
-                    startActivity(new Intent(getApplicationContext(), CalendarActivity.class));
+                    Intent i = new Intent(getApplicationContext(), CalendarActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    dialog.cancel();
+
+                    startActivity(i);
                 } else {
                     Toast.makeText(getApplicationContext(), "Couldn't sign in to Epstein", Toast.LENGTH_LONG).show();
+                    dialog.cancel();
                 }
             }
 

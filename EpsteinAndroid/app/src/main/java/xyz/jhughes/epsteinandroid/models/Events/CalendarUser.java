@@ -1,6 +1,8 @@
 package xyz.jhughes.epsteinandroid.models.Events;
 
-public class CalendarUser {
+import java.io.Serializable;
+
+public class CalendarUser implements Serializable {
     public String email;
     public boolean self;
 }
