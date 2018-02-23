@@ -28,7 +28,6 @@ class CalendarPage extends React.Component {
      //this.setActiveView = this.setActiveView.bind(this);
     console.log("choose calendar service")
     console.log(this.props)
-
     console.log("before" + this.props.eventList)
     //var str = "{ hello: 'world', places: ['Africa', 'America', 'Asia', 'Australia'] }";
     //var json = JSON.stringify(eval("(" + str + ")"));
@@ -37,7 +36,6 @@ class CalendarPage extends React.Component {
     //var json = JSON.stringify(eval("(" + jsony + ")"));
     //this.props.eventList.push(JSON.parse(json))
     console.log ("kill me" + this.props.eventList)
-
       this.calendarType = ''
       this.calendarExist =  false
      this.GoogleFunc = this.GoogleFunc.bind(this);
