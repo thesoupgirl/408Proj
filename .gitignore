@@ -1,10 +1,14 @@
 node_modules/
 src/main/resources/static/*
+src/main/resources/application.yml
+src/main/resources/applicationy.yml
 !src/main/resources/static/index.html
 *log
 web/
 client/mock/
+.directory
 package-lock.json
+application.yml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -36,3 +40,6 @@ nbdist/
 ### Jest ###
 client/__tests__/__snapshots__/
 *.snap
+
+client_secrets.json
+application.yml

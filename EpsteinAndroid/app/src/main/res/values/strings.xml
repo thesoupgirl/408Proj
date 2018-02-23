@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Epstein Android</string>
+    <string name="app_name">Epstein</string>
+    <string name="google_client_id">319724472283-tqcoogggi701pj1tjpp5v8r7ja38i243.apps.googleusercontent.com</string>
+    <string name="google_server_client_id">319724472283-nv9mk2qh67riopurf37tm8i3b5jib7u3.apps.googleusercontent.com</string>
 </resources>

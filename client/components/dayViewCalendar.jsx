@@ -4,20 +4,14 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
-import { Button, Jumbotron } from 'react-bootstrap'
-
-
-
 
 
 BigCalendar.momentLocalizer(moment)
 
-
-class UserPage extends React.Component {
+class dayViewCalendar extends React.Component {
     constructor(props) {
         super(props)
-        console.log("calendar")
-        console.log(props)
+
         this.state = {
             calID: ''
         }
@@ -53,17 +47,16 @@ class UserPage extends React.Component {
     }
     renderCalendar() {
         const { alert } = this.props
-
         if (!alert) {
             return (
                 <BigCalendar
-                    defaultView= 'week'
-                    views={['day', 'week', 'month']}
+                    defaultView='day'
+                    views={['day']}
                     events={this.props.eventList}
-                    eventPropGetter={(event, start, end, isSelected) => this.eventPropGetter(event, start, end, isSelected)}
+                    eventPropGetter={(event, start, end, isSelected) => this.eventPropGetter(event, start, start, isSelected)}
                     startAccessor={event => this.accessor('start', event)}
-                    endAccessor={event => this.accessor('end', event)}
-                    allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
+                    endAccessor={event => this.accessor('start', event)}
+                    allDayAccessor={event => has(event, 'start.date')}
                     titleAccessor='summary'
                     />
             )
@@ -93,10 +86,9 @@ class UserPage extends React.Component {
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
-        
             </div>
         )
     }
 }
 
-module.exports = UserPage
+module.exports = dayViewCalendar
