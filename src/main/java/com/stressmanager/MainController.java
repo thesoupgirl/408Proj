@@ -246,7 +246,7 @@ public class MainController {
 
         //get the User Info
         GetItemSpec spec = new GetItemSpec()
-               .withPrimaryKey("userID", username);
+               .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
 
         //add the calendar ID to the current User's CalendarID list
@@ -257,7 +257,7 @@ public class MainController {
 
         adds = adds+"split"+calID;
         Item update = new Item();
-        update.withString("userID", username);
+        update.withString("username", username);
         update.withString("calID", adds);
         table.putItem(update);
 

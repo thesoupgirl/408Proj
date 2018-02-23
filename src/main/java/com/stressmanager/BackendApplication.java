@@ -452,6 +452,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 		final HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		String token = (String)request.get("idToken");
 		service = getCalendarService(""+-1);
 
 		System.out.println(Colors.ANSI_BLUE+"JSON "+request.toPrettyString());
