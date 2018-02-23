@@ -19,7 +19,7 @@
         </activity>
         <activity android:name=".activities.CalendarActivity" />
         <activity android:name=".activities.CalendarImportActivity" />
-        <activity android:name=".activities.EventRating"></activity>
+        <activity android:name=".activities.EventRatingActivity"></activity>
     </application>
 
 </manifest>

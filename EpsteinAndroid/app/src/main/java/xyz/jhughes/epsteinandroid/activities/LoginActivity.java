@@ -7,17 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
@@ -30,7 +25,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import xyz.jhughes.epsteinandroid.R;
-import xyz.jhughes.epsteinandroid.models.Me;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 

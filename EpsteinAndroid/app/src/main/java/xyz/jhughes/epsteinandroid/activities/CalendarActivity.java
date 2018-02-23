@@ -70,14 +70,14 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         ).enqueue(new Callback<Events>() {
             @Override
             public void onResponse(Call<Events> call, Response<Events> response) {
+                dialog.cancel();
+
                 if (response.body() == null || response.code() != 200) {
                     Toast.makeText(getApplicationContext(), "We had trouble getting your calendar", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 CalendarActivity.this.events = response.body();
-
-                dialog.cancel();
 
                 weekView.notifyDatasetChanged();
             }
@@ -120,7 +120,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     Toast.makeText(this, "You don't have any events to rate", Toast.LENGTH_LONG).show();
                     break;
                 }
-
+                Intent i = new Intent(this, EventRatingActivity.class);
+                i.putExtra("events", events);
+                startActivity(i);
                 break;
             default:
                 //Nothing
@@ -185,7 +187,14 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     Integer.valueOf(endDate[0]), Integer.valueOf(endDate[1]), Integer.valueOf(endDate[2]),       // End date
                     Integer.parseInt(timeForEnd[0]), Integer.parseInt(timeForEnd[1])                             // End time
             );
-            calendarEventToAdd.setColor(getResources().getColor(R.color.colorPrimaryDark));
+
+            if (event.stressValue > 0) {
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositiveStressLevel));
+            } else if (event.stressValue < 0) {
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegativeStressLevel));
+            } else {
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorZeroStressLevel));
+            }
 
             events.add(calendarEventToAdd);
         }

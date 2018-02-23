@@ -17,6 +17,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import xyz.jhughes.epsteinandroid.R;
 import xyz.jhughes.epsteinandroid.models.Calendars.Calendar;
+import xyz.jhughes.epsteinandroid.models.Calendars.CalendarToImport;
 import xyz.jhughes.epsteinandroid.models.Calendars.Calendars;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
@@ -81,13 +82,14 @@ public class CalendarImportActivity extends AppCompatActivity {
         Calendar calendar = (Calendar) listView.getItemAtPosition(listView.getCheckedItemPosition());
 
         EpsteinApiHelper.getInstance().importCalendar(
-                SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
-                SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null),
-                calendar.id
+                new CalendarToImport(
+                        calendar.id,
+                        SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
+                        SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null))
         ).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.code() == 202) {
+                if (response.code() == 200) {
                     setResult(CalendarActivity.IMPORTED_CALENDAR);
                     finish();
                 } else {
