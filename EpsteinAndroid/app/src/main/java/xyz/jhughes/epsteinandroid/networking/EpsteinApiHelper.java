@@ -18,7 +18,7 @@ public class EpsteinApiHelper {
                     .writeTimeout(60 * 5, TimeUnit.SECONDS);
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.186.85.176:8080/")
+                    .baseUrl("https://theepstein.herokuapp.com/")
                     .client(okHttpClient.build())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
