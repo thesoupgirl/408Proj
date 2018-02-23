@@ -10,6 +10,7 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 import ImportPage from './ImportPage'
 import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
+import Games from './Games'
 import CalendarPage from './CalendarPage'
 
 class Navigation extends React.Component {
@@ -57,6 +58,9 @@ class Navigation extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => setActiveView(StressFormPage)}>
               Rate Events
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(Games)}>
+              Games
             </MenuItem>
             <MenuItem onClick={() => this.setState({ alertVisible: true })}>
               Advice

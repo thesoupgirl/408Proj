@@ -1,0 +1,85 @@
+﻿@import "https://fonts.googleapis.com/css?family=Montserrat";
+::-moz-selection {
+  background: transparent;
+}
+::selection {
+  background: transparent;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: #333333;
+  height: 94vh;
+  position: relative;
+}
+h1 {
+  position: relative;
+  top: 5%;
+  text-align: center;
+  font-size: 4em;
+  margin: 30px 0;
+  color: #6da0f2;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+.slider-wrapper {
+  position: absolute;
+  width: 900px;
+  height: 700px;
+  overflow: hidden;
+  top: 20%;
+}
+.inner-wrapper {
+  width: 500%;
+  height: 100%;
+  position: relative;
+  left: -100%;
+}
+.slide {
+  width: calc(20%);
+  height: 100%;
+  float: left;
+  font-size: 80px;
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.slide-title {
+  position: absolute;
+  top: 2%;
+}
+.slide-img {
+  position: relative;
+  top: 5%;
+  width: 90%;
+  height: 75%;
+  cursor: pointer;
+}
+.button {
+  width: 60px;
+  height: 60px;
+  border-top: 10px solid #6da0f2;
+  position: absolute;
+  top: 45%;
+  cursor: pointer;
+}
+.prev {
+  border-left: 10px solid #6da0f2;
+  left: 10%;
+  transform: rotate(-45deg);
+}
+.next {
+  border-right: 10px solid #6da0f2;
+  right: 10%;
+  transform: rotate(45deg);
+}
