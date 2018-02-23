@@ -675,21 +675,6 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	}
 
-	/*
-	* Spring Security Set up
-	*/
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		//temp = http;
-		// @formatter:off
-		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**").permitAll().anyRequest()
-				.authenticated().and().exceptionHandling()
-				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
-				.logoutSuccessUrl("/").permitAll().and().csrf().disable()
-				///disabled the CSRF Tokens
-				.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
-		// @formatter:on
-	}
 	// 	System.out.println(Colors.ANSI_BLUE+"username "+userName);
 	// 	//String eventID = (String)request.get("eventID");
 
