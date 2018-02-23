@@ -1087,7 +1087,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/api/calendar/androidevents").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/advice", "/calendar/list", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -1106,6 +1106,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
             http.antMatcher("/androidlogin").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/androidme").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/api/calendar/androidevents").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/list").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/advice").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
             // @formatter:on
         }
