@@ -128,7 +128,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     @RequestMapping({"/androidlogin"})
     @ResponseBody
-    public ResponseEntity<String> androidLogin(@RequestBody String androidIdToken) throws Exception {
+    public ResponseEntity<String> androidLogin(@RequestHeader String androidIdToken) throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders();
         access = "";
         email = "";
