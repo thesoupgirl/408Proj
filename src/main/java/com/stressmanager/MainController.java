@@ -151,6 +151,7 @@ public class MainController {
 
         //add the stresslvl the user's table for events
         //cheanges the username to something usable
+        userName = userName.replace("@", "");
         userName = userName.replaceAll(" ", "_");
         Item new1 = new Item();
         new1.withString("eventID", eventID);
@@ -211,6 +212,7 @@ public class MainController {
         String eventID = (String)request.get("eventID");
         String username = (String)request.get("userName");
         //get the Table
+        username = username.replace("@", "");
         Table tab = DBSetup.getTable(username.replaceAll(" ","_"));
 
         //get the stress value with that eventID
@@ -231,7 +233,7 @@ public class MainController {
         String resp = gson.toJson(add, listType.getType());
 
         //Send response to client
-        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.ACCEPTED);
     }
 
     //Route that adds the CalendarID under that user
@@ -250,8 +252,9 @@ public class MainController {
         Table table = DBSetup.getUsersTable();
 
         //get the User Info
+        username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
-               .withPrimaryKey("userID", username);
+               .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
 
         //add the calendar ID to the current User's CalendarID list
@@ -262,7 +265,7 @@ public class MainController {
 
         adds = adds+"split"+calID;
         Item update = new Item();
-        update.withString("userID", username);
+        update.withString("username", username);
         update.withString("calID", adds);
         table.putItem(update);
 
