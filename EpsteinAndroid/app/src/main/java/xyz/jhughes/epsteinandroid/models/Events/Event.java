@@ -1,6 +1,8 @@
 package xyz.jhughes.epsteinandroid.models.Events;
 
-public class Event {
+import java.io.Serializable;
+
+public class Event implements Serializable {
     public String summary;
     public String created;
     public String status;
