@@ -206,6 +206,7 @@ public class MainController {
         String eventID = (String)request.get("eventID");
         String username = (String)request.get("userName");
         //get the Table
+        username = username.replace("@", "");
         Table tab = DBSetup.getTable(username.replaceAll(" ","_"));
 
         //get the stress value with that eventID
@@ -226,7 +227,7 @@ public class MainController {
         String resp = gson.toJson(add, listType.getType());
 
         //Send response to client
-        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.ACCEPTED);
     }
 
     //Route that adds the CalendarID under that user
