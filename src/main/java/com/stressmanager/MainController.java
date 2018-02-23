@@ -146,6 +146,7 @@ public class MainController {
 
         //add the stresslvl the user's table for events
         //cheanges the username to something usable
+        userName = userName.replace("@", "");
         userName = userName.replaceAll(" ", "_");
         Item new1 = new Item();
         new1.withString("eventID", eventID);
@@ -246,6 +247,7 @@ public class MainController {
         Table table = DBSetup.getUsersTable();
 
         //get the User Info
+        username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
                .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
