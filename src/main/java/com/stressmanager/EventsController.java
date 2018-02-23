@@ -6,13 +6,15 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-@Controller
+@RestController
 public class EventsController {
 
   @RequestMapping("/outlook/events")
@@ -22,6 +24,7 @@ public class EventsController {
     if (tokens == null) {
       // No tokens in session, user needs to sign in
       redirectAttributes.addFlashAttribute("error", "Please sign in to continue.");
+      System.out.println("You fucked up..." + tokens);
       return "redirect:/index.html";
     }
 
@@ -45,6 +48,7 @@ public class EventsController {
           sort, properties, maxResults)
           .execute().body();
       model.addAttribute("events", events.getValue());
+      System.out.println(events.getValue());
     } catch (IOException e) {
       redirectAttributes.addFlashAttribute("error", e.getMessage());
       return "redirect:/index.html";

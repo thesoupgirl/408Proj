@@ -165,6 +165,14 @@ public class BackendApplicationTests extends AbstractTestNGSpringContextTests {
 
 	}
 
+    @Test
+    public void TestOutlookRoute() throws Exception{
+        System.out.println("\nRunnning test case 14: Checking that the route /outlooksignin works.");
+        mvc.perform(get("/outlooksigin"))
+            .andExpect(status().isMovedTemporarily());
+
+    }
+
 
 
     private String getAccessToken(String username, String password) throws Exception {
