@@ -12,19 +12,19 @@ import renderer from 'react-test-renderer';
 //tests to see if Google button exists
 test('Check to see if Google button exists', () => {
 
-  	const page = shallow(
+  	const googleButton = shallow(
 	  	<CalendarPage />
     );
-	signButton.simulate('click');
-	expect(signButton.contains('Google'));
+	googleButton.simulate('click');
+	expect(googleButton.contains('Google'));
 });
 
 //tests to see if Outlook button exists
 test('Check to see if Outlook button exists', () => {
 
-  	const page = shallow(
+  	const outlookButton = shallow(
 	  	<CalendarPage />
     );
-	signButton.simulate('click');
-	expect(signButton.contains('Outlook'));
+	outlookButton.simulate('click');
+	expect(outlookButton.contains('Outlook'));
 });
