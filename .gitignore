@@ -6,7 +6,9 @@ src/main/resources/applicationy.yml
 *log
 web/
 client/mock/
-
+.directory
+package-lock.json
+application.yml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -38,3 +40,6 @@ nbdist/
 ### Jest ###
 client/__tests__/__snapshots__/
 *.snap
+
+client_secrets.json
+application.yml
