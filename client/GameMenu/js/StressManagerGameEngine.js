@@ -150,14 +150,37 @@ function GameObject(position, bounds, name, hasPhysics) {
   };
 };
 
-var canvas = document.getElementById("myCanvas"); // canvas to draw on
-var context = canvas.getContext("2d"); // canvas context to draw on
+if (typeof document === "undefined") {
+  var canvas = new function() {
+    this.width = 100;
+    this.height = 100;
+    this.offsetLeft = 10;
+    this.offsetTop = 10;
+    this.addEventListener = function() {} ;
+  }
+  var context = new function() {
+    this.fillRect = function() {} ;
+    this.fillText = function() {} ;
+    this.drawImage = function() {} ;
+  }
+} else {
+  var canvas = document.getElementById("myCanvas"); // canvas to draw on
+  var context = canvas.getContext("2d"); // canvas context to draw on
+}
+
 context.font = "30px Arial";
 context.fillText("Loading...", (canvas.width/2)  - 50, canvas.height/2);
 var time = 0; // to calculate last time, in case of frame droppage
 var timeInc = 10; // time increment in ms
 var gameObjects = []; // list of gameobjects to handle clicking, physics, and
-var gameMode = new GameMode();
+if (typeof gameMode === "undefined") {
+  var gameMode = new function() {
+    this.tick = function() {};
+    this.start = function() {};
+  }
+} else {
+  var gameMode = new GameMode();
+}
 
 function sortGameObjectArray() {
   gameObjects.sort(function(a, b) {
@@ -286,8 +309,9 @@ function resume() {
   setInterval(tick, timeInc);
     //console.log(timeInc);
 };
-
-window.onload = onPageLoaded;
+if (typeof window !== "undefined") {
+  window.onload = onPageLoaded;
+}
 canvas.addEventListener('mousedown', mousedown);
 canvas.addEventListener('mouseup', mouseup);
 canvas.addEventListener('mousemove', mousemove)

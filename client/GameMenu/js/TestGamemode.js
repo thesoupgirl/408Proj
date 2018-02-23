@@ -1,6 +1,6 @@
 // A very simple gamemode that only creates balls that bounce on walls
 
-function GameMode() {
+function TestGamemode() {
   this.start = function() {
     var fredBounds = new Vector2(30,30);
     var fredName = "Fred";

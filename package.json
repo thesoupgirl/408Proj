@@ -11,8 +11,7 @@
     "build": "webpack --config webpack.prod.config.js",
     "heroku-postbuild": "webpack --config webpack.prod.config.js",
     "cleanup": "rm -r client/__tests__/__snapshots__/",
-    "test": "jest",
-    "test-game": "jasmine" 
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
