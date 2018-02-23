@@ -5,6 +5,7 @@
  * This script handles core game logic, such as objects, collision, and physics.
  * This script should be loaded after the game logic is initialized.
  */
+
 // A two-dimensional vector
 function Vector2(x, y) {
   this.x = x;
@@ -218,6 +219,7 @@ function tick() {
     // Call the individual game object tick
     gameObjects[i].tick();
     // Scan for changes in depth
+    //console.log("'");
     if (gameObjects[i].lastZ != gameObjects[i].position.z) {
       //console.log(gameObjects[i].name + " " + gameObjects[i].lastZ + " " + gameObjects[i].position.z + " " + gameObjects[i].position + " " + gameObjects[i].physics.velocity);
       mustSort = true;
@@ -315,3 +317,17 @@ if (typeof window !== "undefined") {
 canvas.addEventListener('mousedown', mousedown);
 canvas.addEventListener('mouseup', mouseup);
 canvas.addEventListener('mousemove', mousemove)
+
+function StressManagerGameEngine() {
+  // Used for the tests I guess
+  this.timeInc = timeInc;
+  this.gameObjects = gameObjects;
+  this.GameObject = GameObject;
+  this.addGameObject = addGameObject;
+  this.Vector3 = Vector3;
+  this.Vector2 = Vector2;
+  this.PhysicsProperties = PhysicsProperties;
+  this.tick = tick;
+  //setInterval(this.tick, this.timeInc);
+}
+module.exports = StressManagerGameEngine;

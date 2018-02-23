@@ -86,3 +86,4 @@ function TestGamemode() {
 
   }
 }
+module.exports = TestGamemode;

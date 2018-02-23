@@ -11,17 +11,27 @@ describe("StressManagerGameEngine", function() {
 
     it("should initialize correctly", function () {
       // Check vars
-      expect(gameObjects.length).toBe(0);
-      expect(timeInc).toBe(10);
+      expect(engine.gameObjects.length).toBe(0);
+      expect(engine.timeInc).toBe(10);
     });
 
     describe("when a new gameobject is created", function () {
       var testGameObject;
       beforeEach(function () {
         // add gameobject
-        testGameObject = new GameObject(new Vector3(0,0,0), new Vector2(10, 10), "Test Game Object", true);
-        addGameobject(testGameObject);
-      })
+        testGameObject = new engine.GameObject(new engine.Vector3(0,0,0), new engine.Vector2(10, 10), "Test Game Object", true);
+        //console.log(testGameObject);
+        engine.addGameObject(testGameObject);
+
+        //engine.tick();
+        //engine.tick();
+        //setInterval(engine.tick, engine.timeInc);
+      });
+
+      afterEach(function () {
+        // Clear gameobject list
+        engine.gameObjects.splice(0, engine.gameObjects.length);
+      });
 
       it ("should be clicked through", function () {
         expect(testGameObject.clickThrough).toBe(true);
@@ -35,21 +45,24 @@ describe("StressManagerGameEngine", function() {
         expect(testGameObject.physics.drag).toBe(0);
       });
       it ("should have been ticking", function () {
-        sleep(5000);
-
-        spyOn(engine, "tick");
-        spyOn(testGameObject, "onTick");
+        spyOn(engine, "tick").and.callThrough();
+        spyOn(testGameObject, "tick").and.callThrough();
+        //sleep(5000);
+        //console.log("Gameobject: " + engine.gameObjects[2].position.z);
+        engine.tick();
 
         expect(engine.tick).toHaveBeenCalled();
-        expect(testGameObject.onTick).toHaveBeenCalled();
+        expect(testGameObject.tick).toHaveBeenCalled();
 
       });
       it ("should have been ticking physics", function () {
-          sleep(5000);
+          spyOn(testGameObject.physics, "physicsTick").and.callThrough();
+          //sleep(5000);
+          //console.log("Gameobject: " + engine.gameObjects[3].position.z);
+          engine.tick();
 
-          spyOn(testGameObject.physics, "onTick");
 
-          expect(testGameObject.physicsTick).toHaveBeenCalled();
+          expect(testGameObject.physics.physicsTick).toHaveBeenCalled();
       });
     });
 
