@@ -102,7 +102,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	@CrossOrigin(origins = "http://localhost:8080")
 	@RequestMapping({ "/outlooksignin" })
 	@ResponseBody
-	public void outlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public String outlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		UUID state = UUID.randomUUID();
   		UUID nonce = UUID.randomUUID();
   		System.out.println("app id is..." + appId);
@@ -114,7 +114,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		session.setAttribute("expected_nonce", nonce);
 		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
 		model.addAttribute("loginUrl", loginUrl);
-  		response.sendRedirect(loginUrl);
+		return loginUrl;
+  		//response.sendRedirect(loginUrl);
 	}
 
 	//set up the access token and check that is works
