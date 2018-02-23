@@ -665,6 +665,31 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	// 	//get the Username and eventID
 	// 	String userName = dbCreds.get(idToken);
 
+	// Gets which type of calendar to import...google or outlook
+	@RequestMapping(value = "/calendar/import")
+	@ResponseBody
+	public ResponseEntity<String> calendarImport(@RequestBody GenericJson request) throws Exception {
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		return new ResponseEntity<String>("meow", httpHeaders, HttpStatus.OK);
+
+	}
+
+	/*
+	* Spring Security Set up
+	*/
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		//temp = http;
+		// @formatter:off
+		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**").permitAll().anyRequest()
+				.authenticated().and().exceptionHandling()
+				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
+				.logoutSuccessUrl("/").permitAll().and().csrf().disable()
+				///disabled the CSRF Tokens
+				.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+		// @formatter:on
+	}
 	// 	System.out.println(Colors.ANSI_BLUE+"username "+userName);
 	// 	//String eventID = (String)request.get("eventID");
 

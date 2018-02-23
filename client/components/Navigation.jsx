@@ -10,10 +10,15 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 import ImportPage from './ImportPage'
 import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
+import CalendarPage from './CalendarPage'
 
 class Navigation extends React.Component {
   constructor(props) {
+    console.log("-----nav props----");
+    console.log(props);
     super(props)
+    console.log("Navigation")
+     console.log(props)
 
     this.state = {
       alertVisible: false
@@ -38,12 +43,15 @@ class Navigation extends React.Component {
   }
 
   renderDropdown() {
-    const { advice, authorized, getCalendars, getLogout, setActiveView } = this.props
+    const { advice, authorized, getCalendars, getCalendarType, getLogout, setActiveView } = this.props
 
     if (authorized) {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+             <MenuItem onClick={() =>  setActiveView(CalendarPage)}>
+              Choose Calendar Service
+            </MenuItem>
             <MenuItem onClick={() => getCalendars()}>
               Import Calendar
             </MenuItem>
@@ -68,7 +76,7 @@ class Navigation extends React.Component {
       <Navbar fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#" onClick={() => this.props.setActiveView(UserPage)}>Stress Manager</a>
+            <a href="#" onClick={() => this.props.setActiveView(UserPage)}>Epstein</a>
           </Navbar.Brand>
         </Navbar.Header>
         {this.renderDropdown()}

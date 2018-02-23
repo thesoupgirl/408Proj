@@ -11,6 +11,8 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 
 class ImportPage extends React.Component {
   constructor(props) {
+   console.log("import page")
+    console.log(props)
     super(props)
 
     this.state = {
