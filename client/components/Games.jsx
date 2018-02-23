@@ -11,8 +11,8 @@ const Games = React.createClass({
             width="100%"
             id="myId"
             className="myClassname"
-            height="100%"
-            styles={{height: "200px"}}
+            height="200%"
+            styles={{height: "800px"}}
             allowFullScreen/>
       </div>
     )
