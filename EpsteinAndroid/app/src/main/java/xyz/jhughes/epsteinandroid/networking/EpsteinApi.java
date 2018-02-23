@@ -12,20 +12,19 @@ import xyz.jhughes.epsteinandroid.models.Events.Events;
 import xyz.jhughes.epsteinandroid.models.Me;
 
 public interface EpsteinApi {
-    @FormUrlEncoded
     @POST("androidlogin")
-    Call<String> login(@Field("androidIdToken") String androidIdToken);
+    Call<String> login(@Header("androidIdToken") String androidIdToken);
 
     @GET("androidme")
     Call<Me> getMe(@Header("email") String email, @Header("idToken") String idToken);
 
-    @GET("androidadvice")
+    @GET("advice")
     Call<Advice> getAdvice(@Header("email") String email, @Header("idToken") String idToken);
 
     @POST("api/calendar/androidevents")
     Call<Events> getEvents(@Header("email") String email, @Header("idToken") String idToken);
 
-    @GET("calendar/androidlist")
+    @GET("calendar/list")
     Call<Calendars> getCalendarImportList(@Header("email") String email, @Header("idToken") String idToken);
 
     @POST("calendar/androidadd")

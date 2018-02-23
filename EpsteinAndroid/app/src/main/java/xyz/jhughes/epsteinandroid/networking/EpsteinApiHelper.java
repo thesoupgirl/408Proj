@@ -1,8 +1,5 @@
 package xyz.jhughes.epsteinandroid.networking;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -19,8 +16,6 @@ public class EpsteinApiHelper {
                     .connectTimeout(60 * 5, TimeUnit.SECONDS)
                     .readTimeout(60 * 5, TimeUnit.SECONDS)
                     .writeTimeout(60 * 5, TimeUnit.SECONDS);
-            okHttpClient.interceptors().add(new ReceivedCookiesInterceptor());
-            okHttpClient.interceptors().add(new LoggingInterceptor());
 
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://10.186.85.176:8080/")
