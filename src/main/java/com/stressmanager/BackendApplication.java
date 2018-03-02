@@ -405,6 +405,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 						eventID = eventID.substring(0, eventID.indexOf("_"));
 						System.out.println(Colors.ANSI_RED+"="+eventID+"= "+event.getSummary());//+Colors.ANSI_RED+"=nos9g4bakgg4lsgs6tkscuhsjc=");
 					}
+					if(eventID == null || eventID.length() < 2) {
+						continue;
+					}
 					spec = new GetItemSpec()
 						.withPrimaryKey("eventID", eventID);
 					//the event is in the DB!
