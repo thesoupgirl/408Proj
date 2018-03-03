@@ -42,22 +42,21 @@ class SettingsPage extends React.Component {
         <Jumbotron>
           <p>Welcome to the settings page where you can customize your Epstein experience.</p>
           <p>Choose  a color for the background.</p>
-        <Button bsStyle='primary' className='blue' onClick={() => console.log( document.body.style.backgroundColor = '#e5ffff')}> Blue </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'blue'}} bsStyle='primary' className='Blue' onClick={() => console.log( document.body.style.backgroundColor = '#e5ffff')}> Blue </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='purple' onClick={() => console.log( document.body.style.backgroundColor = '#edc4e3')} > Purple </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'purple'}} bsStyle='primary' className='Purple' onClick={() => console.log( document.body.style.backgroundColor = '#edc4e3')}> Purple </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='green' onClick={() => console.log( document.body.style.backgroundColor = '#d8e6ad')} > Green </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'green'}} bsStyle='primary' className='Green' onClick={() => console.log( document.body.style.backgroundColor = '#d8e6ad')} > Green </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Orange' onClick={() => console.log( document.body.style.backgroundColor = '#ffd194')} > Orange </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'orange'}} bsStyle='primary' className='Orange' onClick={() => console.log( document.body.style.backgroundColor = '#ffd194')} > Orange </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Pink' onClick={() => console.log( document.body.style.backgroundColor = '#ffcccc')} > Pink </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'pink'}} bsStyle='primary' className='Pink' onClick={() => console.log( document.body.style.backgroundColor = '#ffcccc')} > Pink </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Red' onClick={() => console.log( document.body.style.backgroundColor = '#ff6b6b')} > Red </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'red'}} bsStyle='primary' className='Red' onClick={() => console.log( document.body.style.backgroundColor = '#ff6b6b')} > Red </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#abbaab')} > Grey </Button>
-        
-        
-
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'grey'}} bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#abbaab')} > Grey </Button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'white'}} bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#ffffff')} > White </Button>
         </Jumbotron>
         
       </div>
@@ -67,4 +66,3 @@ class SettingsPage extends React.Component {
   export default SettingsPage
 
 
-	
