@@ -41,6 +41,8 @@ class SettingsPage extends React.Component {
       <div className='container'>
         <Jumbotron>
           <p>Welcome to the settings page where you can customize your Epstein experience.</p>
+         
+
           <p>Choose  a color for the background.</p>
         <Button bsStyle='primary' className='blue' onClick={() => console.log( document.body.style.backgroundColor = '#e5ffff')}> Blue </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -55,7 +57,27 @@ class SettingsPage extends React.Component {
         <Button bsStyle='primary' className='Red' onClick={() => console.log( document.body.style.backgroundColor = '#ff6b6b')} > Red </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Button bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#abbaab')} > Grey </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='White' onClick={() => console.log( document.body.style.backgroundColor = '#ffffff')} > White </Button>
         
+        
+
+          <p>Choose  a text color.</p>
+        <Button bsStyle='primary' className='blue'  onClick={() => document.body.style.color = '#005ce6'}> Blue </Button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='purple' onClick={() => document.body.style.color = '#8c1aff'} > Purple </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='green' onClick={() => document.body.style.color = '#00e600'} > Green </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='Orange' onClick={() => document.body.style.color = '#ff6600'} > Orange </Button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='Pink' onClick={() => document.body.style.color = '#ff3399'} > Pink </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='Red' onClick={() => document.body.style.color = '#e60000'} > Red </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='Grey' onClick={() => document.body.style.color = '#67747e'} > Grey </Button>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <Button bsStyle='primary' className='Black' onClick={() => document.body.style.color = '#000000'} > Black </Button>
         
 
         </Jumbotron>
