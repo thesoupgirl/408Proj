@@ -58,27 +58,27 @@ class SettingsPage extends React.Component {
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Button style={{fontSize: 20, color: 'black', backgroundColor: 'grey'}} bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#abbaab')} > Grey </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'white'}} bsStyle='primary' className='Grey' onClick={() => console.log( document.body.style.backgroundColor = '#ffffff')} > White </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'white'}} bsStyle='primary' className='White' onClick={() => console.log( document.body.style.backgroundColor = '#ffffff')} > White </Button>
 
        
         
 
           <p>Choose  a text color.</p>
-        <Button bsStyle='primary' className='blue'  onClick={() => document.body.style.color = '#005ce6'}> Blue </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'blue'}} bsStyle='primary' className='Blue'  onClick={() => document.body.style.color = '#005ce6'}> Blue </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='purple' onClick={() => document.body.style.color = '#8c1aff'} > Purple </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'purple'}} bsStyle='primary' className='Purple' onClick={() => document.body.style.color = '#8c1aff'} > Purple </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='green' onClick={() => document.body.style.color = '#00e600'} > Green </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'green'}} bsStyle='primary' className='Green' onClick={() => document.body.style.color = '#00e600'} > Green </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Orange' onClick={() => document.body.style.color = '#ff6600'} > Orange </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'orange'}} bsStyle='primary' className='Orange' onClick={() => document.body.style.color = '#ff6600'} > Orange </Button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Pink' onClick={() => document.body.style.color = '#ff3399'} > Pink </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'pink'}} bsStyle='primary' className='Pink' onClick={() => document.body.style.color = '#ff3399'} > Pink </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Red' onClick={() => document.body.style.color = '#e60000'} > Red </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'red'}} bsStyle='primary' className='Red' onClick={() => document.body.style.color = '#e60000'} > Red </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Grey' onClick={() => document.body.style.color = '#67747e'} > Grey </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'grey'}} bsStyle='primary' className='Grey' onClick={() => document.body.style.color = '#67747e'} > Grey </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button bsStyle='primary' className='Black' onClick={() => document.body.style.color = '#000000'} > Black </Button>
+        <Button style={{fontSize: 20, color: 'black', backgroundColor: 'white'}} bsStyle='primary' className='White' onClick={() => document.body.style.color = '#000000'} > White </Button>
         
 
         </Jumbotron>
