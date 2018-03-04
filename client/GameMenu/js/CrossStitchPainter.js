@@ -10,7 +10,7 @@ function GameMode() {
    * 3 - Third Template
    * 4 - Blank
    */
-  this.gameState = 0;
+  this.gameState = 1;
 
   /**
    * File Window State monitors what point/screen this file window should have
@@ -148,9 +148,32 @@ function GameMode() {
     };
     addGameObject(fileChoiceBlankButtonGameObject);
 
-    //Cancel Button
+    //Cancel and Return Buttons
+    //Return button
+    var returnButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 4 + 25, bgheight / 2 - fileWindowHeight / 2 + 140, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight / 2), "Return Button", false);
+    returnButtonGameObject.draw = function() {
+        if (self.fileWindowState != 1 && self.fileWindowState != 0) {
+            context.fillStyle = "#6da0f2"
+            context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+            context.lineWidth = 4;
+            context.strokeStyle = "#638fe2"
+            context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+            context.fillStyle = "#FFFFFF";
+            context.font = "30px Arial";
+            context.fillText("Back", this.position.x + 40, this.position.y + 35);
+        }
+    };
+
+    returnButtonGameObject.onMouseup = function() {
+        if (self.fileWindowState > 1) {
+            self.fileWindowState = 1;
+            console.log("Return button is clicked");
+            //console.log("File Window State is: " + self.fileWindowState);
+        }
+    };
+    addGameObject(returnButtonGameObject);
+
     var cancelButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 4 + 25, bgheight / 2 - fileWindowHeight / 2 + 140, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight / 2), "Cancel Button", false);
-    cancelButtonGameObject.clickThrough = true;
     cancelButtonGameObject.draw = function() {
         if (self.fileWindowState == 1) {
             context.fillStyle = "#6da0f2"
@@ -187,6 +210,13 @@ function GameMode() {
             context.fillText("1", this.position.x + 35, this.position.y + 70);
         }
     };
+    tempOneButtonGameObject.onMouseup = function() {
+        console.log("Template 1 button is clicked");
+        if (self.gameState != 0) {
+            console.log("Template 1 button is clicked");
+            self.fileWindowState = 4;
+        }
+    };
     addGameObject(tempOneButtonGameObject);
 
     //Template Two
@@ -221,28 +251,23 @@ function GameMode() {
     };
     addGameObject(tempThreeButtonGameObject);
 
-    //Return Button
-    var returnButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 4 + 25, bgheight / 2 - fileWindowHeight / 2 + 140, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight / 2), "Return Button", false);
-    returnButtonGameObject.draw = function() {
-        if (self.fileWindowState != 1 && self.fileWindowState != 0) {
+
+    //Warning 
+    var warningWindowWidth = 400;
+    var warningWindowHeight = 200;
+    var warningWindowGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 2, bgheight / 2 - fileWindowHeight / 2, 2), new Vector2(fileWindowWidth, fileWindowHeight), "File Window", false);
+    warningWindowGameObject.draw = function() {
+        if (self.fileWindowState == 4) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "30px Arial";
-            context.fillText("Back", this.position.x + 40, this.position.y + 35);
+            context.font = "60px Arial";
+            context.fillText("Meep", this.position.x + 35, this.position.y + 70);
         }
     }
-
-    returnButtonGameObject.onMouseup = function() {
-        if (self.fileWindowState != 1) {
-            self.fileWindowState = 1;
-            console.log("File Window State is: " + self.fileWindowState);
-        }
-    };
-    addGameObject(returnButtonGameObject);
 
     //Color Button
     var colorButtonGameObject = new GameObject(new Vector3(0, 100, 1), new Vector2(buttonWidth, buttonHeight), "Color Button", false);
@@ -280,6 +305,10 @@ function GameMode() {
         handImg.src = "../src/game2/drag_icon.png";
         context.drawImage(handImg, this.position.x + 25, this.position.y + 25, this.bounds.x / 2, this.bounds.y / 2);
     };
+
+    dragButtonGameObject.onMouseup = function() {
+        console.log("Return button clickThrough: " + returnButtonGameObject.clickThrough);
+    };
     addGameObject(dragButtonGameObject);
 
     //Zoom Button
@@ -297,7 +326,7 @@ function GameMode() {
     };
 
     zoomButtonGameObject.onMouseup = function() {
-        console.log("Current file window state: " + self.fileWindowState);
+        console.log("Current file window state: " + self.fileWindowState + " Current game state: " + self.gameState);
     };
     addGameObject(zoomButtonGameObject);
 
@@ -305,6 +334,7 @@ function GameMode() {
 
   this.tick = function() {
     // Called every frame update
+
   };
 
 };
