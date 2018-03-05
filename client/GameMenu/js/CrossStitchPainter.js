@@ -5,22 +5,35 @@ function GameMode() {
   /**
    * Game State monitors what point/screen this game should have
    * 0 - Empty Canvas
-   * 1 - First Template
-   * 2 - Second Template
-   * 3 - Third Template
-   * 4 - Blank
+   * 1 - Canvas Exists
    */
-  this.gameState = 1;
+  this.gameState = 0;
 
   /**
    * File Window State monitors what point/screen this file window should have
    * 0 - Closed
-   * 1 - Choice
-   * 2 - Template Select
-   * 3 - Define Blank
-   * 4 - Warning
+   * 1 - Open
+   * 2 - Template Choice
+   * 3 - Warning
    */
   this.fileWindowState = 0;
+
+  /**
+   * Temporary value for template choice
+   * 0 - None
+   * 1
+   * 2
+   * 3
+   * 4 - Blank
+   */
+  this.tempTemplateChoice = 0;
+
+  this.colorEnabled = false;
+  this.dragEnabled = false;
+  this.zoomEnabled = false;
+
+  this.blankWidth = 0;
+  this.blankHeight = 0;
 
   //For clearing the canvas
   this.deleteOnRestart = []; //array of game objects to be deleted
@@ -79,20 +92,20 @@ function GameMode() {
         //Activate File Window
         if (self.fileWindowState == 0) {
             self.fileWindowState = 1;
-        } else if (self.fileWindowState == 1) {
+        } else {
             self.fileWindowState = 0;
         } 
     };
     addGameObject(fileButtonGameObject);
 
     //File Window for choosing between loading an existing template or starting a blank canvas
-    //Fine Window
-    var fileWindowWidth = 400;
-    var fileWindowHeight = 200;
-    var fileWindowGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 2, bgheight / 2 - fileWindowHeight / 2, 2), new Vector2(fileWindowWidth, fileWindowHeight), "File Window", false);
+    //File Window
+    var fileWindowWidth = 200;
+    var fileWindowHeight = 100;
+    var fileWindowGameObject = new GameObject(new Vector3(100, 0, 2), new Vector2(fileWindowWidth, fileWindowHeight), "File Window", false);
 
     fileWindowGameObject.draw = function() {
-        if (self.fileWindowState != 0) {
+        if (self.fileWindowState > 0) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
@@ -102,177 +115,236 @@ function GameMode() {
     };
     addGameObject(fileWindowGameObject);
 
+
     //Template Button
-    var fileChoiceButtonWidth = 150;
-    var fileChoiceButtonHeight = 100;
-    var fileChoiceTemplateButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 2 + 25, bgheight / 2 - fileWindowHeight / 2 + 25, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight), "Template Choice", false);
+    var fileChoiceButtonWidth = 200;
+    var fileChoiceButtonHeight = 50;
+    var fileChoiceTemplateButtonGameObject = new GameObject(new Vector3(100, 0, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight), "Template Choice", false);
     fileChoiceTemplateButtonGameObject.draw = function() {
-        if (self.fileWindowState == 1) {
+        if (self.fileWindowState > 0) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "30px Arial";
-            context.fillText("Load", this.position.x + 40, this.position.y + 40);
-            context.fillText("Template", this.position.x + 15, this.position.y + 80);
+            context.font = "25px Arial";
+            context.fillText("Load Template", this.position.x + 17, this.position.y + 35);
         }
     }
     fileChoiceTemplateButtonGameObject.onMouseup = function() {
-        if (self.fileWindowState == 1) {
+        if (self.fileWindowState > 0) {
             self.fileWindowState = 2;
         }
     };
     addGameObject(fileChoiceTemplateButtonGameObject);
 
     //Blank Button
-    var fileChoiceBlankButtonGameObject = new GameObject(new Vector3(bgwidth / 2 + 25, bgheight / 2 - fileWindowHeight / 2 + 25, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight), "Blank Choice", false);
+    var fileChoiceBlankButtonGameObject = new GameObject(new Vector3(100, 50, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight), "Blank Choice", false);
     fileChoiceBlankButtonGameObject.draw = function() {
-        if (self.fileWindowState == 1) {
+        if (self.fileWindowState > 0) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "30px Arial";
-            context.fillText("Create", this.position.x + 30, this.position.y + 40);
-            context.fillText("Blank", this.position.x + 37, this.position.y + 80);
+            context.font = "25px Arial";
+            context.fillText("Create Blank", this.position.x + 25, this.position.y + 35);
         }
     }
     fileChoiceBlankButtonGameObject.onMouseup = function() {
-        if (self.fileWindowState == 1) {
-            self.fileWindowState = 3;
+        var bW = 0;
+        var bH = 0;
+        if (self.fileWindowState > 0) {
+            bW = prompt("Please enter the dimensions \nEnter the width", "");
+            while (bW <= 0 || isNaN(bW)) {
+                if (bW == null) {
+                    bW = 0;
+                    break;
+                }
+                bW = prompt("Invalid input.\nEnter the width", "");
+            }
+            bH = prompt("Enter the height", "");
+            while (bH <= 0 || isNaN(bH)) {
+                if (bH == null) {
+                    bH = 0;
+                    break;
+                }
+                bH = prompt("Invalid input.\nEnter the height", "");
+            }
+            self.blankWidth = bW;
+            self.blankHeight = bH;
+            console.log(self.blankWidth * self.blankHeight);
+
+            if (bW * bH != 0) {
+                self.fileWindowState = 0;
+                self.gameState = 1;
+            }
         }
     };
     addGameObject(fileChoiceBlankButtonGameObject);
 
-    //Cancel and Return Buttons
-    //Return button
-    var returnButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 4 + 25, bgheight / 2 - fileWindowHeight / 2 + 140, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight / 2), "Return Button", false);
-    returnButtonGameObject.draw = function() {
-        if (self.fileWindowState != 1 && self.fileWindowState != 0) {
-            context.fillStyle = "#6da0f2"
-            context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
-            context.lineWidth = 4;
-            context.strokeStyle = "#638fe2"
-            context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
-            context.fillStyle = "#FFFFFF";
-            context.font = "30px Arial";
-            context.fillText("Back", this.position.x + 40, this.position.y + 35);
-        }
-    };
-
-    returnButtonGameObject.onMouseup = function() {
-        if (self.fileWindowState > 1) {
-            self.fileWindowState = 1;
-            console.log("Return button is clicked");
-            //console.log("File Window State is: " + self.fileWindowState);
-        }
-    };
-    addGameObject(returnButtonGameObject);
-
-    var cancelButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 4 + 25, bgheight / 2 - fileWindowHeight / 2 + 140, 3), new Vector2(fileChoiceButtonWidth, fileChoiceButtonHeight / 2), "Cancel Button", false);
-    cancelButtonGameObject.draw = function() {
-        if (self.fileWindowState == 1) {
-            context.fillStyle = "#6da0f2"
-            context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
-            context.lineWidth = 4;
-            context.strokeStyle = "#638fe2"
-            context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
-            context.fillStyle = "#FFFFFF";
-            context.font = "30px Arial";
-            context.fillText("Cancel", this.position.x + 30, this.position.y + 35);
-        }
-    };
-    cancelButtonGameObject.onMouseup = function() {
-        if (self.fileWindowState == 1) {
-            console.log("Cancel button is clicked");
-            self.fileWindowState = 0;
-        }
-    };
-    addGameObject(cancelButtonGameObject);
 
     //TEMPLATE SECTION
     //Template One
-    var templateButtonEdgeLen = 100;
-    var tempOneButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 2 + 25, bgheight / 2 - fileWindowHeight / 2 + 25, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template One Button", false);
+    var templateButtonEdgeLen = 50;
+    var tempOneButtonGameObject = new GameObject(new Vector3(305, 0, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template One Button", false);
     tempOneButtonGameObject.draw = function() {
-        if (self.fileWindowState == 2) {
+        if (self.fileWindowState > 1) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "60px Arial";
-            context.fillText("1", this.position.x + 35, this.position.y + 70);
+            context.font = "30px Arial";
+            context.fillText("1", this.position.x + 16, this.position.y + 35);
         }
     };
     tempOneButtonGameObject.onMouseup = function() {
-        console.log("Template 1 button is clicked");
-        if (self.gameState != 0) {
-            console.log("Template 1 button is clicked");
-            self.fileWindowState = 4;
+        if (self.fileWindowState > 1) {
+            self.tempTemplateChoice = 1;
+            if (self.gameState != 0) {
+                self.fileWindowState = 3;
+            } else {
+                self.gameState = 1;
+                self.fileWindowState = 0;
+            }
         }
     };
     addGameObject(tempOneButtonGameObject);
 
     //Template Two
-    var tempTwoButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 8, bgheight / 2 - fileWindowHeight / 2 + 25, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template Two Button", false);
+    var tempTwoButtonGameObject = new GameObject(new Vector3(355, 0, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template Two Button", false);
     tempTwoButtonGameObject.draw = function() {
-        if (self.fileWindowState == 2) {
+        if (self.fileWindowState > 1) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "60px Arial";
-            context.fillText("2", this.position.x + 35, this.position.y + 70);
+            context.font = "30px Arial";
+            context.fillText("2", this.position.x + 16, this.position.y + 35);
+        }
+    };
+    tempTwoButtonGameObject.onMouseup = function() {
+        if (self.fileWindowState > 1) {
+            self.tempTemplateChoice = 2;
+            if (self.gameState != 0) {
+                self.fileWindowState = 3;
+            } else {
+                self.gameState = 2;
+                self.fileWindowState = 0;
+            }
         }
     };
     addGameObject(tempTwoButtonGameObject);
 
     //Template Three
-    var tempThreeButtonGameObject = new GameObject(new Vector3(bgwidth / 2 + fileWindowWidth / 4 - 25, bgheight / 2 - fileWindowHeight / 2 + 25, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template Three Button", false);
+    var tempThreeButtonGameObject = new GameObject(new Vector3(405, 0, 4), new Vector2(templateButtonEdgeLen, templateButtonEdgeLen), "Template Three Button", false);
     tempThreeButtonGameObject.draw = function() {
-        if (self.fileWindowState == 2) {
+        if (self.fileWindowState > 1) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "60px Arial";
-            context.fillText("3", this.position.x + 35, this.position.y + 70);
+            context.font = "30px Arial";
+            context.fillText("3", this.position.x + 16, this.position.y + 35);
+        }
+    };
+    tempThreeButtonGameObject.onMouseup = function() {
+        if (self.fileWindowState > 1) {
+            self.tempTemplateChoice = 3;
+            if (self.gameState != 0) {
+                self.fileWindowState = 3;
+            } else {
+                self.gameState = 3;
+                self.fileWindowState = 0;
+            }
         }
     };
     addGameObject(tempThreeButtonGameObject);
 
-
     //Warning 
     var warningWindowWidth = 400;
-    var warningWindowHeight = 200;
-    var warningWindowGameObject = new GameObject(new Vector3(bgwidth / 2 - fileWindowWidth / 2, bgheight / 2 - fileWindowHeight / 2, 2), new Vector2(fileWindowWidth, fileWindowHeight), "File Window", false);
+    var warningWindowHeight = 150;
+    var warningWindowGameObject = new GameObject(new Vector3(bgwidth / 2 - warningWindowWidth / 2, bgheight / 2 - warningWindowHeight / 2, 4), new Vector2(warningWindowWidth, warningWindowHeight), "File Window", false);
     warningWindowGameObject.draw = function() {
-        if (self.fileWindowState == 4) {
+        if (self.fileWindowState == 3) {
             context.fillStyle = "#6da0f2"
             context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.lineWidth = 4;
             context.strokeStyle = "#638fe2"
             context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
             context.fillStyle = "#FFFFFF";
-            context.font = "60px Arial";
-            context.fillText("Meep", this.position.x + 35, this.position.y + 70);
+            context.font = "20px Arial";
+            context.fillText("This will overwrite the current canvas.", this.position.x + 35, this.position.y + 35);
+            context.fillText("Are you sure you want to", this.position.x + 85, this.position.y + 65);
+            context.fillText("start a new template?", this.position.x + 105, this.position.y + 85);
+
+            var optionButtonwidth = 60;
+            var optionButtonheight = 30;
+            var yesButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - warningWindowWidth / 4, bgheight / 2 + warningWindowHeight / 8 + 10, 5), new Vector2(optionButtonwidth, optionButtonheight), "Yes Button", false);
+            yesButtonGameObject.draw = function() {
+                if (self.fileWindowState == 3) {
+                    context.fillStyle = "#6da0f2"
+                    context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+                    context.lineWidth = 4;
+                    context.strokeStyle = "#638fe2"
+                    context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+                    context.fillStyle = "#FFFFFF";
+                    context.font = "20px Arial";
+                    context.fillText("Yes", this.position.x + 15, this.position.y + 22);
+                }
+
+            }
+            yesButtonGameObject.onMouseup = function() {
+                if (self.fileWindowState == 3) {
+                    self.gameState = self.tempTemplateChoice;
+                    self.fileWindowState = 0;
+                    self.tempTemplateChoice = 0;
+                }
+            };
+            addGameObject(yesButtonGameObject);
+
+            var noButtonGameObject = new GameObject(new Vector3(bgwidth / 2 - warningWindowWidth / 4 + 140, bgheight / 2 + warningWindowHeight / 8 + 10, 5), new Vector2(optionButtonwidth, optionButtonheight), "No Button", false);
+            noButtonGameObject.draw = function() {
+                if (self.fileWindowState == 3) {
+                    context.fillStyle = "#6da0f2"
+                    context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+                    context.lineWidth = 4;
+                    context.strokeStyle = "#638fe2"
+                    context.strokeRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
+                    context.fillStyle = "#FFFFFF";
+                    context.font = "20px Arial";
+                    context.fillText("No", this.position.x + 18, this.position.y + 22);
+                }
+            }
+            noButtonGameObject.onMouseup = function() {
+                if (self.fileWindowState == 3) {
+                    self.fileWindowState = 2;
+                    self.tempTemplateChoice = 0;
+                }
+            };
+            addGameObject(noButtonGameObject);
         }
-    }
+    };
+    addGameObject(warningWindowGameObject);
+
+
 
     //Color Button
     var colorButtonGameObject = new GameObject(new Vector3(0, 100, 1), new Vector2(buttonWidth, buttonHeight), "Color Button", false);
     colorButtonGameObject.draw = function() {
-        context.fillStyle = "#6da0f2"
+        if (self.colorEnabled) {
+            context.fillStyle = "#a0c0fb";
+        } else {
+            context.fillStyle = "#6da0f2"
+        }
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.lineWidth = 4;
         context.strokeStyle = "#638fe2"
@@ -281,6 +353,13 @@ function GameMode() {
         var colorImg = new Image();
         colorImg.src = "../src/game2/color_icon.png";
         context.drawImage(colorImg, this.position.x + 25, this.position.y + 25, this.bounds.x / 2, this.bounds.y / 2);
+    };
+    colorButtonGameObject.onMouseup = function() {
+        if (!self.colorEnabled) {
+            self.dragEnabled = false;
+            self.zoomEnabled = false;
+            self.colorEnabled = true;
+        }
     };
     addGameObject(colorButtonGameObject);
 
@@ -295,7 +374,11 @@ function GameMode() {
     //Drag Button
     var dragButtonGameObject = new GameObject(new Vector3(0, 400, 1), new Vector2(buttonWidth, buttonHeight), "Drag Button", false);
     dragButtonGameObject.draw = function() {
-        context.fillStyle = "#6da0f2"
+        if (self.dragEnabled) {
+            context.fillStyle = "#a0c0fb";
+        } else {
+            context.fillStyle = "#6da0f2"
+        }        
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.lineWidth = 4;
         context.strokeStyle = "#638fe2"
@@ -305,16 +388,23 @@ function GameMode() {
         handImg.src = "../src/game2/drag_icon.png";
         context.drawImage(handImg, this.position.x + 25, this.position.y + 25, this.bounds.x / 2, this.bounds.y / 2);
     };
-
     dragButtonGameObject.onMouseup = function() {
-        console.log("Return button clickThrough: " + returnButtonGameObject.clickThrough);
+        if (!self.dragEnabled) {
+            self.dragEnabled = true;
+            self.zoomEnabled = false;
+            self.colorEnabled = false;
+        }
     };
     addGameObject(dragButtonGameObject);
 
     //Zoom Button
     var zoomButtonGameObject = new GameObject(new Vector3(0, 500, 1), new Vector2(buttonWidth, buttonHeight), "Zoom Button", false);
     zoomButtonGameObject.draw = function() {
-        context.fillStyle = "#6da0f2"
+        if (self.zoomEnabled) {
+            context.fillStyle = "#a0c0fb";
+        } else {
+            context.fillStyle = "#6da0f2"
+        }   
         context.fillRect(this.position.x, this.position.y, this.bounds.x, this.bounds.y);
         context.lineWidth = 4;
         context.strokeStyle = "#638fe2"
@@ -324,9 +414,12 @@ function GameMode() {
         zoomImg.src = "../src/game2/zoom_icon.png";
         context.drawImage(zoomImg, this.position.x + 25, this.position.y + 25, this.bounds.x / 2, this.bounds.y / 2);
     };
-
     zoomButtonGameObject.onMouseup = function() {
-        console.log("Current file window state: " + self.fileWindowState + " Current game state: " + self.gameState);
+        if (!self.zoomEnabled) {
+            self.dragEnabled = false;
+            self.zoomEnabled = true;
+            self.colorEnabled = false;
+        }    
     };
     addGameObject(zoomButtonGameObject);
 
