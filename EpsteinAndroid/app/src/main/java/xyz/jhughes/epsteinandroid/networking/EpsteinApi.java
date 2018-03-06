@@ -29,4 +29,7 @@ public interface EpsteinApi {
 
     @POST("calendar/event")
     Call<Void> updateStreeEvent(@Body RateEvent model);
+
+    @GET("outlooksignin")
+    Call<String> getOutlookUrl();
 }

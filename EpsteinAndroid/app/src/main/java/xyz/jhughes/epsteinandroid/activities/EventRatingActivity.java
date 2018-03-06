@@ -101,6 +101,7 @@ public class EventRatingActivity extends AppCompatActivity {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.code() != 200) {
                         Toast.makeText(EventRatingActivity.this, "Failed to update stress levels", Toast.LENGTH_LONG).show();
+                        return;
                     }
                     toPost--;
                     if (toPost <= 0) {

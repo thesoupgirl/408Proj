@@ -1,9 +1,15 @@
 package xyz.jhughes.epsteinandroid.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -36,8 +42,93 @@ public class CalendarImportActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        dialog = ProgressDialog.show(this, "", "Looking for calendars. Please wait...", true);
-        dialog.show();
+        outlookOrGoogle();
+    }
+
+    private void outlookOrGoogle() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle("Import Calendar")
+                //.setMessage("Would you like to import a Google or Outlook calendar?")
+                .setCancelable(true)
+                .setItems((new String[]{"Google", "Outlook"}),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                                switch (which) {
+                                    case 0:
+                                        getCalendarList();
+                                        break;
+                                    case 1:
+                                        processOutlookWeb();
+                                        break;
+                                }
+                            }
+                        }
+                ).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        finish();
+                    }
+                }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+        AlertDialog calendar = alertDialogBuilder.create();
+        calendar.show();
+    }
+
+    private void processOutlookWeb() {
+        showLoadingCalendarList();
+
+        EpsteinApiHelper.getInstance().getOutlookUrl().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                dialog.cancel();
+
+                if (response.body() != null && response.code() == 200
+                        && !response.body().equals("") && !response.body().startsWith("<html>")) {
+                    signInToOutlookWeb(response.body());
+                } else {
+                    failedToGetCalendars();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                failedToGetCalendars();
+            }
+        });
+    }
+
+    private void signInToOutlookWeb(String url) {
+        WebView wv = new WebView(this);
+        wv.loadUrl(url);
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                System.out.println(url);
+            }
+        });
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                .setTitle("Sign-In to Outlook")
+                .setView(wv)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+        alert.show();
+    }
+
+    private void getCalendarList() {
+        showLoadingCalendarList();
 
         EpsteinApiHelper.getInstance().getCalendarImportList(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
@@ -45,27 +136,33 @@ public class CalendarImportActivity extends AppCompatActivity {
         ).enqueue(new Callback<Calendars>() {
             @Override
             public void onResponse(Call<Calendars> call, Response<Calendars> response) {
+                dialog.dismiss();
+
                 if (response.code() == 200 && response.body() != null) {
                     ArrayAdapter<Calendar> itemsAdapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_single_choice, response.body().items);
                     listView.setAdapter(itemsAdapter);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Looks like we had a problem getting your calendars", Toast.LENGTH_LONG).show();
-                    setResult(CalendarActivity.FAILED_IMPORT_CALENDAR);
-                    finish();
+                    failedToGetCalendars();
                 }
-
-                dialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<Calendars> call, Throwable t) {
                 dialog.dismiss();
-                t.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Looks like we had a problem getting your calendars", Toast.LENGTH_LONG).show();
-                setResult(CalendarActivity.FAILED_IMPORT_CALENDAR);
-                finish();
+                failedToGetCalendars();
             }
         });
+    }
+
+    private void showLoadingCalendarList() {
+        dialog = ProgressDialog.show(this, "", "Looking for calendars. Please wait...", true);
+        dialog.show();
+    }
+
+    private void failedToGetCalendars() {
+        Toast.makeText(getApplicationContext(), "Looks like we had a problem getting your calendars", Toast.LENGTH_LONG).show();
+        setResult(CalendarActivity.FAILED_IMPORT_CALENDAR);
+        finish();
     }
 
     @OnClick(R.id.import_calendar_button)
