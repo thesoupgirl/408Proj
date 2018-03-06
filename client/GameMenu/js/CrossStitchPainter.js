@@ -156,6 +156,7 @@ function GameMode() {
     fileChoiceBlankButtonGameObject.onMouseup = function() {
         var bW = 0;
         var bH = 0;
+        self.tempTemplateChoice = 4;
         if (self.fileWindowState > 0) {
             bW = prompt("Please enter the dimensions \nEnter the width", "");
             while (bW <= 0 || isNaN(bW)) {
@@ -178,8 +179,14 @@ function GameMode() {
             console.log(self.blankWidth * self.blankHeight);
 
             if (bW * bH != 0) {
-                self.fileWindowState = 0;
-                self.gameState = 1;
+                if (self.gameState == 1) {
+                    self.fileWindowState = 3;
+                } else {
+                    //console.log("gameState is " + self.gameState);
+                    self.gameState = 1;
+                    self.fileWindowState = 0;
+                    console.log("Running blank template of size" + bW + " * " + bH);
+                }
             }
         }
     };
@@ -210,6 +217,7 @@ function GameMode() {
             } else {
                 self.gameState = 1;
                 self.fileWindowState = 0;
+                console.log("Running first template");
             }
         }
     };
@@ -235,8 +243,9 @@ function GameMode() {
             if (self.gameState != 0) {
                 self.fileWindowState = 3;
             } else {
-                self.gameState = 2;
+                self.gameState = 1;
                 self.fileWindowState = 0;
+                console.log("Running second template");
             }
         }
     };
@@ -262,8 +271,9 @@ function GameMode() {
             if (self.gameState != 0) {
                 self.fileWindowState = 3;
             } else {
-                self.gameState = 3;
+                self.gameState = 1;
                 self.fileWindowState = 0;
+                console.log("Running third template");
             }
         }
     };
@@ -304,7 +314,8 @@ function GameMode() {
             }
             yesButtonGameObject.onMouseup = function() {
                 if (self.fileWindowState == 3) {
-                    self.gameState = self.tempTemplateChoice;
+                    console.log("Starting new template of choice " + self.tempTemplateChoice)
+                    self.gameState = 1;
                     self.fileWindowState = 0;
                     self.tempTemplateChoice = 0;
                 }
@@ -328,6 +339,7 @@ function GameMode() {
                 if (self.fileWindowState == 3) {
                     self.fileWindowState = 2;
                     self.tempTemplateChoice = 0;
+                    console.log("Returning to current template");
                 }
             };
             addGameObject(noButtonGameObject);
