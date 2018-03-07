@@ -19,23 +19,14 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 class SettingsPage extends React.Component {
 	
   constructor(props) {
-  
    console.log("at settings page")
     super(props)
-   
-     this.customizeBackground = this.customizeBackground.bind(this)
   }
 
-  customizeBackground(){
-   
-      
-       document.body.style.backgroundColor = '#33ccff'
-  
-
-  }
   
   
-
+// allow user to change color of background and UI after pressing coursing color button. 
+// onClick function to change color 
    render() {
     return (
       <div className='container'>
