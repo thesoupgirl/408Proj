@@ -78,7 +78,7 @@ class SettingsPage extends React.Component {
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Button style={{fontSize: 20, color: 'black', backgroundColor: '#67747e'}} bsStyle='primary' className='Grey' onClick={() => document.body.style.color = '#67747e'} > Grey </Button>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Button style={{fontSize: 20, color: 'white', backgroundColor: '#000000'}} bsStyle='primary' className='Black' onClick={() => document.body.style.color = '#ffffff'} > Black </Button>
+        <Button style={{fontSize: 20, color: 'white', backgroundColor: 'black'}} bsStyle='primary' className='Black' onClick={() => document.body.style.color = 'black'} > Black </Button>
         
 
         </Jumbotron>
