@@ -405,6 +405,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 						eventID = eventID.substring(0, eventID.indexOf("_"));
 						System.out.println(Colors.ANSI_RED+"="+eventID+"= "+event.getSummary());//+Colors.ANSI_RED+"=nos9g4bakgg4lsgs6tkscuhsjc=");
 					}
+					if(eventID == null || eventID.length() < 2) {
+						continue;
+					}
 					spec = new GetItemSpec()
 						.withPrimaryKey("eventID", eventID);
 					//the event is in the DB!
@@ -1098,7 +1101,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/api/calendar/androidevents").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/calendar/event", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
