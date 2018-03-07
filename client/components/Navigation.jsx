@@ -12,6 +12,7 @@ import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import HomePage from './HomePage'
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -58,6 +59,9 @@ class Navigation extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => setActiveView(StressFormPage)}>
               Rate Events
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(HomePage)}>
+              Home Page
             </MenuItem>
             <MenuItem onClick={() => setActiveView(Games)}>
               Games

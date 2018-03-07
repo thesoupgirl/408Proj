@@ -12,6 +12,7 @@ import UserPage from './UserPage'
 import StressFormPage from './StressFormPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import HomePage from './HomePage'
 
 
 class App extends React.Component {
