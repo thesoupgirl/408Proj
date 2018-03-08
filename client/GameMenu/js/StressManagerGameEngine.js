@@ -109,7 +109,7 @@ function GameObject(position, bounds, name, hasPhysics) {
   this.lastZ = position.z; // Used to see if we should sort the gameobject array again
   if (hasPhysics) this.physics = new PhysicsProperties();
 
-  this.draw = function() {
+  this.draw = function(itisme) {
     // Can be overridden by whoever creates this,
     // but for now we only draw a tiny circle
     context.fillStyle = "#FF0000";
@@ -124,7 +124,7 @@ function GameObject(position, bounds, name, hasPhysics) {
   // int, int
   // Called by core gamemode loop
   this.tick = function() {
-    this.draw();
+    this.draw(this);
     this.onTick();
     if (this.hasPhysics) {
       this.position = this.physics.physicsTick(this.position);
@@ -138,7 +138,7 @@ function GameObject(position, bounds, name, hasPhysics) {
     //console.log(name + " mouse down at (" + x + "," + y + ")");
   };
   // int, int, world position of the click on this element
-  this.onMouseup = function(x, y) {
+  this.onMouseup = function(x, y, itisme) {
     // Can be overridden by whoever creates this,
     // but for now we just print the name of this object
     //console.log(name + " mouse up at (" + x + "," + y + ")");
@@ -260,7 +260,8 @@ function mouseup(event) {
   for (var i = gameObjects.length - 1, len = gameObjects.length; i >= 0; i--) {
     if (gameObjects[i].position.x < x && gameObjects[i].position.x + gameObjects[i].bounds.x > x &&
       gameObjects[i].position.y < y && gameObjects[i].position.y + gameObjects[i].bounds.y > y) {
-      gameObjects[i].onMouseup(x, y);
+      //console.log("please work");
+      gameObjects[i].onMouseup(x, y, gameObjects[i]);
       if (!gameObjects[i].clickThrough) break;
     }
   }
