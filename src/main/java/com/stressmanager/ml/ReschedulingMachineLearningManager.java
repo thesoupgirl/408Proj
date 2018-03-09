@@ -57,7 +57,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         final int NUM_EXAMPLES = 200;
         for (int n = 0; n < NUM_EXAMPLES; n++) {
             try (Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
-                 Tensor<Integer> target = Tensors.create(timeDiffTarget);
+                 Tensor<Float> target = Tensors.create((float)timeDiffTarget);
                  Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
                  Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
                  Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
