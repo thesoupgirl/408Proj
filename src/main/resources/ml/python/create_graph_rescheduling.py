@@ -2,15 +2,15 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-pS = tf.placeholder(tf.int8, name='pS') # Combined stress for Sunday
-pM = tf.placeholder(tf.int8, name='pM') # Combined stress for Monday
-pT = tf.placeholder(tf.int8, name='pT') # Combined stress for Tuesday
-pW = tf.placeholder(tf.int8, name='pW') # Combined stress for Wednesday
-pTh = tf.placeholder(tf.int8, name='pTh') # Combined stress for Thursday
-pF = tf.placeholder(tf.int8, name='pF') # Combined stress for Friday
-pSa = tf.placeholder(tf.int8, name='pSa') # Combined stress for Saturday
+pS = tf.placeholder(tf.int32, name='pS') # Combined stress for Sunday
+pM = tf.placeholder(tf.int32, name='pM') # Combined stress for Monday
+pT = tf.placeholder(tf.int32, name='pT') # Combined stress for Tuesday
+pW = tf.placeholder(tf.int32, name='pW') # Combined stress for Wednesday
+pTh = tf.placeholder(tf.int32, name='pTh') # Combined stress for Thursday
+pF = tf.placeholder(tf.int32, name='pF') # Combined stress for Friday
+pSa = tf.placeholder(tf.int32, name='pSa') # Combined stress for Saturday
 
-eventStress = tf.placeholder(tf.int8, name="eventStress") # Stress of the event in question
+eventStress = tf.placeholder(tf.int32, name="eventStress") # Stress of the event in question
 
 y_ = tf.placeholder(tf.float64, name='target') # Time from the event in question to the predicted reschedule time
 

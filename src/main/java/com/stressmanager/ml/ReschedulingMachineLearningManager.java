@@ -12,7 +12,7 @@ import org.tensorflow.Tensor;
 import org.tensorflow.Tensors;
 
 public class ReschedulingMachineLearningManager extends MachineLearningManager {
-    private static final String myGraphDefFilePath = "./src/main/resources/ml/graphs/graph.pb";
+    private static final String myGraphDefFilePath = "./src/main/resources/ml/graphs/graph_rescheduling.pb";
     private static final String myCheckpointDir = "./src/main/resources/ml/checkpoints/checkpoint_rescheduling";
 
     /**
@@ -58,7 +58,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         for (int n = 0; n < NUM_EXAMPLES; n++) {
             try (Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
                  Tensor<Float> target = Tensors.create((float)timeDiffTarget);
-                 Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
+                 Tensor<Integer> stressSundayTensor = Tensors.create(   stressSunday);
                  Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
                  Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
                  Tensor<Integer> stressWednesdayTensor = Tensors.create(stressWednesday);
@@ -68,13 +68,13 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
                 session.runner()
                         .feed("eventStress", eventStressTensor)
                         .feed("target", target)
-                        .feed("iS", stressSundayTensor)
-                        .feed("iM", stressMondayTensor)
-                        .feed("iT", stressTuesdayTensor)
-                        .feed("iW", stressWednesdayTensor)
-                        .feed("iTh", stressThursdayTensor)
-                        .feed("iF", stressFridayTensor)
-                        .feed("iSa", stressSaturdayTensor)
+                        .feed("pS", stressSundayTensor)
+                        .feed("pM", stressMondayTensor)
+                        .feed("pT", stressTuesdayTensor)
+                        .feed("pW", stressWednesdayTensor)
+                        .feed("pTh", stressThursdayTensor)
+                        .feed("pF", stressFridayTensor)
+                        .feed("pSa", stressSaturdayTensor)
                         .addTarget("train").run();
             }
         }
@@ -96,18 +96,22 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
 
     protected void printVariables(Session sess) {
         List<Tensor<?>> values = sess.runner()
-                .fetch("eventStress/read")
-                .fetch("target/read")
-                .fetch("pS/read")
-                .fetch("pM/read")
-                .fetch("pT/read")
-                .fetch("pW/read")
-                .fetch("pTh/read")
-                .fetch("pF/read")
-                .fetch("pSa/read")
+                .fetch("iS/read")
+                .fetch("iM/read")
+                .fetch("iT/read")
+                .fetch("iW/read")
+                .fetch("iTh/read")
+                .fetch("iF/read")
+                .fetch("iSa/read")
                 .run();
+        System.out.printf("iS: %f\n", values.get(0).floatValue());
+        System.out.printf("iM: %f\n", values.get(1).floatValue());
+        System.out.printf("iT: %f\n", values.get(2).floatValue());
+        System.out.printf("iW: %f\n", values.get(3).floatValue());
+        System.out.printf("iTh: %f\n", values.get(4).floatValue());
+        System.out.printf("iF: %f\n", values.get(5).floatValue());
+        System.out.printf("iSa: %f\n", values.get(6).floatValue());
         for (Tensor<?> t : values) {
-            System.out.printf("%s\n", t.toString());
             t.close();
         }
     }
