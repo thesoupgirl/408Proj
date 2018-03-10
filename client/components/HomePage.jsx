@@ -35,14 +35,12 @@ class HomePage extends React.Component {
     return (
       <div className='container'>
         <Jumbotron>
-          <p>Welcome to Epstein.</p>
+          <p>Welcome to Epstein. We are so glad you decided to use our smart calendar to help you manage and balance your day to day activities and alleviate your stress from the chaos of life! </p>
 
         </Jumbotron>
  
-  
-    <img  width={900} height={600} alt="900x600"  src={require('../image/flower.png')} /> 
-      
 
+<img width={200} height={200} src={require('../image/flower.png')} style={{position: "relative", top: 100, left: 500}}/>
         
       </div>
       )
