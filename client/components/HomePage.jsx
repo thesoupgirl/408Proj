@@ -40,7 +40,7 @@ class HomePage extends React.Component {
         </Jumbotron>
  
 
-<img width={200} height={200} src={require('../image/flower.png')} style={{position: "relative", top: 100, left: 500}}/>
+<img width={600} height={900} src={require('../image/flower.png')} style={{position: "relative", top: 100, left: 250}}/>
         
       </div>
       )
