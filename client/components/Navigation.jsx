@@ -12,6 +12,7 @@ import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import SettingsPage from './SettingsPage'
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -64,6 +65,9 @@ class Navigation extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => this.setState({ alertVisible: true })}>
               Advice
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(SettingsPage)}>
+              Settings
             </MenuItem>
             <MenuItem divider/>
             <MenuItem onClick={() => getLogout()}>
