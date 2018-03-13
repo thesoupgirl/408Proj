@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+
+import org.joda.time.DateTimeConstants;
 import org.tensorflow.Graph;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
@@ -38,7 +40,8 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         // Focused event stress
         int eventStress = focusedEvent.getStress();
         // The time difference between the original event, and the future event
-        int timeDiffTarget = (int)focusedEvent.getEventTime().minus(currentWeek.getEvent(focusedEvent.getEventId()).getEventTime().getMillis()).getMillis();
+        // Note: in HOURS
+        int timeDiffTarget = -1 * (int)focusedEvent.getEventTime().minus(currentWeek.getEvent(focusedEvent.getEventId()).getEventTime().getMillis()).getMillis()/DateTimeConstants.MILLIS_PER_HOUR;
         // Combined stresses
         int stressSunday = previousWeek.getEvents(Calendar.SUNDAY).stream().mapToInt(event -> event.getStress()).sum();
         int stressMonday = previousWeek.getEvents(Calendar.MONDAY).stream().mapToInt(event -> event.getStress()).sum();
@@ -51,13 +54,23 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
 
         System.out.println("Tensors before training:");
         printVariables(session);
+        System.out.printf("pS: %d\n", stressSunday);
+        System.out.printf("pM: %d\n", stressMonday);
+        System.out.printf("pT: %d\n", stressTuesday);
+        System.out.printf("pW: %d\n", stressWednesday);
+        System.out.printf("pTh: %d\n", stressThursday);
+        System.out.printf("pF: %d\n", stressFriday);
+        System.out.printf("pSa: %d\n", stressSaturday);
+        System.out.printf("focusedEventTimeDiff: %d\n", timeDiffTarget);
+        System.out.printf("eventStress: %d\n", eventStress);
+
 
         // Train a bunch of times.
         // (Will be much more efficient if we sent batches instead of individual values).
-        final int NUM_EXAMPLES = 200;
+        final int NUM_EXAMPLES = 5;
         for (int n = 0; n < NUM_EXAMPLES; n++) {
             try (Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
-                 Tensor<Float> target = Tensors.create((float)timeDiffTarget);
+                 Tensor<Double> target = Tensors.create((double)timeDiffTarget);
                  Tensor<Integer> stressSundayTensor = Tensors.create(   stressSunday);
                  Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
                  Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
@@ -76,6 +89,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
                         .feed("pF", stressFridayTensor)
                         .feed("pSa", stressSaturdayTensor)
                         .addTarget("train").run();
+                printVariables(session);
             }
         }
 

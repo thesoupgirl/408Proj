@@ -15,19 +15,21 @@ eventStress = tf.placeholder(tf.int32, name="eventStress") # Stress of the event
 y_ = tf.placeholder(tf.float64, name='target') # Time from the event in question to the predicted reschedule time
 
 
-iS = tf.Variable(0., name='iS') # Influence of Sunday
-iM = tf.Variable(0., name='iM') # Influence of Monday
-iT = tf.Variable(0., name='iT') # Influence of Tuesday
-iW = tf.Variable(0., name='iW') # Influence of Wednesday
-iTh = tf.Variable(0., name='iTh') # Influence of Thursday
-iF = tf.Variable(0., name='iF') # Influence of Friday
-iSa = tf.Variable(0., name='iSa') # Influence of Saturday
+iS = tf.Variable(1., name='iS') # Influence of Sunday
+iM = tf.Variable(1., name='iM') # Influence of Monday
+iT = tf.Variable(1., name='iT') # Influence of Tuesday
+iW = tf.Variable(1., name='iW') # Influence of Wednesday
+iTh = tf.Variable(1., name='iTh') # Influence of Thursday
+iF = tf.Variable(1., name='iF') # Influence of Friday
+iSa = tf.Variable(1., name='iSa') # Influence of Saturday
+
+# y = eventStress * ((pS * iS) + (pM * iM) + (pT * iT) + (pW * iW) + (pTh * iTh) + (pF * iF) + (pSa * iSa))
 
 y = tf.cast(tf.cast(eventStress, tf.float32) * ((tf.cast(pS, tf.float32) * iS) + (tf.cast(pM, tf.float32) * iM) + (tf.cast(pT, tf.float32) * iT) + (tf.cast(pW, tf.float32) * iW) + (tf.cast(pTh, tf.float32) * iTh) + (tf.cast(pF, tf.float32) * iF) + (tf.cast(pSa, tf.float32) * iSa)), tf.float64)
 
 y = tf.identity(y, name='output')
 
-loss = tf.reduce_mean(tf.square(y - y_))
+loss = tf.reduce_mean(tf.log(tf.clip_by_value(y - y_, 1e10,-1e10)))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train_op = optimizer.minimize(loss, name='train')
 
