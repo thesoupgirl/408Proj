@@ -1,18 +1,13 @@
 package com.stressmanager.ml;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
-
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.tensorflow.Graph;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 import org.tensorflow.Tensors;
+
+import java.nio.file.Paths;
+import java.util.Calendar;
+import java.util.List;
 
 public class ReschedulingMachineLearningManager extends MachineLearningManager {
     private static final double FLOAT_TO_MILLIS_CONVERSION_RATE = DateTimeConstants.MILLIS_PER_HOUR;
@@ -40,7 +35,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
      * @param currentWeek
      */
     public synchronized void trainRescheduling(String focusedEventId, WeekData previousWeek, WeekData currentWeek) {
-        // TODO test
         if (!previousWeek.hasEvent(focusedEventId)) {
             System.err.println("Could not find focused event in the previous provided week, aborting");
             return;
@@ -51,7 +45,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         }
         EventData focusedEvent = previousWeek.getEvent(focusedEventId);
         // Focused event stress
-        //int eventStress = focusedEvent.getStress();
         // The time difference between the original event, and the future event
         // Note: in HOURS
         double timeDiffTarget = -1 * (currentWeek.getEvent(focusedEventId).getEventTime().getMillis() - previousWeek.getEvent(focusedEvent.getEventId()).getEventTime().getMillis()) / FLOAT_TO_MILLIS_CONVERSION_RATE;
@@ -75,7 +68,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         System.out.printf("pF: %d\n", stressFriday);
         System.out.printf("pSa: %d\n", stressSaturday);
         System.out.printf("timeDiffTarget: %f\n", timeDiffTarget);
-        //System.out.printf("eventStress: %d\n", eventStress);
 
 
         // Train a bunch of times.
@@ -83,7 +75,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         final int NUM_EXAMPLES = 200;
         for (int n = 0; n < NUM_EXAMPLES; n++) {
             try (
-                 //Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
                  Tensor<Double> target = Tensors.create(timeDiffTarget);
                  Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
                  Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
@@ -93,7 +84,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
                  Tensor<Integer> stressFridayTensor = Tensors.create(stressFriday);
                  Tensor<Integer> stressSaturdayTensor = Tensors.create(stressSaturday)) {
                 session.runner()
-                        //.feed("eventStress", eventStressTensor)
                         .feed("target", target)
                         .feed("pS", stressSundayTensor)
                         .feed("pM", stressMondayTensor)
@@ -103,7 +93,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
                         .feed("pF", stressFridayTensor)
                         .feed("pSa", stressSaturdayTensor)
                         .addTarget("train").run();
-                printVariables(session);
+                //printVariables(session);
             }
         }
 
@@ -126,9 +116,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
      * @return - A new week, otherwise currentWeek if machine learning fails to provide an acceptable date
      */
     public WeekData predictRescheduling(String focusedEventId, WeekData currentWeek) {
-        EventData focusedEvent = currentWeek.getEvent(focusedEventId);
-        // Focused event stress
-        //int eventStress = focusedEvent.getStress();
         // Combined stresses
         int stressSunday = currentWeek.getEvents(Calendar.SUNDAY).stream().mapToInt(event -> event.getStress()).sum();
         int stressMonday = currentWeek.getEvents(Calendar.MONDAY).stream().mapToInt(event -> event.getStress()).sum();
@@ -147,13 +134,11 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         System.out.printf("pTh: %d\n", stressThursday);
         System.out.printf("pF: %d\n", stressFriday);
         System.out.printf("pSa: %d\n", stressSaturday);
-        //System.out.printf("eventStress: %d\n", eventStress);
 
 
         WeekData suggestedWeek = new WeekData(currentWeek);
 
         try (
-             //Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
              Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
              Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
              Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
@@ -162,7 +147,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
              Tensor<Integer> stressFridayTensor = Tensors.create(stressFriday);
              Tensor<Integer> stressSaturdayTensor = Tensors.create(stressSaturday);
              Tensor<Double> output = session.runner()
-                     //.feed("eventStress", eventStressTensor)
                      .feed("pS", stressSundayTensor)
                      .feed("pM", stressMondayTensor)
                      .feed("pT", stressTuesdayTensor)
@@ -229,14 +213,15 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
                 }
             }
         }
-
-        // TODO weekends/overnight?
-
+        
         // verify new date is within one week
         // may not need this one if that many people reschedule weeks away
         if (Math.abs(originalEventTime - newEventTime) > DateTimeConstants.MILLIS_PER_WEEK) {
             throw new RuntimeException("Rescheduled time was outside of the acceptable range of one week");
         }
+
+        // TODO weekends/overnight?
+
     }
 
 
