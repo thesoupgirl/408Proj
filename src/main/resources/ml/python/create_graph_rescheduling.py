@@ -25,7 +25,7 @@ iSa = tf.Variable(1., name='iSa') # Influence of Saturday
 
 # y = (eventStress / (pS * iS)) + (pS * iS) + (eventStress / (pM * iM)) + (pM * iM) +
 
-y = tf.cast((1.0/(tf.cast(pS, tf.float32) * iS)) + (tf.cast(pS, tf.float32) * iS) + (1.0/(tf.cast(pM, tf.float32) * iM)) + (tf.cast(pM, tf.float32) * iM) +(1.0/(tf.cast(pT, tf.float32) * iT)) + (tf.cast(pT, tf.float32) * iT) +(1.0/(tf.cast(pW, tf.float32) * iW)) + (tf.cast(pW, tf.float32) * iW) +(1.0/(tf.cast(pTh, tf.float32) * iTh)) + (tf.cast(pTh, tf.float32) * iTh) +(1.0/(tf.cast(pF, tf.float32) * iF)) + (tf.cast(pF, tf.float32) * iF) +(1.0/(tf.cast(pSa, tf.float32) * iSa)) + (tf.cast(pSa, tf.float32) * iSa), tf.float64)
+y = tf.cast((tf.cast(pS, tf.float32) * iS) + (tf.cast(pS, tf.float32) * iS) + (tf.cast(pM, tf.float32) * iM) + (tf.cast(pM, tf.float32) * iM) + (tf.cast(pT, tf.float32) * iT) + (tf.cast(pT, tf.float32) * iT) + (tf.cast(pW, tf.float32) * iW) + (tf.cast(pW, tf.float32) * iW) + (tf.cast(pTh, tf.float32) * iTh) + (tf.cast(pTh, tf.float32) * iTh) + (tf.cast(pF, tf.float32) * iF) + (tf.cast(pF, tf.float32) * iF) + (tf.cast(pSa, tf.float32) * iSa) + (tf.cast(pSa, tf.float32) * iSa), tf.float64)
 
 y = tf.identity(y, name='output')
 

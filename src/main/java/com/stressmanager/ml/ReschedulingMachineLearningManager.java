@@ -128,7 +128,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
     public WeekData predictRescheduling(String focusedEventId, WeekData currentWeek) {
         EventData focusedEvent = currentWeek.getEvent(focusedEventId);
         // Focused event stress
-        int eventStress = focusedEvent.getStress();
+        //int eventStress = focusedEvent.getStress();
         // Combined stresses
         int stressSunday = currentWeek.getEvents(Calendar.SUNDAY).stream().mapToInt(event -> event.getStress()).sum();
         int stressMonday = currentWeek.getEvents(Calendar.MONDAY).stream().mapToInt(event -> event.getStress()).sum();
@@ -147,12 +147,13 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         System.out.printf("pTh: %d\n", stressThursday);
         System.out.printf("pF: %d\n", stressFriday);
         System.out.printf("pSa: %d\n", stressSaturday);
-        System.out.printf("eventStress: %d\n", eventStress);
+        //System.out.printf("eventStress: %d\n", eventStress);
 
 
         WeekData suggestedWeek = new WeekData(currentWeek);
 
-        try (Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
+        try (
+             //Tensor<Integer> eventStressTensor = Tensors.create(eventStress);
              Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
              Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
              Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
@@ -161,7 +162,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
              Tensor<Integer> stressFridayTensor = Tensors.create(stressFriday);
              Tensor<Integer> stressSaturdayTensor = Tensors.create(stressSaturday);
              Tensor<Double> output = session.runner()
-                     .feed("eventStress", eventStressTensor)
+                     //.feed("eventStress", eventStressTensor)
                      .feed("pS", stressSundayTensor)
                      .feed("pM", stressMondayTensor)
                      .feed("pT", stressTuesdayTensor)
@@ -173,7 +174,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
         ) {
             double outputValue = output.doubleValue();
             System.out.printf("Expected time difference: %f hours (%f days)\n", outputValue, outputValue / DateTimeConstants.HOURS_PER_DAY);
-            applyRescheduleSuggestion(suggestedWeek, focusedEventId, (long)(outputValue * FLOAT_TO_MILLIS_CONVERSION_RATE));
+            applyRescheduleSuggestion(suggestedWeek, focusedEventId, (long)(-1 * outputValue * FLOAT_TO_MILLIS_CONVERSION_RATE));
             return suggestedWeek;
         } catch (Exception e) {
             System.err.println("Unable to suggest rescheduling: " + e);
