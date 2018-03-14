@@ -33,7 +33,7 @@ y = tf.cast(tf.cast(eventStress, tf.float32) * (1.0/(tf.cast(pS, tf.float32) * i
 
 y = tf.identity(y, name='output')
 
-loss = tf.reduce_mean(tf.clip_by_value(y - y_, 1e10,-1e10))
+loss = tf.reduce_mean(tf.log(y - y_))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train_op = optimizer.minimize(loss, name='train')
 
