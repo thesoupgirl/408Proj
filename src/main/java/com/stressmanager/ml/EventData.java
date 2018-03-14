@@ -39,5 +39,8 @@ public class EventData {
         this.eventTime = eventTime;
     }
 
-
+    @Override
+    public String toString() {
+        return "EventData: id = " + eventId + ", eventTime = " + eventTime + ", stress: " + stress;
+    }
 }

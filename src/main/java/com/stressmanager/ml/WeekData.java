@@ -16,7 +16,7 @@ public class WeekData {
      */
     public WeekData(WeekData toClone) {
         this();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 1; i <= 7; i++) {
             if (toClone.dataMap.get(i) != null) {
                 for (Map.Entry<String, EventData> entry : toClone.dataMap.get(i).entrySet()) {
                     addEvent(new EventData(entry.getValue().getEventId(), entry.getValue().getEventTime(), entry.getValue().getStress()));
@@ -53,6 +53,21 @@ public class WeekData {
             dataMap.get(toSet.getEventTime().getDayOfWeek()).put(toSet.getEventId(), toSet);
         } else {
             addEvent(toSet);
+        }
+    }
+
+    /**
+     * Does it have the event
+     * does this really need a javadoc
+     * @param id
+     * @return
+     */
+    public boolean hasEvent(String id) {
+        try {
+            getEvent(id);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
         }
     }
 
