@@ -10,6 +10,21 @@ public class WeekData {
         dataMap = new HashMap<>();
     }
 
+    /**
+     * Clones an existing weekdata
+     * @param toClone
+     */
+    public WeekData(WeekData toClone) {
+        this();
+        for (int i = 0; i < 7; i++) {
+            if (toClone.dataMap.get(i) != null) {
+                for (Map.Entry<String, EventData> entry : toClone.dataMap.get(i).entrySet()) {
+                    addEvent(new EventData(entry.getValue().getEventId(), entry.getValue().getEventTime(), entry.getValue().getStress()));
+                }
+            }
+        }
+    }
+
     public WeekData(List<EventData> toAdd) {
         this();
         for (EventData event : toAdd) {

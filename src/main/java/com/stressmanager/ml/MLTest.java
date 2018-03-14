@@ -9,8 +9,6 @@ import java.util.Random;
 
 public class MLTest {
     public static void main(String[] args) {
-        ReschedulingMachineLearningManager rs = ReschedulingMachineLearningManager.getInstance();
-
         // DUMMY DATA
         List<EventData> priorEvents = new ArrayList<>();
         List<EventData> nextEvents = new ArrayList<>();
@@ -22,11 +20,16 @@ public class MLTest {
             priorEvents.add(new EventData(i + "", time, eventStress));
             nextEvents.add(new EventData(i + "", time, eventStress));
         }
+
+
         WeekData priorWeekData = new WeekData(priorEvents);
         WeekData nextWeekData = new WeekData(nextEvents);
         EventData focusedEvent = nextWeekData.getEvent("4");
         focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours(4));
 
-        rs.trainRescheduling(focusedEvent.getEventId(), priorWeekData, nextWeekData);
+        ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), priorWeekData, nextWeekData);
+
+        WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEvent.getEventId(), nextWeekData);
+
     }
 }
