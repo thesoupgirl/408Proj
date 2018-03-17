@@ -95,4 +95,20 @@ public class WeekData {
     public List<EventData> getEvents(int weekdayId) {
         return new ArrayList<>(dataMap.get(weekdayId).values());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        WeekData toCompare = (WeekData)o;
+        for (int i = 1; i <= 7; i++) {
+            if (toCompare.dataMap.get(i) != null) {
+                for (Map.Entry<String, EventData> entry : toCompare.dataMap.get(i).entrySet()) {
+                    if (!entry.getValue().equals(toCompare.getEvent(entry.getKey()))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }

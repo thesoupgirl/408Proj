@@ -43,4 +43,11 @@ public class EventData {
     public String toString() {
         return "EventData: id = " + eventId + ", eventTime = " + eventTime + ", stress: " + stress;
     }
+    @Override
+    public boolean equals(Object o) {
+        EventData toCompare = (EventData)o;
+        return toCompare.stress == this.stress &&
+                toCompare.eventTime.getMillis() == this.eventTime.getMillis() &&
+                toCompare.eventId.equals(this.eventId);
+    }
 }

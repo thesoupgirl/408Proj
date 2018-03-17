@@ -274,5 +274,4 @@ public class MainController {
         //Send response to client
         return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
     }
-
 }
