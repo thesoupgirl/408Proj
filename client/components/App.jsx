@@ -93,7 +93,7 @@ class App extends React.Component {
       success: (user, status, xhr) => {
         if (this.responseIsJson(xhr)) {
             this.setState({ user, authorized: true })
-            this.setActiveView(UserPage)
+            this.setActiveView(HomePage)
             this.getEventList()
           return
         }
