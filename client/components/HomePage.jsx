@@ -74,7 +74,7 @@ class HomePage extends React.Component {
 
        <h3  style={{textAlign: "center"}}>Try Epstein on Android.
          </h3>
-      <img  width={700} height="auto" alt="900x600"  src={require('../image/EpsteinThree.png')} style={{position: "relative", left: 250}} onClick={() => this.props.setActiveView(CalendarPage)} /> 
+      <img  width={700} height="auto" alt="900x600"  src={require('../image/EpsteinThree.png')} style={{position: "relative", left: 250}}  /> 
 
 
       
