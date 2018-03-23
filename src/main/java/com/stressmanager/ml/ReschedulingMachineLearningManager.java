@@ -36,12 +36,10 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
      */
     public synchronized void trainRescheduling(String focusedEventId, WeekData previousWeek, WeekData currentWeek) {
         if (!previousWeek.hasEvent(focusedEventId)) {
-            System.err.println("Could not find focused event in the previous provided week, aborting");
-            return;
+            throw new RuntimeException("Could not find focused event in the previous provided week");
         }
         if (!currentWeek.hasEvent(focusedEventId)) {
-            System.err.println("Could not find focused event in the newest provided week, aborting");
-            return;
+            throw new RuntimeException("Could not find focused event in the newest provided week");
         }
         EventData focusedEvent = previousWeek.getEvent(focusedEventId);
         // Focused event stress
@@ -160,9 +158,6 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
             System.out.printf("Expected time difference: %f hours (%f days)\n", outputValue, outputValue / DateTimeConstants.HOURS_PER_DAY);
             applyRescheduleSuggestion(suggestedWeek, focusedEventId, (long)(-1 * outputValue * FLOAT_TO_MILLIS_CONVERSION_RATE));
             return suggestedWeek;
-        } catch (Exception e) {
-            System.err.println("Unable to suggest rescheduling: " + e);
-            return currentWeek;
         }
     }
 
@@ -197,10 +192,17 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
      * @return the verified weekdata, NULL if the weekdata fails any of our verifications
      */
     public void applyRescheduleSuggestion(WeekData weekInput, String eventId, long newEventTimeDiff) {
-        EventData focusedEvent = weekInput.getEvent(eventId);
+        EventData focusedEvent = null;
+        try {
+            focusedEvent = weekInput.getEvent(eventId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Could not find event " + eventId + " in the current week");
+
+        }
         long originalEventTime = focusedEvent.getEventTime().getMillis();
         long newEventTime = originalEventTime + newEventTimeDiff;
         focusedEvent.setEventTime(focusedEvent.getEventTime().plus(newEventTimeDiff));
+
 
         // verify nothing overlaps
         // Assuming 1 hour overlaps

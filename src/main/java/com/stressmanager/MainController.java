@@ -14,6 +14,10 @@ import com.google.api.client.auth.oauth2.*;
 import com.google.api.services.calendar.model.*;
 import com.google.api.client.auth.oauth2.Credential;
 
+import com.stressmanager.ml.MLSuggestionRequest;
+import com.stressmanager.ml.RawWeekData;
+import com.stressmanager.ml.ReschedulingMachineLearningManager;
+import com.stressmanager.ml.WeekData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
@@ -274,4 +278,34 @@ public class MainController {
         //Send response to client
         return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
     }
+
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/suggest", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getCalendarSuggestion(@RequestBody GenericJson request) {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        Gson gson = new Gson();
+
+        MLSuggestionRequest parsedRequest = gson.fromJson(request.toString(), MLSuggestionRequest.class);
+
+        String focusedEventId = parsedRequest.focusedEventId;
+        WeekData currentWeek = new WeekData(parsedRequest.currentWeek);
+
+        String response;
+
+        try {
+            WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEventId, currentWeek);
+            response = gson.toJson(suggestedWeek.getRaw());
+        } catch (RuntimeException e) {
+            response = "{\"Error\":\"" + e + "\"}";
+            return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
+        }
+
+
+        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+    }
+
 }

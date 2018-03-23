@@ -1,6 +1,7 @@
 package com.stressmanager.ml;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WeekData {
     // Integer as in the day of the week
@@ -8,6 +9,11 @@ public class WeekData {
 
     public WeekData() {
         dataMap = new HashMap<>();
+    }
+
+    public WeekData(RawWeekData raw) {
+        // *vomit*
+        this(raw.weekdayItems.stream().map(item -> item.get(raw.weekdayItems.indexOf(item))).collect(Collectors.toList()));
     }
 
     /**
@@ -111,4 +117,16 @@ public class WeekData {
         return true;
     }
 
+    /**
+     * Convert to RawWeekData
+     * @return RawWeekData
+     */
+    public RawWeekData getRaw() {
+        List<List<EventData>> rawData = new ArrayList<>();
+        for (int i = 1; i <= 7; i++) {
+            rawData.add(new ArrayList(dataMap.get(i).values()));
+        }
+        return new RawWeekData(rawData);
+        //return new RawWeekData(dataMap.values().stream().map(items -> new ArrayList(items.values())).collect(Collectors.toList()));
+    }
 }
