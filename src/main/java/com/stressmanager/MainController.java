@@ -2,24 +2,12 @@
 package com.stressmanager;
 
 import java.util.*;
-import javax.servlet.http.*;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.GenericJson;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.auth.oauth2.*;
 import com.google.api.services.calendar.model.*;
-import com.google.api.client.auth.oauth2.Credential;
 
-import com.stressmanager.ml.MLSuggestionRequest;
-import com.stressmanager.ml.RawWeekData;
 import com.stressmanager.ml.ReschedulingMachineLearningManager;
 import com.stressmanager.ml.WeekData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -289,10 +277,8 @@ public class MainController {
 
         Gson gson = new Gson();
 
-        MLSuggestionRequest parsedRequest = gson.fromJson(request.toString(), MLSuggestionRequest.class);
-
-        String focusedEventId = parsedRequest.focusedEventId;
-        WeekData currentWeek = new WeekData(parsedRequest.currentWeek);
+        String focusedEventId = (String)request.get("focusedEvent");
+        WeekData currentWeek = null; // TODO get
 
         String response;
 
