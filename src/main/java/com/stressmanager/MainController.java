@@ -6,6 +6,7 @@ import java.util.*;
 import com.google.api.client.json.GenericJson;
 import com.google.api.services.calendar.model.*;
 
+import com.stressmanager.ml.EventData;
 import com.stressmanager.ml.ReschedulingMachineLearningManager;
 import com.stressmanager.ml.WeekData;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
@@ -269,29 +270,37 @@ public class MainController {
 
 
     // Route that gets a rescheduled day suggestion using machine learning
-    @RequestMapping(value = "/calendar/suggest", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/calendar/suggest", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> getCalendarSuggestion(@RequestBody GenericJson request) {
+    public ResponseEntity<String> getCalendarSuggestion() {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        Gson gson = new Gson();
-
-        String focusedEventId = (String)request.get("focusedEvent");
-        WeekData currentWeek = null; // TODO get
-
+        
         String response;
-
-        try {
-            WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEventId, currentWeek);
-            response = gson.toJson(suggestedWeek.getRaw());
-        } catch (RuntimeException e) {
-            response = "{\"Error\":\"" + e + "\"}";
-            return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
-        }
-
-
+        response = "{\"WeekData\":\"\"}";
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+        /*Gson gson = new Gson();
+
+        WeekData currentWeek = null; // TODO get
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        // TODO reschedule every single event in the current week
+        for (int i = 1; i <= 7; i++) {
+            for (EventData event : currentWeek.getEvents(i)) {
+                try {
+                    returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
+                } catch (RuntimeException e) {
+                    // If any exceptions, continue and do not change the returned week week
+                    continue;
+                    //response = "{\"Error\":\"" + e + "\"}";
+                    //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        response = gson.toJson(returnedWeek.getRaw());
+        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);*/
     }
 
 }
