@@ -23,9 +23,9 @@ iTh = tf.Variable(1., name='iTh') # Influence of Thursday
 iF = tf.Variable(1., name='iF') # Influence of Friday
 iSa = tf.Variable(1., name='iSa') # Influence of Saturday
 
-# y = (eventStress / (pS * iS)) + (pS * iS) + (eventStress / (pM * iM)) + (pM * iM) +
+# y = (eventStress / (pS * iS)) + (pS * iS) + (eventStress / (pM * tf.clip_by_value(iM, 0, 10))) + (pM * tf.clip_by_value(iM, 0, 10)) +
 
-y = tf.cast((tf.cast(pS, tf.float32) * iS) + (tf.cast(pS, tf.float32) * iS) + (tf.cast(pM, tf.float32) * iM) + (tf.cast(pM, tf.float32) * iM) + (tf.cast(pT, tf.float32) * iT) + (tf.cast(pT, tf.float32) * iT) + (tf.cast(pW, tf.float32) * iW) + (tf.cast(pW, tf.float32) * iW) + (tf.cast(pTh, tf.float32) * iTh) + (tf.cast(pTh, tf.float32) * iTh) + (tf.cast(pF, tf.float32) * iF) + (tf.cast(pF, tf.float32) * iF) + (tf.cast(pSa, tf.float32) * iSa) + (tf.cast(pSa, tf.float32) * iSa), tf.float64)
+y = tf.cast((tf.cast(pS, tf.float32) * tf.clip_by_value(iS, 0, 10)) + (tf.cast(pS, tf.float32) * tf.clip_by_value(iS, 0, 10)) + (tf.cast(pM, tf.float32) * tf.clip_by_value(iM, 0, 10)) + (tf.cast(pM, tf.float32) * tf.clip_by_value(iM, 0, 10)) + (tf.cast(pT, tf.float32) * tf.clip_by_value(iT, 0, 10)) + (tf.cast(pT, tf.float32) * tf.clip_by_value(iT, 0, 10)) + (tf.cast(pW, tf.float32) * tf.clip_by_value(iW, 0, 10)) + (tf.cast(pW, tf.float32) * tf.clip_by_value(iW, 0, 10)) + (tf.cast(pTh, tf.float32) * tf.clip_by_value(iTh, 0, 10)) + (tf.cast(pTh, tf.float32) * tf.clip_by_value(iTh, 0, 10)) + (tf.cast(pF, tf.float32) * tf.clip_by_value(iF, 0, 10)) + (tf.cast(pF, tf.float32) * tf.clip_by_value(iF, 0, 10)) + (tf.cast(pSa, tf.float32) * tf.clip_by_value(iSa, 0, 10)) + (tf.cast(pSa, tf.float32) * tf.clip_by_value(iSa, 0, 10)), tf.float64)
 
 y = tf.identity(y, name='output')
 
@@ -61,5 +61,5 @@ print('Tensor to read value of iTh              ', iTh.value().name)
 print('Tensor to read value of iF               ', iF.value().name)
 print('Tensor to read value of iSa              ', iSa.value().name)
 
-with open('../graphs/graph_rescheduling.pb', 'wb') as f:
+with open('../graphs/graph_rescheduling_notification.pb', 'wb') as f:
     f.write(tf.get_default_graph().as_graph_def().SerializeToString())

@@ -13,8 +13,6 @@ public class MLTest {
         public List<String> items;
     }
     public static void main(String[] args) {
-        foo itm = new Gson().fromJson("{ \"weekdayItems\" : [\"a\", \"b\"]}", foo.class);
-        System.out.println(itm.items.size());
 
         // DUMMY DATA
         List<EventData> priorEvents = new ArrayList<>();
@@ -30,12 +28,17 @@ public class MLTest {
         }
 
 
-        WeekData priorWeekData = new WeekData(priorEvents);
-        WeekData nextWeekData = new WeekData(nextEvents);
-        EventData focusedEvent = nextWeekData.getEvent("4");
-        focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours((r.nextInt() % 10) - 5));
+        WeekData weekData = new WeekData(priorEvents);
+        //WeekData nextWeekData = new WeekData(nextEvents);
+        //EventData focusedEvent = nextWeekData.getEvent("4");
+        //focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours((r.nextInt() % 10) - 5));
 
-        //ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), priorWeekData, nextWeekData);
+        // Random number from 3 to 5
+        WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification((r.nextInt()%3) + 3, weekData);
+
+        double predictedTime = WhenReschedulingMachineLearningManager.getInstance().predictReschedulingNotification(weekData);
+
+        //ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), weekData, nextWeekData);
 
         //WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEvent.getEventId(), nextWeekData);
 

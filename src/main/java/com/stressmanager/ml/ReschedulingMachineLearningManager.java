@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class ReschedulingMachineLearningManager extends MachineLearningManager {
+    public static int TRAINING_COUNT = 200;
+
     private static final double FLOAT_TO_MILLIS_CONVERSION_RATE = DateTimeConstants.MILLIS_PER_HOUR;
 
     private static final String myGraphDefFilePath = "./src/main/resources/ml/graphs/graph_rescheduling.pb";
@@ -70,8 +72,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
 
         // Train a bunch of times.
         // (Will be much more efficient if we sent batches instead of individual values).
-        final int NUM_EXAMPLES = 200;
-        for (int n = 0; n < NUM_EXAMPLES; n++) {
+        for (int n = 0; n < TRAINING_COUNT; n++) {
             try (
                  Tensor<Double> target = Tensors.create(timeDiffTarget);
                  Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
