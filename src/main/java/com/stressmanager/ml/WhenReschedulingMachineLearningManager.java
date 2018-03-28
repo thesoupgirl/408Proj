@@ -44,16 +44,11 @@ public class WhenReschedulingMachineLearningManager extends MachineLearningManag
         int stressFriday = currentWeek.getEvents(Calendar.FRIDAY).stream().mapToInt(event -> event.getStress()).sum();
         int stressSaturday = currentWeek.getEvents(Calendar.SATURDAY).stream().mapToInt(event -> event.getStress()).sum();
 
+        int totalStress = stressSunday + stressMonday + stressTuesday + stressWednesday + stressThursday + stressFriday + stressSaturday;
 
         System.out.println("Tensors before training:");
         printVariables(session);
-        System.out.printf("pS: %d\n", stressSunday);
-        System.out.printf("pM: %d\n", stressMonday);
-        System.out.printf("pT: %d\n", stressTuesday);
-        System.out.printf("pW: %d\n", stressWednesday);
-        System.out.printf("pTh: %d\n", stressThursday);
-        System.out.printf("pF: %d\n", stressFriday);
-        System.out.printf("pSa: %d\n", stressSaturday);
+        System.out.printf("pStress: %d\n", totalStress);
         System.out.printf("timeDiffTarget: %f\n", timeTaken);
 
 
@@ -62,22 +57,10 @@ public class WhenReschedulingMachineLearningManager extends MachineLearningManag
         for (int n = 0; n < TRAINING_COUNT; n++) {
             try (
                     Tensor<Double> target = Tensors.create(timeTaken);
-                    Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
-                    Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
-                    Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
-                    Tensor<Integer> stressWednesdayTensor = Tensors.create(stressWednesday);
-                    Tensor<Integer> stressThursdayTensor = Tensors.create(stressThursday);
-                    Tensor<Integer> stressFridayTensor = Tensors.create(stressFriday);
-                    Tensor<Integer> stressSaturdayTensor = Tensors.create(stressSaturday)) {
+                    Tensor<Integer> stressTotalTensor = Tensors.create(totalStress)) {
                 session.runner()
                         .feed("target", target)
-                        .feed("pS", stressSundayTensor)
-                        .feed("pM", stressMondayTensor)
-                        .feed("pT", stressTuesdayTensor)
-                        .feed("pW", stressWednesdayTensor)
-                        .feed("pTh", stressThursdayTensor)
-                        .feed("pF", stressFridayTensor)
-                        .feed("pSa", stressSaturdayTensor)
+                        .feed("pStress", stressTotalTensor)
                         .addTarget("train").run();
                 //printVariables(session);
             }
@@ -109,35 +92,19 @@ public class WhenReschedulingMachineLearningManager extends MachineLearningManag
         int stressFriday = currentWeek.getEvents(Calendar.FRIDAY).stream().mapToInt(event -> event.getStress()).sum();
         int stressSaturday = currentWeek.getEvents(Calendar.SATURDAY).stream().mapToInt(event -> event.getStress()).sum();
 
+        int totalStress = stressSunday + stressMonday + stressTuesday + stressWednesday + stressThursday + stressFriday + stressSaturday;
+
         System.out.println("Inputs upon retrieval");
         printVariables(session);
-        System.out.printf("pS: %d\n", stressSunday);
-        System.out.printf("pM: %d\n", stressMonday);
-        System.out.printf("pT: %d\n", stressTuesday);
-        System.out.printf("pW: %d\n", stressWednesday);
-        System.out.printf("pTh: %d\n", stressThursday);
-        System.out.printf("pF: %d\n", stressFriday);
-        System.out.printf("pSa: %d\n", stressSaturday);
+        System.out.printf("pStress: %d\n", totalStress);
 
 
         WeekData suggestedWeek = new WeekData(currentWeek);
 
         try (
-                Tensor<Integer> stressSundayTensor = Tensors.create(stressSunday);
-                Tensor<Integer> stressMondayTensor = Tensors.create(stressMonday);
-                Tensor<Integer> stressTuesdayTensor = Tensors.create(stressTuesday);
-                Tensor<Integer> stressWednesdayTensor = Tensors.create(stressWednesday);
-                Tensor<Integer> stressThursdayTensor = Tensors.create(stressThursday);
-                Tensor<Integer> stressFridayTensor = Tensors.create(stressFriday);
-                Tensor<Integer> stressSaturdayTensor = Tensors.create(stressSaturday);
+                Tensor<Integer> totalStressTensor = Tensors.create(totalStress);
                 Tensor<Double> output = session.runner()
-                        .feed("pS", stressSundayTensor)
-                        .feed("pM", stressMondayTensor)
-                        .feed("pT", stressTuesdayTensor)
-                        .feed("pW", stressWednesdayTensor)
-                        .feed("pTh", stressThursdayTensor)
-                        .feed("pF", stressFridayTensor)
-                        .feed("pSa", stressSaturdayTensor)
+                        .feed("pStress", totalStressTensor)
                         .fetch("output").run().get(0).expect(Double.class)
         ) {
             double outputValue = output.doubleValue();
@@ -148,21 +115,9 @@ public class WhenReschedulingMachineLearningManager extends MachineLearningManag
 
     protected void printVariables(Session sess) {
         List<Tensor<?>> values = sess.runner()
-                .fetch("iS/read")
-                .fetch("iM/read")
-                .fetch("iT/read")
-                .fetch("iW/read")
-                .fetch("iTh/read")
-                .fetch("iF/read")
-                .fetch("iSa/read")
+                .fetch("iStress/read")
                 .run();
-        System.out.printf("influenceS: %f\n", values.get(0).floatValue());
-        System.out.printf("influenceM: %f\n", values.get(1).floatValue());
-        System.out.printf("influenceT: %f\n", values.get(2).floatValue());
-        System.out.printf("influenceW: %f\n", values.get(3).floatValue());
-        System.out.printf("influenceTh: %f\n", values.get(4).floatValue());
-        System.out.printf("influenceF: %f\n", values.get(5).floatValue());
-        System.out.printf("influenceSa: %f\n", values.get(6).floatValue());
+        System.out.printf("influenceStress: %f\n", values.get(0).floatValue());
         for (Tensor<?> t : values) {
             t.close();
         }
