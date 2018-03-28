@@ -16,11 +16,11 @@ iStress = tf.Variable(1., name='iStress') # Influence of stress
 # y = tf.cast((tf.cast(pS, tf.float32) * tf.clip_by_value(iS, 0, 10)) + (tf.cast(pS, tf.float32) * tf.clip_by_value(iS, 0, 10)) + (tf.cast(pM, tf.float32) * tf.clip_by_value(iM, 0, 10)) + (tf.cast(pM, tf.float32) * tf.clip_by_value(iM, 0, 10)) + (tf.cast(pT, tf.float32) * tf.clip_by_value(iT, 0, 10)) + (tf.cast(pT, tf.float32) * tf.clip_by_value(iT, 0, 10)) + (tf.cast(pW, tf.float32) * tf.clip_by_value(iW, 0, 10)) + (tf.cast(pW, tf.float32) * tf.clip_by_value(iW, 0, 10)) + (tf.cast(pTh, tf.float32) * tf.clip_by_value(iTh, 0, 10)) + (tf.cast(pTh, tf.float32) * tf.clip_by_value(iTh, 0, 10)) + (tf.cast(pF, tf.float32) * tf.clip_by_value(iF, 0, 10)) + (tf.cast(pF, tf.float32) * tf.clip_by_value(iF, 0, 10)) + (tf.cast(pSa, tf.float32) * tf.clip_by_value(iSa, 0, 10)) + (tf.cast(pSa, tf.float32) * tf.clip_by_value(iSa, 0, 10)), tf.float64)
 
 # Minimum time of 5
-y = tf.cast(5 + tf.clip_by_value(tf.cast(pStress, tf.float32) * iStress, 0, 120), tf.float64);
+y = tf.cast(5 + tf.clip_by_value(-5 * tf.cast(pStress, tf.float32) * iStress, 0, 120), tf.float64);
 
 y = tf.identity(y, name='output')
 
-loss = tf.reduce_sum(tf.log(y - y_))
+loss = tf.reduce_mean(tf.square(y - y_))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train_op = optimizer.minimize(loss, name='train')
 
