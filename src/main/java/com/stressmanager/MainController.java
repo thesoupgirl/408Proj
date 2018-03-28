@@ -269,38 +269,6 @@ public class MainController {
     }
 
 
-    // Route that gets a rescheduled day suggestion using machine learning
-    @RequestMapping(value = "/calendar/suggest", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<String> getCalendarSuggestion() {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        
-        String response;
-        response = "{\"WeekData\":\"\"}";
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
-        /*Gson gson = new Gson();
-
-        WeekData currentWeek = null; // TODO get
-        WeekData returnedWeek = new WeekData(currentWeek);
-
-
-        // TODO reschedule every single event in the current week
-        for (int i = 1; i <= 7; i++) {
-            for (EventData event : currentWeek.getEvents(i)) {
-                try {
-                    returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
-                } catch (RuntimeException e) {
-                    // If any exceptions, continue and do not change the returned week week
-                    continue;
-                    //response = "{\"Error\":\"" + e + "\"}";
-                    //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
-                }
-            }
-        }
-        response = gson.toJson(returnedWeek.getRaw());
-        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);*/
-    }
 
 }

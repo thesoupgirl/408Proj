@@ -23,6 +23,7 @@ public class WeekData {
     public WeekData(WeekData toClone) {
         this();
         for (int i = 1; i <= 7; i++) {
+            dataMap.put(i, new HashMap<>());
             if (toClone.dataMap.get(i) != null) {
                 for (Map.Entry<String, EventData> entry : toClone.dataMap.get(i).entrySet()) {
                     addEvent(new EventData(entry.getValue().getEventId(), entry.getValue().getEventTime(), entry.getValue().getStress()));
@@ -99,6 +100,7 @@ public class WeekData {
      * @return
      */
     public List<EventData> getEvents(int weekdayId) {
+        if (dataMap.get(weekdayId) == null) return new ArrayList<>();
         return new ArrayList<>(dataMap.get(weekdayId).values());
     }
 
