@@ -105,7 +105,7 @@ import java.io.FileReader;
 public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    OAuth2ClientContext oauth2ClientContext;
+    public OAuth2ClientContext oauth2ClientContext;
 
 
 	@Value("${google.client.clientId}")
@@ -1174,7 +1174,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
      ** Helper Methods
      ** to keep the code clean
      */
-    public boolean tableCheck(String userName) {
+    public static boolean tableCheck(String userName) {
         boolean exists = true;
         Table table = DBSetup.getTable(userName);
         GetItemSpec spec12 = new GetItemSpec()
