@@ -62,12 +62,13 @@ class App extends React.Component {
 
 getReschedule() {
 	
+	
       ajax({
-           	url: 'calendar/suggest',
+           	url: 'calendar/suggest/'+ this.state.user.name,
       	   	type: 'get',
       		//contentType: 'application/json',
 	       	//data: JSON.stringify(data),
-	          success: (data,response) => {
+	          success: (data,response, xhr) => {
 	          	console.log("calling resch endpoint")
 	          	 console.log("data")
           		 console.log(data)
