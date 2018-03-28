@@ -34,7 +34,7 @@ public class MLTest {
         //focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours((r.nextInt() % 10) - 5));
 
         // Random number from 3 to 5
-        WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification((r.nextInt()%3) + 3, weekData);
+        WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification((Math.abs(r.nextInt()%3)) + 5, weekData);
 
         double predictedTime = WhenReschedulingMachineLearningManager.getInstance().predictReschedulingNotification(weekData);
 

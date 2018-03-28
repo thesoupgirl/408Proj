@@ -47,9 +47,9 @@ public class MLEndpoints {
     static com.google.api.services.calendar.Calendar service;
 
     // Route that gets a rescheduled day suggestion using machine learning
-    @RequestMapping(value = "/calendar/suggest", method = RequestMethod.GET)
+    @RequestMapping(value = "/calendar/suggest/{userName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> getCalendarSuggestion(@RequestBody GenericJson request) throws Exception {
+    public ResponseEntity<String> getCalendarSuggestion(@PathVariable(value = "userName") String userName) throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -58,9 +58,9 @@ public class MLEndpoints {
 
         Calendar service = getCalendarService(""+-1);
 
-        System.out.println(Colors.ANSI_BLUE + "JSON " + request.toPrettyString());
+        //System.out.println(Colors.ANSI_BLUE + "JSON " + request.toPrettyString());
         //get the Username and eventID
-        String userName = (String) request.get("userName");
+        //String userName = (String) request.get("userName");
 
         System.out.println(Colors.ANSI_BLUE + "userName " + userName);
         //String eventID = (String)request.get("eventID");
