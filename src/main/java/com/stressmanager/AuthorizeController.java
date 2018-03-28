@@ -22,7 +22,7 @@ public class AuthorizeController {
   }
 
   @RequestMapping(value="/authorize", method=RequestMethod.POST)
-  public void authorize(
+  public String authorize(
       @RequestParam("code") String code, 
       @RequestParam("id_token") String idToken,
       @RequestParam("state") UUID state,
@@ -32,6 +32,8 @@ public class AuthorizeController {
     HttpSession session = request.getSession();
     UUID expectedState = (UUID) session.getAttribute("expected_state");
     UUID expectedNonce = (UUID) session.getAttribute("expected_nonce");
+    System.out.println("nonce: " + session.getAttribute("expected_nonce"));
+    System.out.println("token from param: " + idToken);
 
     // Make sure that the state query parameter returned matches
     // the expected state
@@ -44,18 +46,21 @@ public class AuthorizeController {
         session.setAttribute("userName", idTokenObj.getName());
         session.setAttribute("userTenantId", idTokenObj.getTenantId());
       } else {
-        //return "Id token failed validation";
+        return "Id token failed validation";
         //session.setAttribute("error", "ID token failed validation.");
       }
     }
     else {
-      //return "Unexpected state";
+      return "Unexpected state";
       //session.setAttribute("error", "Unexpected state returned from authority.");
     }
     try {
-      response.sendRedirect("/");
+      System.out.println("meow: " + session.getAttribute("tokens"));
+      return "yay?";
+      //response.sendRedirect("/");
     }
     catch(Exception e) {
+      return "well fuck";
       
     }
   }

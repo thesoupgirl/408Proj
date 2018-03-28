@@ -32,6 +32,7 @@ public class IdToken {
 
     // The three parts are: header.token.signature
     String idToken = tokenParts[1];
+    System.out.println("idToken from parseEncodedToken: " + idToken);
 
     byte[] decodedBytes = Base64.getUrlDecoder().decode(idToken);
 

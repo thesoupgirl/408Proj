@@ -234,7 +234,10 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			for (Event event : items) {
 				//get the stresslvl from the DB if possible
 				String eventID = event.getId();
-				Integer val = null;
+				if(eventID.equals(null) || eventID.equals("")){
+					continue;
+				}
+ 				Integer val = null;
 				if(tableExists) {
 					GetItemSpec spec;
 					if(eventID.indexOf("_") != -1)

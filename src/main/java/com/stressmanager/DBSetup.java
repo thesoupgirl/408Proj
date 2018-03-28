@@ -40,6 +40,7 @@ public class DBSetup {
             .withRegion(Regions.US_WEST_2)
             .withCredentials(new DefaultAWSCredentialsProviderChain())
             .build();
+
         currentDB = new DynamoDB(remotetest);
 
     }

@@ -175,9 +175,11 @@ public class AuthHelper {
   TokenService tokenService = retrofit.create(TokenService.class);
 
   try {
-    return tokenService.getAccessTokenFromAuthCode(tenantId, getAppId(), getAppPassword(), 
-        "authorization_code", authCode, getRedirectUrl()).execute().body();
+    System.out.println("getting access token from auth code");
+    return tokenService.getAccessTokenFromAuthCode(tenantId, "d47db936-04fe-446f-8e69-a0c52e86d8b1", "JWXK3740(|=+dzfzpzmCEC0", 
+        "authorization_code", authCode, "http://localhost:8080/authorize").execute().body();
   } catch (IOException e) {
+    System.out.println("In AuthHelper in getTokenFromAuthCode catch...");
     TokenResp error = new TokenResp();
     error.setError("IOException");
     error.setErrorDescription(e.getMessage());
