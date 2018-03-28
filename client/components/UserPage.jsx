@@ -18,20 +18,43 @@ class UserPage extends React.Component {
         super(props)
         console.log("calendar")
         console.log(props)
+        console.log("apply")
+        console.log(this.props.apply)
         this.state = {
             calID: ''
         }
     }
 
     accessor(time, event) {
-        const dateTimeString = `${time}.dateTime`
-        const dateString = `${time}.date`
+        if(this.props.apply){
+            console.log("applying resch cal changes")
 
-        if (has(event, dateTimeString)) {
-            return moment(event[time]['dateTime']).toDate()
-        } else if (has(event, dateString)) {
-            return moment(event[time]['date']).toDate()
+            const dateTimeString = `${time}.dateTime`
+            const dateString = `${time}.date`
+            var daty = moment(event[time]['dateTime']).toDate()
+
+            if (has(event, dateTimeString)) {
+                var dat = moment(event[time]['dateTime']).toDate()
+                dat = moment(daty).set({ hour: parseInt((dat.getHours() + 1), 10)}).toDate()
+                return dat
+                } 
+            else if (has(event, dateString)) {
+                return moment(event[time]['date']).toDate()
+                }
+
+            }
+        else {
+             console.log("regular cal")
+            const dateTimeString = `${time}.dateTime`
+            const dateString = `${time}.date`
+
+            if (has(event, dateTimeString)) {
+                return moment(event[time]['dateTime']).toDate()
+            } else if (has(event, dateString)) {
+                return moment(event[time]['date']).toDate()
+            }
         }
+         //this.props.setApplyState(this.props.apply)
     }
 
 
@@ -93,7 +116,9 @@ class UserPage extends React.Component {
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
-        
+                <Jumbotron>
+                <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.props.getReschedule()}> Reschedule </Button>
+                 </Jumbotron>
             </div>
         )
     }

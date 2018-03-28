@@ -13,6 +13,7 @@ class MainLayout extends React.Component {
           authorized={this.props.authorized}
           getCalendars={() => this.props.getCalendars()}
           getCalendarType={() => this.props.getCalendarType()}
+          getReschedule={() => this.props.getReschedule()}
           getLogout={() => this.props.getLogout()}
           setActiveView={activeView => this.props.setActiveView(activeView)}
           user={this.props.user}
@@ -21,6 +22,7 @@ class MainLayout extends React.Component {
         <this.props.activeView
           calendarList={this.props.calendarList}
           eventList={this.props.eventList}
+          ReschedulEventList ={this.props.ReschedulEventList}
           alert={this.props.alert}
           getEventList={() => this.props.getEventList}
           postCalendarAdd={calID => this.props.postCalendarAdd(calID)}
@@ -29,6 +31,9 @@ class MainLayout extends React.Component {
           user={this.props.user}
           setActiveView={activeView => this.props.setActiveView(activeView)}
           getCalendars={() => this.props.getCalendars()}
+          getReschedule={() => this.props.getReschedule()}
+          apply={this.props.apply}
+          setApplyState={apply => this.props.setApplyState(apply)}
         />
       </div>
     )

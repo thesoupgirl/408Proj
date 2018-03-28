@@ -12,6 +12,8 @@ import UserPage from './UserPage'
 import StressFormPage from './StressFormPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import ReschedulePage from './ReschedulePage'
+
 
 
 class App extends React.Component {
@@ -26,8 +28,10 @@ class App extends React.Component {
       authorized: false,
       calendarList: [],
       eventList: [],
+      ReschedulEventList: [],
       user: {},
-      alert: true
+      alert: true,
+      apply: false
     }
   }
 
@@ -55,6 +59,30 @@ class App extends React.Component {
   }
 
   // API Methods
+
+getReschedule() {
+    ajax({
+      url: 'calendar/suggest',
+      type: 'get',
+      //data: JSON.stringify(data),
+      //response: JSON.stringify(response),
+          success: (response) => {
+          	//console.log("data")
+          	//console.log(data)
+	        //this.setState({ ReschedulEventList: response.items })
+	      	this.setState({alert: true})
+	      	this.setActiveView(ReschedulePage)
+	        console.log(response)
+	        this.getEventList()
+	        //this.setState({alert: false})
+       
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log(response)
+      }
+    })
+  }
 
   getCalendarType() {
     ajax({
@@ -150,6 +178,7 @@ class App extends React.Component {
           type: 'get',
           success: (data, status, xhr) => {
               this.setState({ authorized: false })
+              this.setState({ apply: false })
           },
           error: response => {
               // TODO give feedback to user
@@ -244,6 +273,14 @@ postImportCalendar() {
   setActiveView(activeView) {
     this.setState({ activeView })
   }
+  setApplyState(apply){
+  	if(apply){
+  		this.setState({ apply: false })
+  	}
+  	else {
+  		this.setState({ apply: true })
+  	}
+  }
 
   unratedEvents() {
     var temp = filter(this.state.eventList, event =>
@@ -265,15 +302,19 @@ postImportCalendar() {
           authorized={this.state.authorized}
           calendarList={this.state.calendarList}
           eventList={this.state.eventList}
+          ReschedulEventList ={this.state.ReschedulEventList}
           getEventList={() => this.getEventList()}
           getCalendars={() => this.getCalendars()}
           getCalendarType={() => this.getCalendarType()}
+          getReschedule={() => this.getReschedule()}
           getLogout={() => this.getLogout()}
           postCalendarAdd={calId => this.postCalendarAdd(calId)}
           postCalendarEvent={(calEvent, stressValue, navigateTo) => this.postCalendarEvent(calEvent, stressValue, navigateTo)}
           unratedEvents={this.unratedEvents()}
           user={this.state.user}
           setActiveView={activeView => this.setActiveView(activeView)}
+          apply = {this.state.apply}
+          setApplyState={apply => this.setApplyState(apply)}
         />
       </div>
     )
