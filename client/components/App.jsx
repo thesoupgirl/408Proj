@@ -61,12 +61,40 @@ class App extends React.Component {
   // API Methods
 
 getReschedule() {
-    ajax({
+	
+      ajax({
+           	url: 'calendar/suggest',
+      	   	type: 'get',
+      		//contentType: 'application/json',
+	       	//data: JSON.stringify(data),
+	          success: (data,response) => {
+	          	console.log("calling resch endpoint")
+	          	 console.log("data")
+          		 console.log(data)
+          		  console.log("response")
+          		 console.log(response)
+	      		  this.setState({alert: true})
+	           //   this.setState({ eventList: data.items })
+	              //this.setState({alert: false})
+	              this.setActiveView(ReschedulePage)
+	        	console.log(response)
+	        	this.getEventList()
+
+	          },
+	          error: (response, data )=> {
+	              // TODO give feedback to user
+	              console.log("error")
+	              console.log(response)
+	              console.log("data")
+	               console.log(data)
+	          }
+      })
+   /* ajax({
       url: 'calendar/suggest',
       type: 'get',
-      //data: JSON.stringify(data),
-      //response: JSON.stringify(response),
-          success: (response) => {
+      contentType: 'application/json',
+       data: JSON.stringify(data),
+          success: (data, response) => {
           	//console.log("data")
           	//console.log(data)
 	        //this.setState({ ReschedulEventList: response.items })
@@ -81,7 +109,7 @@ getReschedule() {
         // TODO give feedback to user
         console.log(response)
       }
-    })
+    })*/
   }
 
   getCalendarType() {
