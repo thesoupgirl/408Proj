@@ -11,6 +11,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonString;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
@@ -54,6 +55,255 @@ public class MLEndpoints {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserEvents(userName);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        // TODO reschedule every single event in the current week
+        for (int i = 1; i <= 7; i++) {
+            if (currentWeek.getEvents(i) == null) continue;
+            for (EventData event : currentWeek.getEvents(i)) {
+                try {
+                    returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
+                } catch (RuntimeException e) {
+                    // If any exceptions, continue and do not change the returned week week
+                    continue;
+                    //response = "{\"Error\":\"" + e + "\"}";
+                    //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        for (int i = 1; i <= 7; i++) {
+            if (currentWeek.getEvents(i) == null) continue;
+            for (EventData event :currentWeek.getEvents(i)) {
+                // Search for each event that may have been rescheduled, and replace the time
+                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getOriginalStartTime();
+                newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
+            }
+        }
+        //response = gson.toJson(returnedWeek.getRaw());
+        //return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+
+        return new ResponseEntity<String>(events.toPrettyString(), httpHeaders, HttpStatus.OK);
+    }
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/suggest/wait/{userName}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getTimeReschedSuggestion(@PathVariable(value = "userName") String userName) throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserEvents(userName);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        double result = WhenReschedulingMachineLearningManager.getInstance().predictReschedulingNotification(returnedWeek);
+
+        return new ResponseEntity<>("{\"waitTime\":" + result + "}", httpHeaders, HttpStatus.OK);
+    }
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/suggest/train/{userName}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> trainReschedSuggestion(@PathVariable(value = "userName") String userName, @RequestBody GenericJson request) throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        double timeTaken = (double) request.get("timeTaken");
+
+        // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserEvents(userName);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification(timeTaken, returnedWeek);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/androidsuggest", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getAndroidCalendarSuggestion(@RequestHeader(value="idToken") String idToken,
+                                                               @RequestHeader(value="email") String email) throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserAndroidEvents(email, idToken);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        // TODO reschedule every single event in the current week
+        for (int i = 1; i <= 7; i++) {
+            if (currentWeek.getEvents(i) == null) continue;
+            for (EventData event : currentWeek.getEvents(i)) {
+                try {
+                    returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
+                } catch (RuntimeException e) {
+                    // If any exceptions, continue and do not change the returned week week
+                    continue;
+                    //response = "{\"Error\":\"" + e + "\"}";
+                    //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        for (int i = 1; i <= 7; i++) {
+            if (currentWeek.getEvents(i) == null) continue;
+            for (EventData event :currentWeek.getEvents(i)) {
+                // Search for each event that may have been rescheduled, and replace the time
+                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getOriginalStartTime();
+                newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
+            }
+        }
+        //response = gson.toJson(returnedWeek.getRaw());
+        //return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+
+        return new ResponseEntity<String>(events.toPrettyString(), httpHeaders, HttpStatus.OK);
+    }
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/androidsuggest/wait/{userName}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getAndroidTimeReschedSuggestion(@RequestHeader(value="idToken") String idToken,
+                                                                  @RequestHeader(value="email") String email) throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserAndroidEvents(email, idToken);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        double result = WhenReschedulingMachineLearningManager.getInstance().predictReschedulingNotification(returnedWeek);
+
+        return new ResponseEntity<>("{\"waitTime\":" + result + "}", httpHeaders, HttpStatus.OK);
+    }
+
+    // Route that gets a rescheduled day suggestion using machine learning
+    @RequestMapping(value = "/calendar/androidsuggest/train/{userName}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> trainAndroidReschedSuggestion(@RequestHeader(value="idToken") String idToken,
+                                                                @RequestHeader(value="email") String email, @RequestBody GenericJson request) throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        double timeTaken = (double) request.get("timeTaken");
+
+        // GET THE CURRENT WEEK OF THE CALENDAR
+        Events events = getUserAndroidEvents(email, idToken);
+
+        WeekData currentWeek = new WeekData();
+        for (Event event : events.getItems()) {
+            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+        }
+
+        WeekData returnedWeek = new WeekData(currentWeek);
+
+
+        WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification(timeTaken, returnedWeek);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    private Events getUserAndroidEvents(String email, String idToken) throws  Exception {
+        String userName = email.replace("@", "");
+        System.out.println(Colors.ANSI_BLUE + "username " + userName);
+        System.out.println(Colors.ANSI_BLUE + "username " + userName.replace("@", ""));
+        //String eventID = (String)request.get("eventID");
+        DBSetup.remoteDB();
+        //get the Table
+        boolean exists = tableCheck(userName.replace("@", ""));
+        System.out.println(Colors.ANSI_BLUE + "Table is " +exists);
+        //Set up Calendar request
+        java.util.Calendar currentDate = java.util.Calendar.getInstance();
+        currentDate.set(java.util.Calendar.DATE, 1);
+        // The first day of the month
+        DateTime beginningOfMonth = new DateTime(currentDate.getTimeInMillis());
+        System.out.println(beginningOfMonth.toString());
+        // The last day of the month
+        currentDate.roll(java.util.Calendar.MONTH, 1);
+        DateTime endOfMonth = new DateTime(currentDate.getTimeInMillis());
+
+        //get the User Table and user's data from there
+        Table t = DBSetup.getUsersTable();
+        GetItemSpec spec = new GetItemSpec()
+                .withPrimaryKey("username", userName);
+        Item got = t.getItem(spec);
+
+        //get a list of Calendar IDs
+        String str = got.getString("calID");
+        System.out.println(Colors.ANSI_CYAN + "The User Has: " + got.toString());
+        String[] calIDs = str.split("split");
+
+        List<Event> target = new LinkedList<>();
+        Table table = DBSetup.getTable(userName);
+        for (String val : calIDs) {
+            System.out.println(Colors.ANSI_CYAN + "The calid now is: " + val);
+            //get the events for each of these
+            List<Event> addThis = getEventsMultiCal(val, beginningOfMonth, endOfMonth, true, userName, idToken);
+            //add it to a list of all the events retrieved
+            if (addThis != null)
+                target.addAll(addThis);
+        }
+        Events events = service.events().list("primary") // Get events from primary calendar...
+                .setMaxResults(1)
+                .setSingleEvents(true)
+                .setOrderBy("startTime")
+                .execute();
+        events.setItems(target);
+        return events;
+    }
+
+
+    private Events getUserEvents(String userName) throws Exception{
 
 
         Calendar service = getCalendarService(""+-1);
@@ -106,45 +356,10 @@ public class MLEndpoints {
                 .setOrderBy("startTime")
                 .execute();
         events.setItems(target);
-
-        WeekData currentWeek = new WeekData();
-        for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
-        }
-
-        WeekData returnedWeek = new WeekData(currentWeek);
-
-
-        // TODO reschedule every single event in the current week
-        for (int i = 1; i <= 7; i++) {
-            if (currentWeek.getEvents(i) == null) continue;
-            for (EventData event : currentWeek.getEvents(i)) {
-                try {
-                    returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
-                } catch (RuntimeException e) {
-                    // If any exceptions, continue and do not change the returned week week
-                    continue;
-                    //response = "{\"Error\":\"" + e + "\"}";
-                    //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
-                }
-            }
-        }
-        for (int i = 1; i <= 7; i++) {
-            if (currentWeek.getEvents(i) == null) continue;
-            for (EventData event :currentWeek.getEvents(i)) {
-                // Search for each event that may have been rescheduled, and replace the time
-                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getOriginalStartTime();
-                newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
-            }
-        }
-        //response = gson.toJson(returnedWeek.getRaw());
-        //return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
-
-
-        return new ResponseEntity<String>(events.toPrettyString(), httpHeaders, HttpStatus.OK);
+        return events;
     }
+
+
     //get and instance of Google Calendar API services
     public com.google.api.services.calendar.Calendar getCalendarService(String androidIdToken) throws Exception {
         final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -276,5 +491,26 @@ public class MLEndpoints {
             return credz;
         }
 
+    }
+    /*
+     ** Helper Methods
+     ** to keep the code clean
+     */
+    public static boolean tableCheck(String userName) {
+        boolean exists = true;
+        Table table = DBSetup.getTable(userName);
+        GetItemSpec spec12 = new GetItemSpec()
+                .withPrimaryKey("eventID", "123213213fwqefefw");
+        //the event is in the DB!
+        Item it1 = null;
+        try {
+            it1 = table.getItem(spec12);
+            return true;
+        } catch (ResourceNotFoundException e) {
+            //System.out.println(Colors.ANSI_CYAN+"Get Item is messing up: 1"+e.getMessage());
+            //maybe if we make the table?
+            DBSetup.createTable(userName.replaceAll(" ", "_"));
+            return false;
+        }
     }
 }
