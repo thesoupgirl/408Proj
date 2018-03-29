@@ -5,7 +5,7 @@ src/main/resources/application.yml
 *log
 web/
 client/mock/
-
+package-lock.json
 target/
 !.mvn/wrapper/maven-wrapper.jar
 

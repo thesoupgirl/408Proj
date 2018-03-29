@@ -153,6 +153,22 @@ class App extends React.Component {
         console.log(response)
       }
     })
+
+    ajax({
+      url: '/outlook/events',
+      type: 'get',
+      success: (data) => {
+       // this.setActiveView(UserPage)
+        console.log("outlook success")
+        console.log(data)
+        window.location = data
+       
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log(response)
+      }
+    })
 }
   getLogout() {
       ajax({

@@ -138,6 +138,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		UUID state = UUID.randomUUID();
   		UUID nonce = UUID.randomUUID();
   		System.out.println("app id is..." + appId);
+  		System.out.println("clientid thing..." + System.getenv("GOOGLE_CLIENT_ID"));
+
+  		System.out.println("google id is..." + clientID);
   		System.out.println("app id is..." + System.getenv("APP_ID"));
   		// Save the state and nonce in the session so we can
 		// verify after the auth process redirects back
@@ -1261,6 +1264,7 @@ class ClientResources {
 	public ClientResources() {
 		client.setClientId(System.getenv("GOOGLE_CLIENT_ID"));
 		client.setClientSecret(System.getenv("GOOGLE_CLIENT_SECRET"));
+		System.out.println("clientid thing..." + System.getenv("GOOGLE_CLIENT_ID"));
 		List<String> str = new ArrayList<>();
 		str.add(CalendarScopes.CALENDAR);
 		client.setScope(str);
