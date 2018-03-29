@@ -153,6 +153,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             // Start time for event
             // ---------------------------------------------------------------------------
 
+            if (event.start.dateTime == null || event.end.dateTime == null) {
+                continue;
+            }
+
             // Splitting date from time
             String[] startTimes = event.start.dateTime.split("T");
 
