@@ -18,7 +18,7 @@ public class AuthorizeController {
   public String logout(HttpServletRequest request) {
     HttpSession session = request.getSession();
     session.invalidate();
-    return "redirect:/index.html";
+    return "logged out";
   }
 
   @RequestMapping(value="/authorize", method=RequestMethod.POST)

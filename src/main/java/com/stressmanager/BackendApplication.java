@@ -118,6 +118,26 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
   		//response.sendRedirect(loginUrl);
 	}
 
+	//starting point for outlook, spawns auth
+	@CrossOrigin(origins = "http://localhost:8080")
+	@RequestMapping({ "/android/outlooksignin" })
+	@ResponseBody
+	public String androidOutlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		UUID state = UUID.randomUUID();
+  		UUID nonce = UUID.randomUUID();
+  		System.out.println("app id is..." + appId);
+  		System.out.println("app id is..." + System.getenv("APP_ID"));
+  		// Save the state and nonce in the session so we can
+		// verify after the auth process redirects back
+		HttpSession session = request.getSession();
+		session.setAttribute("expected_state", state);
+		session.setAttribute("expected_nonce", nonce);
+		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
+		model.addAttribute("loginUrl", loginUrl);
+		//return loginUrl;
+  		response.sendRedirect(loginUrl);
+	}
+
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
 	@ResponseBody
@@ -605,7 +625,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		//temp = http;
 		// @formatter:off
-		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/webjars/**").permitAll().anyRequest()
+		http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/android/outlooksignin", "/webjars/**").permitAll().anyRequest()
 				.authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
 				.logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -622,6 +642,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			// @formatter:off
 			http.antMatcher("/me").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlooksignin").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/android/outlooksignin").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/authorize").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlook/logout").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlook/events").authorizeRequests().anyRequest().authenticated();
