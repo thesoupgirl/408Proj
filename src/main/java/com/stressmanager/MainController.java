@@ -250,8 +250,9 @@ public class MainController {
         Table table = DBSetup.getUsersTable();
 
         //get the User Info
+        username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
-               .withPrimaryKey("username", username);
+                .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
 
         //add the calendar ID to the current User's CalendarID list
