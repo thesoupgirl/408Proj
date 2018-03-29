@@ -304,7 +304,10 @@ public class MLEndpoints {
             if (addThis != null)
                 target.addAll(addThis);
         }
-        Events events = service.events().list("primary") // Get events from primary calendar...
+
+        System.out.println(Colors.ANSI_YELLOW + "The service is: " + BackendApplication.service);
+
+        Events events = BackendApplication.service.events().list("primary") // Get events from primary calendar...
                 .setMaxResults(1)
                 .setSingleEvents(true)
                 .setOrderBy("startTime")
@@ -391,7 +394,7 @@ public class MLEndpoints {
 
 
         System.out.println("arf " + service.toString());
-        Events events = service.events().list(calID) // Get events from calendar calID...
+        Events events = BackendApplication.service.events().list(calID) // Get events from calendar calID...
                 .setTimeMin(start) // Starting at the beginning of the month
                 .setTimeMax(end) // and ending at the last day of the month
                 .setMaxResults(100)

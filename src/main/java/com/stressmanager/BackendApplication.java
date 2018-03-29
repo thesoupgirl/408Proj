@@ -124,7 +124,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     //static Credentials credz;
 
-    static com.google.api.services.calendar.Calendar service;
+    public static com.google.api.services.calendar.Calendar service;
 
     @RequestMapping({"/androidlogin"})
     @ResponseBody
