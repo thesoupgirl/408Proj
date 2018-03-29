@@ -10,7 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.MonthLoader;
@@ -32,6 +36,7 @@ import xyz.jhughes.epsteinandroid.R;
 import xyz.jhughes.epsteinandroid.models.Advice;
 import xyz.jhughes.epsteinandroid.models.Events.Event;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
+import xyz.jhughes.epsteinandroid.models.MLTime;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 
@@ -124,11 +129,51 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 i.putExtra("events", events);
                 startActivity(i);
                 break;
+            case R.id.suggest_reschedule:
+                suggestEvents();
+                break;
             default:
                 //Nothing
         }
 
         return true;
+    }
+
+    private void suggestEvents() {
+        EpsteinApiHelper.getInstance().getEventsToRescheduleSuggestions(
+                SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
+                SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
+        ).enqueue(new Callback<Events>() {
+            @Override
+            public void onResponse(Call<Events> call, Response<Events> response) {
+                if (response.code() == 200 && response.body() != null) {
+                    List<String> eventTitles = new ArrayList<>();
+                    for (Event e : response.body().items) {
+                        eventTitles.add(e.summary);
+                    }
+
+                    ListView lv = new ListView(CalendarActivity.this);
+                    lv.setAdapter(new ArrayAdapter<>(CalendarActivity.this, android.R.layout.simple_list_item_1, eventTitles));
+
+                    android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(CalendarActivity.this)
+                            .setTitle("Suggested Events")
+                            .setView(lv)
+                            .setNegativeButton("Okay", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    finish();
+                                }
+                            });
+                    alert.show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Events> call, Throwable t) {
+                System.out.println("failed");
+            }
+        });
     }
 
     @Override

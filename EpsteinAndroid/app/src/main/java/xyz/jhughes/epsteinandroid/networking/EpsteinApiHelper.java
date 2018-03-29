@@ -14,7 +14,7 @@ public class EpsteinApiHelper {
     public static EpsteinApi getInstance() {
         if (epsteinApi == null) {
             HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
             OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                     .connectTimeout(60 * 5, TimeUnit.SECONDS)
@@ -24,7 +24,7 @@ public class EpsteinApiHelper {
                     .build();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://theepstein.herokuapp.com")
+                    .baseUrl("http://10.186.93.218:8080")
                     .client(okHttpClient)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
