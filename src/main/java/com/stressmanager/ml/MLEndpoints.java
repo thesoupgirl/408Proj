@@ -263,22 +263,6 @@ public class MLEndpoints {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Configuration
-    @EnableResourceServer
-    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            // @formatter:off
-            http.antMatcher("/calendar/suggest/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/suggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/suggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest/wait").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest/train").authorizeRequests().anyRequest().authenticated();
-            // @formatter:on
-        }
-    }
-
 
     private Events getUserAndroidEvents(String email, String idToken) throws  Exception {
         String userName = email.replace("@", "");
