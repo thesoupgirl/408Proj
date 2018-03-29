@@ -23,12 +23,16 @@ import com.stressmanager.BackendApplication;
 import com.stressmanager.Colors;
 import com.stressmanager.DBSetup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -257,6 +261,22 @@ public class MLEndpoints {
         WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification(timeTaken, returnedWeek);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Configuration
+    @EnableResourceServer
+    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            // @formatter:off
+            http.antMatcher("/calendar/suggest/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/wait").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/train").authorizeRequests().anyRequest().authenticated();
+            // @formatter:on
+        }
     }
 
 
