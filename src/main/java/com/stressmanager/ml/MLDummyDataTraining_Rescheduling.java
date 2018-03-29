@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MLTest {
-    private class foo {
-        public List<String> items;
-    }
+public class MLDummyDataTraining_Rescheduling {
+    public static int TRAINING_COUNT = 50;
     public static void main(String[] args) {
 
         // DUMMY DATA
@@ -29,18 +27,15 @@ public class MLTest {
 
 
         WeekData weekData = new WeekData(priorEvents);
-        //WeekData nextWeekData = new WeekData(nextEvents);
-        //EventData focusedEvent = nextWeekData.getEvent("4");
-        //focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours((r.nextInt() % 10) - 5));
+        WeekData nextWeekData = new WeekData(nextEvents);
+        EventData focusedEvent = nextWeekData.getEvent("4");
+        focusedEvent.setEventTime(focusedEvent.getEventTime().plusHours((r.nextInt() % 10) - 5));
 
-        // Random number from 3 to 5
-        //WhenReschedulingMachineLearningManager.getInstance().trainReschedulingNotification((Math.abs(r.nextInt()%3)) + 5, weekData);
+        for (int i = 0; i < TRAINING_COUNT; i++) {
+            ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), weekData, nextWeekData);
+        }
 
-        //double predictedTime = WhenReschedulingMachineLearningManager.getInstance().predictReschedulingNotification(weekData);
-
-        //ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), weekData, nextWeekData);
-
-        //WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEvent.getEventId(), nextWeekData);
-
+        // This may throw exceptions, don't worry
+        WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEvent.getEventId(), nextWeekData);
     }
 }
