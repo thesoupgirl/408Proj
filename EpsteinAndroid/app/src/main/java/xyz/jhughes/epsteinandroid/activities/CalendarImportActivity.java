@@ -5,9 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -104,13 +101,18 @@ public class CalendarImportActivity extends AppCompatActivity {
         });
     }
 
-    private void signInToOutlookWeb(String url) {
+    public void signInToOutlookWeb(String url) {
         WebView wv = new WebView(this);
         wv.loadUrl(url);
+        wv.getSettings().setJavaScriptEnabled(true);
+        wv.getSettings().setDomStorageEnabled(true);
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                System.out.println(url);
+                if (url.contains("localhost") || url.contains("heroku")) {
+                    dialog.dismiss();
+                    finish();
+                }
             }
         });
 
