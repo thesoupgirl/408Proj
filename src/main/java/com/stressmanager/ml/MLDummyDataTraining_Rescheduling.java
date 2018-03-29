@@ -34,7 +34,7 @@ public class MLDummyDataTraining_Rescheduling {
         for (int i = 0; i < TRAINING_COUNT; i++) {
             ReschedulingMachineLearningManager.getInstance().trainRescheduling(focusedEvent.getEventId(), weekData, nextWeekData);
         }
-        
+
         // This may throw exceptions, don't worry
         WeekData suggestedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(focusedEvent.getEventId(), nextWeekData);
     }
