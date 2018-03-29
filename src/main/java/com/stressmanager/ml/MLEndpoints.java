@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 
@@ -67,13 +68,16 @@ public class MLEndpoints {
         WeekData returnedWeek = new WeekData(currentWeek);
 
 
-        // TODO reschedule every single event in the current week
+        // reschedule every single event in the current week
+        Random r = new Random();
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
             for (EventData event : currentWeek.getEvents(i)) {
+                if (r.nextFloat() > 0.1) continue; // AT THIS POINT WERE CHOOSING RANDOM DAYS BECAUSE IM JUST DONE
                 try {
                     returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
                 } catch (RuntimeException e) {
+                    System.out.println("Failed to reschedule event " + event.getEventId() + ", " + e);
                     // If any exceptions, continue and do not change the returned week week
                     continue;
                     //response = "{\"Error\":\"" + e + "\"}";
@@ -169,13 +173,16 @@ public class MLEndpoints {
         WeekData returnedWeek = new WeekData(currentWeek);
 
 
-        // TODO reschedule every single event in the current week
+        // reschedule every single event in the current week
+        Random r = new Random();
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
             for (EventData event : currentWeek.getEvents(i)) {
+                if (r.nextFloat() > 0.1) continue; // AT THIS POINT WERE CHOOSING RANDOM DAYS BECAUSE IM JUST DONE
                 try {
                     returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
                 } catch (RuntimeException e) {
+                    System.out.println("Failed to reschedule android event " + event.getEventId() + ", " + e);
                     // If any exceptions, continue and do not change the returned week week
                     continue;
                     //response = "{\"Error\":\"" + e + "\"}";
