@@ -24,7 +24,7 @@ public class EpsteinApiHelper {
                     .build();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://stressmanager.herokuapp.com")
+                    .baseUrl("https://theepstein.herokuapp.com")
                     .client(okHttpClient)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
