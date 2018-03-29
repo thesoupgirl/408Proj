@@ -242,7 +242,7 @@ public class MainController {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         String calID = (String)request.get("calID");
-        String username = (String)request.get("userName");
+        String username = (String)request.get("username");
         String resp = "{\"Error\":\"Calendar Already exists\"}";
         //username = username.replaceAll(" ","_");
 
