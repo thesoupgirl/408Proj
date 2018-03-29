@@ -13,6 +13,8 @@ import StressFormPage from './StressFormPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
+import HomePage from './HomePage'
+
 
 
 class App extends React.Component {
@@ -93,7 +95,7 @@ class App extends React.Component {
       success: (user, status, xhr) => {
         if (this.responseIsJson(xhr)) {
             this.setState({ user, authorized: true })
-            this.setActiveView(UserPage)
+            this.setActiveView(HomePage)
             this.getEventList()
           return
         }
