@@ -104,6 +104,18 @@ public class WeekData {
         return new ArrayList<>(dataMap.get(weekdayId).values());
     }
 
+    /**
+     * Get all events from every week
+     * @return
+     */
+    public List<EventData> getEvents() {
+        List<EventData> allEvents = new ArrayList<>();
+        for (int i = 1; i <= 7; i++) {
+            allEvents.addAll(getEvents(i));
+        }
+        return allEvents;
+    }
+
     @Override
     public boolean equals(Object o) {
         WeekData toCompare = (WeekData)o;
