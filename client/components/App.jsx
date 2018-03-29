@@ -68,18 +68,18 @@ getReschedule() {
       	   	type: 'get',
       		//contentType: 'application/json',
 	       	//data: JSON.stringify(data),
-	          success: (data,response, xhr) => {
+	          success: (data,response) => {
 	          	console.log("calling resch endpoint")
-	          	 console.log("data")
-          		 console.log(data)
-          		  console.log("response")
-          		 console.log(response)
-	      		  this.setState({alert: true})
-	           //   this.setState({ eventList: data.items })
-	              //this.setState({alert: false})
-	              this.setActiveView(ReschedulePage)
-	        	console.log(response)
+	          	console.log("data")
+          		console.log(data)
+          		console.log("response")
+          		console.log(response)
+	      		this.setState({alert: true})
+	           	this.setState({ ReschedulEventList: data.items })
+	             
+	            this.setActiveView(ReschedulePage)
 	        	this.getEventList()
+	        	//this.setState({alert: false})
 
 	          },
 	          error: (response, data )=> {
@@ -90,28 +90,8 @@ getReschedule() {
 	               console.log(data)
 	          }
       })
-   /* ajax({
-      url: 'calendar/suggest',
-      type: 'get',
-      contentType: 'application/json',
-       data: JSON.stringify(data),
-          success: (data, response) => {
-          	//console.log("data")
-          	//console.log(data)
-	        //this.setState({ ReschedulEventList: response.items })
-	      	this.setState({alert: true})
-	      	this.setActiveView(ReschedulePage)
-	        console.log(response)
-	        this.getEventList()
-	        //this.setState({alert: false})
-       
-      },
-      error: response => {
-        // TODO give feedback to user
-        console.log(response)
-      }
-    })*/
   }
+  
 
   getCalendarType() {
     ajax({
