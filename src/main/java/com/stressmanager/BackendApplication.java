@@ -265,6 +265,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 						eventID = eventID.substring(0, eventID.indexOf("_"));
 						System.out.println(Colors.ANSI_RED+"="+eventID+"= "+event.getSummary());//+Colors.ANSI_RED+"=nos9g4bakgg4lsgs6tkscuhsjc=");
 					}
+					if(eventID == null || eventID.length() < 2) {
+						continue;
+					}
 					spec = new GetItemSpec()
 						.withPrimaryKey("eventID", eventID);
 					//the event is in the DB!
@@ -692,6 +695,246 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
+    ///Logout a user using the Servlet Context
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "index";//You can redirect wherever you want, but generally it's a good practice to show login screen again.
+    }
+
+    ///Logout a user using the Servlet Context
+    @RequestMapping(value = "/androidlogout", method = RequestMethod.GET)
+    public String logoutAndroidPage(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "index";//You can redirect wherever you want, but generally it's a good practice to show login screen again.
+    }
+
+    //get a month worth of events from the First day of the month to the first of the next month
+    //TODO: Fix the frontend's event cap
+    @RequestMapping(value = "/me/calendar/events")
+    @ResponseBody
+    public ResponseEntity<String> events(@RequestBody GenericJson request) throws Exception {
+        //HTTP Headers
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // Returns all events in the current month
+        //TODO Check for androidIdToken in JSON
+        service = getCalendarService(""+-1);
+
+        System.out.println(Colors.ANSI_BLUE + "JSON " + request.toPrettyString());
+        //get the Username and eventID
+        String userName = (String) request.get("userName");
+
+        System.out.println(Colors.ANSI_BLUE + "userName " + userName);
+        //String eventID = (String)request.get("eventID");
+
+        //get the Table
+        boolean exists = tableCheck(userName);
+
+
+        //Set up Calendar request
+        java.util.Calendar currentDate = java.util.Calendar.getInstance();
+        currentDate.set(java.util.Calendar.DATE, 1);
+        // The first day of the month
+        DateTime beginningOfMonth = new DateTime(currentDate.getTimeInMillis());
+        System.out.println(beginningOfMonth.toString());
+        // The last day of the month
+        currentDate.roll(java.util.Calendar.MONTH, 1);
+        DateTime endOfMonth = new DateTime(currentDate.getTimeInMillis());
+
+        Events events = service.events().list("primary") // Get events from primary calendar...
+                .setTimeMin(beginningOfMonth) // Starting at the beginning of the month
+                .setTimeMax(endOfMonth) // and ending at the last day of the month
+                .setMaxResults(150)
+                .setSingleEvents(true)
+                .setOrderBy("startTime")
+                .execute();
+
+        //get the data from the HttpServletRequest
+        List<Event> items = events.getItems();
+        if (items.size() == 0) {
+            System.out.println("No upcoming events found.");
+            return new ResponseEntity<String>("{\"error\":\"404 Resource Not Found\"}", httpHeaders, HttpStatus.OK);
+        } else {
+            //make a list of GenericJson
+            List<Event> target = new LinkedList<>();
+            Table table = DBSetup.getTable(userName);
+
+            System.out.println("Upcoming events");
+            for (Event event : items) {
+                //get the stresslvl from the DB if possible
+                String eventID = event.getId();
+                Integer val = null;
+                if (exists) {
+                    GetItemSpec spec;
+                    if (eventID.indexOf("_") != -1) {
+                        eventID = eventID.substring(0, eventID.indexOf("_"));
+                        System.out.println(Colors.ANSI_RED + "=" + eventID + "= " + event.getSummary());//+Colors.ANSI_RED+"=nos9g4bakgg4lsgs6tkscuhsjc=");
+                    }
+                    spec = new GetItemSpec()
+                            .withPrimaryKey("eventID", eventID);
+                    //the event is in the DB!
+                    Item it = null;
+                    try {
+                        it = table.getItem(spec);
+                    } catch (ResourceNotFoundException e) {
+                        //System.out.println(Colors.ANSI_CYAN+"Get Item is messing up: 4"+e.getMessage());
+                        //maybe if we make the table?
+                        //DBSetup.createTable(userName.replaceAll(" ", "_"));
+                        //return null;
+                    }
+                    if (it != null)
+                        System.out.println(Colors.ANSI_CYAN + eventID + "  " + it.getJSON("stressValue"));
+                    //get the stresslvl
+
+                    if (it != null) {
+                        try {
+                            val = it.getInt("stressValue");
+                        } catch (Exception e) {
+                            val = null;
+                        }
+                    }
+                } else
+                    val = null;
+
+                //add to the Event class and add to list
+                GenericJson new1 = (GenericJson) event.set("stressValue", val);
+                target.add((Event) new1);
+                //System.out.printf("%s: ==> (%s)\n", new1.toPrettyString(), eventID);
+            }
+
+            //set the 'items' to the new List
+            events = events.setItems(target);
+
+            return new ResponseEntity<String>(events.toPrettyString(), httpHeaders, HttpStatus.OK);
+        }
+    }
+
+    // Display the information for a single event in the user's calendar
+    @RequestMapping(value = "/event/detail")
+    @ResponseBody
+    public ResponseEntity<String> eventDetails(@RequestBody GenericJson request) throws Exception {
+        db.accessDB();
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        //TODO Check for androidIdToken in JSON
+        service = getCalendarService(""+-1);
+        String calID = (String) request.get("calID");
+        String eventID = (String) request.get("eventID");
+
+        Event event = service.events().get(calID, eventID).execute();
+        return new ResponseEntity<String>(event.toPrettyString(), httpHeaders, HttpStatus.OK);
+
+    }
+
+    /*
+     * Spring Security Set up
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //temp = http;
+        // @formatter:off
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/calendar/event", "/api/calendar/androidevents").permitAll().anyRequest()
+                .authenticated().and().exceptionHandling()
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
+                .logoutSuccessUrl("/").permitAll().and().csrf().disable()
+                ///disabled the CSRF Tokens
+                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+        // @formatter:on
+    }
+
+    @Configuration
+    @EnableResourceServer
+    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            // @formatter:off
+            http.antMatcher("/me").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/androidlogin").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/androidme").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/api/calendar/androidevents").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/list").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/advice").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/event").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/add").authorizeRequests().anyRequest().authenticated();
+            // @formatter:on
+        }
+    }
+
+    @Bean
+    public FilterRegistrationBean oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        System.out.println("FILTER BEING MADE");
+        registration.setFilter(filter);
+        registration.setOrder(-100);
+        return registration;
+    }
+
+    @Bean
+    @ConfigurationProperties("google")//Google Login setup
+    public ClientResources google() {
+        System.out.println("RESOURCE BEING MADE");
+        return new ClientResources();
+    }
+
+    private Filter ssoFilter() {
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+        System.out.println("FILTER LIST MADE");
+        String path = "/login/google";
+        filters.add(ssoFilter(google(), path));
+        filter.setFilters(filters);
+        System.out.println("RESOURCE BEING MADE");
+        return filter;
+    }
+
+    private Filter ssoFilter(ClientResources client, String path) {
+        OAuth2ClientAuthenticationProcessingFilter filter = new OAuth2ClientAuthenticationProcessingFilter(
+                path);
+        OAuth2RestTemplate template = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);
+        filter.setRestTemplate(template);
+        UserInfoTokenServices tokenServices = new UserInfoTokenServices(
+                client.getResource().getUserInfoUri(), client.getClient().getClientId());
+        tokenServices.setRestTemplate(template);
+        filter.setTokenServices(tokenServices);
+        return filter;
+    }
+
+    //Deploy the Server
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
+
+    /*
+     ** Helper Methods
+     ** to keep the code clean
+     */
+    public boolean tableCheck(String userName) {
+        boolean exists = true;
+        Table table = DBSetup.getTable(userName);
+        GetItemSpec spec12 = new GetItemSpec()
+                .withPrimaryKey("eventID", "123213213fwqefefw");
+        //the event is in the DB!
+        Item it1 = null;
+        try {
+            it1 = table.getItem(spec12);
+            return true;
+        } catch (ResourceNotFoundException e) {
+            //System.out.println(Colors.ANSI_CYAN+"Get Item is messing up: 1"+e.getMessage());
+            //maybe if we make the table?
+            DBSetup.createTable(userName.replaceAll(" ", "_"));
+            return false;
+        }
+    }
 	/*
 	** Helper Methods
 	** to keep the code clean
