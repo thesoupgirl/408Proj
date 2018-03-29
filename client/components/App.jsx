@@ -64,7 +64,7 @@ getReschedule() {
 	
 	
       ajax({
-           	url: 'calendar/suggest/'+ this.state.user.name,
+           	url: 'calendar/suggest/' + this.state.user.name,
       	   	type: 'get',
       		//contentType: 'application/json',
 	       	//data: JSON.stringify(data),
@@ -92,6 +92,26 @@ getReschedule() {
       })
   }
   
+  getWaitTime() {
+    ajax({
+      url: '/calendar/suggest/wait/' + this.state.user.name,
+      type: 'get',
+      success: (data,response) => {
+        		console.log("Expected wait time")
+	          	console.log("data")
+          		console.log(data)
+          		console.log("response")
+          		console.log(response)
+       
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log("Error in Expected wait time")
+        console.log(response)
+      }
+  	})
+  }
+   
 
   getCalendarType() {
     ajax({
@@ -273,6 +293,34 @@ postImportCalendar() {
     })
   }
 
+  postWaitTime(timeTaken) {
+  	 /* const data = {
+          userName: this.state.user.name
+      }*/
+    
+
+    ajax({
+      url: '/calendar/suggest/train/' + this.state.user.name +'/' +  JSON.parse(timeTaken) ,
+      type: 'post',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: (data,response) => {
+        		console.log("post time it took to press button")
+	          	console.log("data")
+          		console.log(data)
+          		console.log("response")
+          		console.log(response)
+       
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log("error in postWaitTime")
+        console.log(response)
+      }
+  	})
+  }
+ 
+
   // App Methods
 
   isActiveView(view) {
@@ -324,6 +372,10 @@ postImportCalendar() {
           setActiveView={activeView => this.setActiveView(activeView)}
           apply = {this.state.apply}
           setApplyState={apply => this.setApplyState(apply)}
+          getWaitTime={() => this.getWaitTime()}
+          postWaitTime={timeTaken => this.postWaitTime()}
+
+
         />
       </div>
     )

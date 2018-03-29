@@ -34,6 +34,8 @@ class MainLayout extends React.Component {
           getReschedule={() => this.props.getReschedule()}
           apply={this.props.apply}
           setApplyState={apply => this.props.setApplyState(apply)}
+          getWaitTime={() => this.props.getWaitTime()}
+          postWaitTime={timeTaken => this.props.postWaitTime()}
         />
       </div>
     )

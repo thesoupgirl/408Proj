@@ -15,6 +15,7 @@ BigCalendar.momentLocalizer(moment)
 
 class UserPage extends React.Component {
     constructor(props) {
+        
         super(props)
         console.log("calendar")
         console.log(props)
@@ -23,6 +24,11 @@ class UserPage extends React.Component {
         this.state = {
             calID: ''
         }
+
+         this.RescheduleAction = this.RescheduleAction.bind(this);
+         this.props.getWaitTime()
+         this.start =  new Date().getTime();
+         
     }
 
     accessor(time, event) {
@@ -110,14 +116,21 @@ class UserPage extends React.Component {
 
         return { className: `event-unrated${selected}` }
     }
-//{this.renderAlert()}
+
+    RescheduleAction(){
+        var end = new Date().getTime();
+        this.props.getReschedule()
+        this.props.postWaitTime(end - this.start)
+
+    }
+
     render() {
         return (
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
                 <Jumbotron>
-                <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.props.getReschedule()}> Reschedule </Button>
+                <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
             </div>
         )
