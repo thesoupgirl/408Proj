@@ -10,8 +10,11 @@ import SweetAlert from 'react-bootstrap-sweetalert'
 import ImportPage from './ImportPage'
 import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
+import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
+import HomePage from './HomePage'
+
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -46,6 +49,9 @@ class Navigation extends React.Component {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+            <MenuItem onClick={() => setActiveView(HomePage)}>
+              Home Page
+            </MenuItem>
              <MenuItem onClick={() =>  setActiveView(CalendarPage)}>
               Choose Calendar Service
               </MenuItem>
@@ -54,6 +60,12 @@ class Navigation extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => setActiveView(StressFormPage)}>
               Rate Events
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(UserPage)}>
+              Calendar
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(Games)}>
+              Games
             </MenuItem>
             <MenuItem onClick={() => this.setState({ alertVisible: true })}>
               Advice
@@ -76,7 +88,7 @@ class Navigation extends React.Component {
       <Navbar fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#" onClick={() => this.props.setActiveView(UserPage)}>Stress Manager</a>
+            <a href="#" onClick={() => this.props.setActiveView(HomePage)}>Epstein</a>
           </Navbar.Brand>
         </Navbar.Header>
         {this.renderDropdown()}
