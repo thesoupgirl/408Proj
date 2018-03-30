@@ -36,6 +36,8 @@ class MainLayout extends React.Component {
           setApplyState={apply => this.props.setApplyState(apply)}
           getWaitTime={() => this.props.getWaitTime()}
           postWaitTime={timeTaken => this.props.postWaitTime()}
+          time={this.props.time}
+          setTime={time => this.props.setTime(time)}
         />
       </div>
     )

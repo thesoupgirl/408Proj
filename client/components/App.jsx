@@ -31,7 +31,8 @@ class App extends React.Component {
       ReschedulEventList: [],
       user: {},
       alert: true,
-      apply: false
+      apply: false,
+      time: 0
     }
   }
 
@@ -294,16 +295,27 @@ postImportCalendar() {
   }
 
   postWaitTime(timeTaken) {
-  	 /* const data = {
-          userName: this.state.user.name
-      }*/
-    
+  	 const { time } = this.state
+  	 const data = {
+          timeTaken: 17.35
+      }
+      console.log("time taken--------------")
+      console.log(timeTaken)
+      console.log("time--------------")
+       console.log(this.state.time)
+        console.log(this.time)
+         console.log(time)
+
+      console.log("what is json")
+      console.log(JSON.stringify(data))
+
 
     ajax({
-      url: '/calendar/suggest/train/' + this.state.user.name +'/' +  JSON.parse(timeTaken) ,
+      url: '/calendar/suggest/train/' + this.state.user.name ,
       type: 'post',
       contentType: 'application/json',
       data: JSON.stringify(data),
+
       success: (data,response) => {
         		console.log("post time it took to press button")
 	          	console.log("data")
@@ -337,6 +349,9 @@ postImportCalendar() {
   	else {
   		this.setState({ apply: true })
   	}
+  }
+  setTime(time) {
+    this.setState({ time: time })
   }
 
   unratedEvents() {
@@ -374,6 +389,8 @@ postImportCalendar() {
           setApplyState={apply => this.setApplyState(apply)}
           getWaitTime={() => this.getWaitTime()}
           postWaitTime={timeTaken => this.postWaitTime()}
+          time={this.state.time}
+          setTime={time => this.setTime(time)}
 
 
         />

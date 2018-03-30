@@ -27,7 +27,7 @@ class UserPage extends React.Component {
 
          this.RescheduleAction = this.RescheduleAction.bind(this);
          this.props.getWaitTime()
-         this.start =  new Date().getTime();
+         this.start =  new Date().getTime()/1000;
          
     }
 
@@ -41,7 +41,7 @@ class UserPage extends React.Component {
 
             if (has(event, dateTimeString)) {
                 var dat = moment(event[time]['dateTime']).toDate()
-                dat = moment(daty).set({ hour: parseInt((dat.getHours() + 1), 10)}).toDate()
+                dat = moment(daty).set({ hour: parseInt((dat.getHours() + 25), 10)}).toDate()
                 return dat
                 } 
             else if (has(event, dateString)) {
@@ -118,9 +118,13 @@ class UserPage extends React.Component {
     }
 
     RescheduleAction(){
-        var end = new Date().getTime();
+        var end = new Date().getTime()/1000;
         this.props.getReschedule()
+        console.log("time")
+        console.log(end - this.start)
+        this.props.setTime(end - this.start)
         this.props.postWaitTime(end - this.start)
+
 
     }
 
