@@ -32,9 +32,12 @@ class UserPage extends React.Component {
          this.start =  new Date().getTime()/1000;
 
 
-        //setTimeout(function(){ alert("Looks like you are having a stressful week. Would you like some rescheduling suggestions? If so please click the Reschedule button at the buttom of the page."); },20000);
 
-       
+
+        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page."); },20000);
+
+    
+
 
             
          
@@ -84,6 +87,7 @@ class UserPage extends React.Component {
                     <div className="loader"></div>
 
                 </SweetAlert>
+
 
 
             )
@@ -141,13 +145,12 @@ class UserPage extends React.Component {
 
     }
     message(){
-        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n If so please click the Reschedule button at the buttom of the page.")
+        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page.")
     }
     prompt(){
         const { alert } = this.props
-        if(!alert){
-        setTimeout(this.message() , 100000);
-        }
+        setTimeout(this.message() , 10000000);
+        
     }
 
     render() {
@@ -155,7 +158,6 @@ class UserPage extends React.Component {
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
-                {this.prompt()}
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
