@@ -15,6 +15,11 @@ class UserPage extends React.Component {
         this.state = {
             calID: ''
         }
+        console.log("at user page")
+        console.log("is it outlook")
+        console.log(this.props.yesOutlook)
+        console.log(this.props.getEventList)
+        this.props.getEventList()
     }
 
     accessor(time, event) {

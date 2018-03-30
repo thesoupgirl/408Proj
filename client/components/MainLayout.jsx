@@ -28,6 +28,7 @@ class MainLayout extends React.Component {
           setActiveView={activeView => this.props.setActiveView(activeView)}
           getCalendars={() => this.props.getCalendars()}
           getOutlook={() => this.props.getOutlook()}
+          yesOutlook ={this.props.yesOutlook}
         />
       </div>
     )

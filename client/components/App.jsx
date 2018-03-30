@@ -92,7 +92,40 @@ class App extends React.Component {
       }
     })
   }
-  getEventList() {
+   getEventList() {
+   	const { yesOutlook} = this.props
+  		console.log("is it outlook")
+  		console.log(this.yesOutlook)
+      
+
+  	 if (this.yesOutlook){
+  		//window.location.href = 'http://localhost:8080/'
+
+		 	
+  	 		ajax({
+		      url: '/outlook/events',
+		      type: 'get',
+		      contentType: 'application/json',
+          	  data: JSON.stringify(data),
+		      success: (data, xhr) => {
+
+		      		console.log("outlook event success")
+		        	console.log(data)
+		        	window.location.href = 'http://localhost:8080/'
+		          	this.setState({ eventList: data.items })
+		          	this.setActiveView(UserPage)
+		          	this.setState({alert: false})
+
+		       
+		      },
+		      error: response => {
+		        // TODO give feedback to user
+		        console.log("error outlook event success")
+		        console.log(response)
+		      }
+		    })
+  	 }
+  	 else {
       const data = {
           userName: this.state.user.name
       }
@@ -112,7 +145,9 @@ class App extends React.Component {
               console.log(response)
           }
       });
+  	}
   }
+
 
   getCalendars() {
     ajax({
@@ -141,7 +176,10 @@ class App extends React.Component {
        // this.setActiveView(UserPage)
         console.log("outlook success")
         console.log(data)
+        this.setState({yesOutlook: true})
+        console.log(this.yesOutlook)
         window.location = data
+
        
       },
       error: response => {
@@ -149,17 +187,11 @@ class App extends React.Component {
         console.log(response)
       }
     })
-//'/localhost:8080/authorize'
-  console.log("arfffffff");
-  console.log(data);
-  if (data == "yay?") {
-  console.log("meow");
-  getOutlookEndpoint()
-}
+
 
 }
 
-getOutlookEndpoint() {
+/*getOutlookEndpoint() {
     console.log("in endpoint thingy");
     ajax({
       url: '/outlook/events',
@@ -182,7 +214,7 @@ getOutlookEndpoint() {
         console.log(response)
       }
     })
-}
+}*/
 
   getLogout() {
       ajax({
@@ -287,6 +319,7 @@ getOutlookEndpoint() {
           unratedEvents={this.unratedEvents()}
           user={this.state.user}
           setActiveView={activeView => this.setActiveView(activeView)}
+          yesOutlook ={this.state.yesOutlook}
         />
       </div>
     )

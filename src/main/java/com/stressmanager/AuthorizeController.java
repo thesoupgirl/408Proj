@@ -56,8 +56,8 @@ public class AuthorizeController {
     }
     try {
       System.out.println("meow: " + session.getAttribute("tokens"));
-      return "yay?";
-      //response.sendRedirect("/");
+      response.sendRedirect("/");
+       return "yay?";
     }
     catch(Exception e) {
       return "well fuck";
