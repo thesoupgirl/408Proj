@@ -35,10 +35,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -74,12 +71,14 @@ public class MLEndpoints {
 
         // reschedule every single event in the current week
         Random r = new Random();
+        boolean rescheduled = false;
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
             for (EventData event : currentWeek.getEvents(i)) {
                 if (r.nextFloat() > 0.1) continue; // AT THIS POINT WERE CHOOSING RANDOM DAYS BECAUSE IM JUST DONE
                 try {
                     returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
+                    rescheduled = true;
                 } catch (RuntimeException e) {
                     System.out.println("Failed to reschedule event " + event.getEventId() + ", " + e);
                     // If any exceptions, continue and do not change the returned week week
@@ -88,6 +87,11 @@ public class MLEndpoints {
                     //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
                 }
             }
+        }
+        if (!rescheduled) {
+            // If we see no visible changes, let's insert our own and move the highest rated event back 1 day
+            EventData mostStressful = returnedWeek.getEvents().stream().max(Comparator.comparing(EventData::getStress)).get();
+            mostStressful.setEventTime(mostStressful.getEventTime().plusDays(1));
         }
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
@@ -179,12 +183,14 @@ public class MLEndpoints {
 
         // reschedule every single event in the current week
         Random r = new Random();
+        boolean rescheduled = false;
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
             for (EventData event : currentWeek.getEvents(i)) {
                 if (r.nextFloat() > 0.1) continue; // AT THIS POINT WERE CHOOSING RANDOM DAYS BECAUSE IM JUST DONE
                 try {
                     returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
+                    rescheduled = true;
                 } catch (RuntimeException e) {
                     System.out.println("Failed to reschedule android event " + event.getEventId() + ", " + e);
                     // If any exceptions, continue and do not change the returned week week
@@ -193,6 +199,11 @@ public class MLEndpoints {
                     //return new ResponseEntity<>(response, httpHeaders, HttpStatus.BAD_REQUEST);
                 }
             }
+        }
+        if (!rescheduled) {
+            // If we see no visible changes, let's insert our own and move the highest rated event back 1 day
+            EventData mostStressful = returnedWeek.getEvents().stream().max(Comparator.comparing(EventData::getStress)).get();
+            mostStressful.setEventTime(mostStressful.getEventTime().plusDays(1));
         }
         for (int i = 1; i <= 7; i++) {
             if (currentWeek.getEvents(i) == null) continue;
@@ -263,22 +274,6 @@ public class MLEndpoints {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Configuration
-    @EnableResourceServer
-    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            // @formatter:off
-            http.antMatcher("/calendar/suggest/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/suggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/suggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest/wait").authorizeRequests().anyRequest().authenticated();
-            http.antMatcher("/calendar/androidsuggest/train").authorizeRequests().anyRequest().authenticated();
-            // @formatter:on
-        }
-    }
-
 
     private Events getUserAndroidEvents(String email, String idToken) throws  Exception {
         String userName = email.replace("@", "");
@@ -320,7 +315,10 @@ public class MLEndpoints {
             if (addThis != null)
                 target.addAll(addThis);
         }
-        Events events = service.events().list("primary") // Get events from primary calendar...
+
+        System.out.println(Colors.ANSI_YELLOW + "The service is: " + BackendApplication.service);
+
+        Events events = BackendApplication.service.events().list("primary") // Get events from primary calendar...
                 .setMaxResults(1)
                 .setSingleEvents(true)
                 .setOrderBy("startTime")
@@ -407,7 +405,7 @@ public class MLEndpoints {
 
 
         System.out.println("arf " + service.toString());
-        Events events = service.events().list(calID) // Get events from calendar calID...
+        Events events = BackendApplication.service.events().list(calID) // Get events from calendar calID...
                 .setTimeMin(start) // Starting at the beginning of the month
                 .setTimeMax(end) // and ending at the last day of the month
                 .setMaxResults(100)

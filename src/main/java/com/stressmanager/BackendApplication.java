@@ -124,7 +124,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     //static Credentials credz;
 
-    static com.google.api.services.calendar.Calendar service;
+    public static com.google.api.services.calendar.Calendar service;
 
     @RequestMapping({"/androidlogin"})
     @ResponseBody
@@ -1098,7 +1098,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/api/calendar/androidevents").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/suggest/**", "/calendar/androidsuggest", "/calendar/androidsuggest**","/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -1122,6 +1122,13 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
             http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/event").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/add").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/train/").authorizeRequests().anyRequest().authenticated();
             // @formatter:on
         }
     }
