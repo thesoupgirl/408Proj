@@ -133,11 +133,6 @@ class App extends React.Component {
     })
   }
    getOutlook() {
-    console.log("meow :" + this.state.eventList)
-    //this.state.eventList.push("\{ \"created\" : \"2017-03-28T20:30:49.000Z\",\"creator\" : \{ \"email\" : \"campb215@purdue.edu\", \"self\" : false \},\"end\" : \{\"dateTime\" : \"2018-02-05T11:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\},\"etag\" : \"\"2981603602346000\"\",\"htmlLink\" : \"https://www.google.com/calendar/event?eid=NnVybjk3aTRtaDRtMjdyNG5zam42MmhkYjBfMjAxODAyMDVUMTUwMDAwWiBvdGVzdGluZzY5QG0\", \"iCalUID\" : \"6urn97i4mh4m27r4nsjn62hdb0@google.com\",\"id\" : \"6urn97i4mh4m27r4nsjn62hdb0_20180205T150000Z\",\"kind\" : \"calendar#event\",\"organizer\" : \{\"email\" : \"campb215@purdue.edu\",\"self\" : false \},\"originalStartTime\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\}, \"recurringEventId\" : \"6urn97i4mh4m27r4nsjn62hdb0\", \"reminders\" : \{ \"useDefault\" : true\},\"sequence\" : 0,\"start\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\", \"timeZone\" : \"America/New_York\"\},\"status\" : \"confirmed\",\"summary\" : \"407 Meeting\",\"updated\" : \"2017-03-29T15:36:41.173Z\",\"stressValue\" : 0\}")
-    console.log(" arf" + this.state.eventList)
-    this.setState({yesOutlook: true})
-   // this.setState{eventy: getEventList().push("\{ \"created\" : \"2017-03-28T20:30:49.000Z\",\"creator\" : \{ \"email\" : \"campb215@purdue.edu\", \"self\" : false \},\"end\" : \{\"dateTime\" : \"2018-02-05T11:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\},\"etag\" : \"\"2981603602346000\"\",\"htmlLink\" : \"https://www.google.com/calendar/event?eid=NnVybjk3aTRtaDRtMjdyNG5zam42MmhkYjBfMjAxODAyMDVUMTUwMDAwWiBvdGVzdGluZzY5QG0\", \"iCalUID\" : \"6urn97i4mh4m27r4nsjn62hdb0@google.com\",\"id\" : \"6urn97i4mh4m27r4nsjn62hdb0_20180205T150000Z\",\"kind\" : \"calendar#event\",\"organizer\" : \{\"email\" : \"campb215@purdue.edu\",\"self\" : false \},\"originalStartTime\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\}, \"recurringEventId\" : \"6urn97i4mh4m27r4nsjn62hdb0\", \"reminders\" : \{ \"useDefault\" : true\},\"sequence\" : 0,\"start\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\", \"timeZone\" : \"America/New_York\"\},\"status\" : \"confirmed\",\"summary\" : \"407 Meeting\",\"updated\" : \"2017-03-29T15:36:41.173Z\",\"stressValue\" : 0\}")}
     ajax({
       url: '/outlooksignin',
       type: 'get',
@@ -154,7 +149,18 @@ class App extends React.Component {
         console.log(response)
       }
     })
+//'/localhost:8080/authorize'
+  console.log("arfffffff");
+  console.log(data);
+  if (data == "yay?") {
+  console.log("meow");
+  getOutlookEndpoint()
+}
 
+}
+
+getOutlookEndpoint() {
+    console.log("in endpoint thingy");
     ajax({
       url: '/outlook/events',
       type: 'get',
@@ -167,10 +173,8 @@ class App extends React.Component {
           	this.setState({ eventList: data.items })
             this.setState({alert: false})
           	this.setActiveView(UserPage)
-    
 
         }
-       
        
       },
       error: response => {
@@ -179,6 +183,7 @@ class App extends React.Component {
       }
     })
 }
+
   getLogout() {
       ajax({
           url: '/logout',
@@ -239,6 +244,7 @@ class App extends React.Component {
         // TODO give feedback to user
         console.log(response)
       }
+
     })
   }
 
@@ -274,6 +280,7 @@ class App extends React.Component {
           getEventList={() => this.getEventList()}
           getCalendars={() => this.getCalendars()}
           getOutlook={() => this.getOutlook()}
+          getOutlookEndpoint={() => this.getOutlookEndpoint()}
           getLogout={() => this.getLogout()}
           postCalendarAdd={calId => this.postCalendarAdd(calId)}
           postCalendarEvent={(calEvent, stressValue, navigateTo) => this.postCalendarEvent(calEvent, stressValue, navigateTo)}
