@@ -15,8 +15,9 @@ BigCalendar.momentLocalizer(moment)
 
 class UserPage extends React.Component {
     constructor(props) {
-        
+
         super(props)
+        help: false
         console.log("calendar")
         console.log(props)
         console.log("apply")
@@ -80,6 +81,24 @@ class UserPage extends React.Component {
             <div></div>
         )
     }
+
+     renderHelp() {
+        return (
+            <div style={styles.helpModal}>
+                <div style={{position: 'relative', width: '100%', height: '100%'}}>
+                    <div style={styles.helpText}>
+                        1. Would you like to reschedule? Check the reschedule button at the bottom. 
+                        <br/>
+                        <br/>
+                                    </div>
+                    <div style={{position: 'absolute', right: 10, bottom: 10}}>
+                        <button onClick={() => this.setState({help: false})}>Close</button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     renderCalendar() {
         const { alert } = this.props
 
@@ -132,13 +151,31 @@ class UserPage extends React.Component {
         return (
             <div className='container'>
                 {this.renderAlert()}
+                {this.renderHelp()}
                 {this.renderCalendar()}
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
+
                  </Jumbotron>
             </div>
         )
     }
 }
+let styles = {
+ helpModal: {
+        position: 'absolute',
+        backgroundColor: 'grey',
+        borderRadius: 8,
+        left: 'calc(50vw - 250px)',
+        top: 'calc(50vh - 300px)',
+        height: 600,
+        width: 500,
+        padding: 10
+    },
+    helpText: {
+        color: 'white',
+        fontSize: 12
+    },
+    };
 
 module.exports = UserPage
