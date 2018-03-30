@@ -93,6 +93,38 @@ class App extends React.Component {
     })
   }
   getEventList() {
+  		console.log("is it outlook")
+  		console.log(this.yesOutlook)
+      
+
+  	 if (this.yesOutlook){
+  		window.location.href = 'http://localhost:8080/'
+
+		 	
+  	 		ajax({
+		      url: '/outlook/events',
+		      type: 'get',
+		      contentType: 'application/json',
+          	  data: JSON.stringify(data),
+		      success: (data, xhr) => {
+
+		      		console.log("outlook event success")
+		        	console.log(data)
+		        	window.location.href = 'http://localhost:8080/'
+		          	this.setState({ eventList: data.items })
+		          	this.setActiveView(UserPage)
+		          	this.setState({alert: false})
+
+		       
+		      },
+		      error: response => {
+		        // TODO give feedback to user
+		        console.log("error outlook event success")
+		        console.log(response)
+		      }
+		    })
+  	 }
+  	 else {
       const data = {
           userName: this.state.user.name
       }
@@ -112,6 +144,7 @@ class App extends React.Component {
               console.log(response)
           }
       });
+  	}
   }
 
   getCalendars() {
@@ -136,7 +169,7 @@ class App extends React.Component {
     console.log("meow :" + this.state.eventList)
     //this.state.eventList.push("\{ \"created\" : \"2017-03-28T20:30:49.000Z\",\"creator\" : \{ \"email\" : \"campb215@purdue.edu\", \"self\" : false \},\"end\" : \{\"dateTime\" : \"2018-02-05T11:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\},\"etag\" : \"\"2981603602346000\"\",\"htmlLink\" : \"https://www.google.com/calendar/event?eid=NnVybjk3aTRtaDRtMjdyNG5zam42MmhkYjBfMjAxODAyMDVUMTUwMDAwWiBvdGVzdGluZzY5QG0\", \"iCalUID\" : \"6urn97i4mh4m27r4nsjn62hdb0@google.com\",\"id\" : \"6urn97i4mh4m27r4nsjn62hdb0_20180205T150000Z\",\"kind\" : \"calendar#event\",\"organizer\" : \{\"email\" : \"campb215@purdue.edu\",\"self\" : false \},\"originalStartTime\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\}, \"recurringEventId\" : \"6urn97i4mh4m27r4nsjn62hdb0\", \"reminders\" : \{ \"useDefault\" : true\},\"sequence\" : 0,\"start\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\", \"timeZone\" : \"America/New_York\"\},\"status\" : \"confirmed\",\"summary\" : \"407 Meeting\",\"updated\" : \"2017-03-29T15:36:41.173Z\",\"stressValue\" : 0\}")
     console.log(" arf" + this.state.eventList)
-    this.setState({yesOutlook: true})
+    //this.setState({yesOutlook: true})
    // this.setState{eventy: getEventList().push("\{ \"created\" : \"2017-03-28T20:30:49.000Z\",\"creator\" : \{ \"email\" : \"campb215@purdue.edu\", \"self\" : false \},\"end\" : \{\"dateTime\" : \"2018-02-05T11:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\},\"etag\" : \"\"2981603602346000\"\",\"htmlLink\" : \"https://www.google.com/calendar/event?eid=NnVybjk3aTRtaDRtMjdyNG5zam42MmhkYjBfMjAxODAyMDVUMTUwMDAwWiBvdGVzdGluZzY5QG0\", \"iCalUID\" : \"6urn97i4mh4m27r4nsjn62hdb0@google.com\",\"id\" : \"6urn97i4mh4m27r4nsjn62hdb0_20180205T150000Z\",\"kind\" : \"calendar#event\",\"organizer\" : \{\"email\" : \"campb215@purdue.edu\",\"self\" : false \},\"originalStartTime\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\",\"timeZone\" : \"America/New_York\"\}, \"recurringEventId\" : \"6urn97i4mh4m27r4nsjn62hdb0\", \"reminders\" : \{ \"useDefault\" : true\},\"sequence\" : 0,\"start\" : \{\"dateTime\" : \"2018-02-05T10:00:00.000-08:00\", \"timeZone\" : \"America/New_York\"\},\"status\" : \"confirmed\",\"summary\" : \"407 Meeting\",\"updated\" : \"2017-03-29T15:36:41.173Z\",\"stressValue\" : 0\}")}
     ajax({
       url: '/outlooksignin',
@@ -147,6 +180,7 @@ class App extends React.Component {
         console.log("outlook success")
         console.log(data)
         window.location = data
+         this.setState({yesOutlook: true})
        
       },
       error: response => {
@@ -155,7 +189,7 @@ class App extends React.Component {
       }
     })
 
-    ajax({
+  /*  ajax({
       url: '/outlook/events',
       type: 'get',
       async: false,
@@ -177,7 +211,7 @@ class App extends React.Component {
         // TODO give feedback to user
         console.log(response)
       }
-    })
+    })*/
 }
   getLogout() {
       ajax({
