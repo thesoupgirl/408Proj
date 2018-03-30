@@ -21,7 +21,7 @@ public class WhenReschedulingMachineLearningManager extends MachineLearningManag
      */
 
     // Singleton nonsense
-    private static WhenReschedulingMachineLearningManager ourInstance = new WhenReschedulingMachineLearningManager();
+    private final static WhenReschedulingMachineLearningManager ourInstance = new WhenReschedulingMachineLearningManager();
 
     public static synchronized WhenReschedulingMachineLearningManager getInstance() {
         return ourInstance;

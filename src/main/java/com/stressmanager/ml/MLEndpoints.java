@@ -61,9 +61,9 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null  || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);
@@ -90,17 +90,23 @@ public class MLEndpoints {
         }
         if (!rescheduled) {
             // If we see no visible changes, let's insert our own and move the highest rated event back 1 day
-            EventData mostStressful = returnedWeek.getEvents().stream().max(Comparator.comparing(EventData::getStress)).get();
+            EventData mostStressful = returnedWeek.getEvents().stream().filter(item->item.getStress() <= 10).max(Comparator.comparing(EventData::getStress)).get();
             mostStressful.setEventTime(mostStressful.getEventTime().plusDays(1));
+            //returnedWeek.setEvent(mostStressful);
+            System.out.println("OVERLOADING THE RESCHEDULING WITH EVENT " + events.getItems().stream().filter(i->i.getId().equals(mostStressful.getEventId())).findFirst().get().getSummary());
         }
+        List<Event> eventsList = events.getItems();
         for (int i = 1; i <= 7; i++) {
-            if (currentWeek.getEvents(i) == null) continue;
-            for (EventData event :currentWeek.getEvents(i)) {
+            if (returnedWeek.getEvents(i) == null) continue;
+            for (EventData event : returnedWeek.getEvents(i)) {
+                Event foundEvent = eventsList.stream().filter(item -> item.getId().equals(event.getEventId())).findFirst().get();
+                if (event.getEventTime().getMillis() == foundEvent.getStart().getDateTime().getValue()) continue; // Same time, continue
                 // Search for each event that may have been rescheduled, and replace the time
-                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getOriginalStartTime();
-                newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
+                foundEvent.getStart().setDateTime(new DateTime(event.getEventTime().getMillis()));
+                foundEvent.getEnd().setDateTime(new DateTime(event.getEventTime().getMillis() + event.getDuration()));
             }
         }
+        events.setItems(eventsList);
         //response = gson.toJson(returnedWeek.getRaw());
         //return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
@@ -120,9 +126,9 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null  || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);
@@ -147,9 +153,12 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            //if (event.getId().equals("a1l6639t5hvetkmj4ec7rcbnno_20180301T230000Z")) {
+                //System.out.println("why is this happening");
+            //}
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);
@@ -173,9 +182,9 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null  || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);
@@ -209,7 +218,7 @@ public class MLEndpoints {
             if (currentWeek.getEvents(i) == null) continue;
             for (EventData event :currentWeek.getEvents(i)) {
                 // Search for each event that may have been rescheduled, and replace the time
-                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getOriginalStartTime();
+                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getStart();
                 newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
             }
         }
@@ -233,9 +242,9 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);
@@ -261,9 +270,9 @@ public class MLEndpoints {
 
         WeekData currentWeek = new WeekData();
         for (Event event : events.getItems()) {
-            if (event.getOriginalStartTime() == null || event.getOriginalStartTime().getDateTime() == null || event.getColorId() == null) continue;
-            System.out.println("Id: " + event.getId() + " Time: " + event.getOriginalStartTime().getDateTime() + " Color: " + event.getColorId() + " weekdata: " + currentWeek);
-            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getOriginalStartTime().getDateTime().getValue()), Integer.parseInt(event.getColorId())));
+            if (event.getStart() == null || event.getStart().getDateTime() == null || event.get("stressValue") == null || event.getEnd() == null  || event.getEnd().getDateTime() == null || event.getEnd().getDateTime().getValue() < event.getStart().getDateTime().getValue()) continue;
+            System.out.println("Id: " + event.getId() + " Time: " + event.getStart().getDateTime() + " Color: " + event.get("stressValue") + " weekdata: " + currentWeek);
+            currentWeek.addEvent(new EventData(event.getId(),  new org.joda.time.DateTime(event.getStart().getDateTime().getValue()), (int)event.get("stressValue"), event.getEnd().getDateTime().getValue() - event.getStart().getDateTime().getValue()));
         }
 
         WeekData returnedWeek = new WeekData(currentWeek);

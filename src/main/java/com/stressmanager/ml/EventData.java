@@ -7,18 +7,30 @@ public class EventData {
     private DateTime eventTime;
     private int stress;
 
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    private long duration;
+
 
 
     public EventData() {
         eventId = null;
         eventTime = DateTime.now();
         stress = 0;
+        duration = 0;
     }
 
-    public EventData(String eventId, DateTime eventTime, int stress) {
+    public EventData(String eventId, DateTime eventTime, int stress, long duration) {
         this.eventId = eventId;
         this.eventTime = eventTime;
         this.stress = stress;
+        this.duration = duration;
     }
 
     public String getEventId() {

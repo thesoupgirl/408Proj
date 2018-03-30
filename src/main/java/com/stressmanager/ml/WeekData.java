@@ -26,7 +26,7 @@ public class WeekData {
             dataMap.put(i, new HashMap<>());
             if (toClone.dataMap.get(i) != null) {
                 for (Map.Entry<String, EventData> entry : toClone.dataMap.get(i).entrySet()) {
-                    addEvent(new EventData(entry.getValue().getEventId(), entry.getValue().getEventTime(), entry.getValue().getStress()));
+                    addEvent(new EventData(entry.getValue().getEventId(), entry.getValue().getEventTime(), entry.getValue().getStress(), entry.getValue().getDuration()));
                 }
             }
         }

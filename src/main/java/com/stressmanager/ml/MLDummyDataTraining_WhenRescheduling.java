@@ -3,6 +3,7 @@ package com.stressmanager.ml;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,8 @@ public class MLDummyDataTraining_WhenRescheduling {
         for (int i = 0; i < 24 * 7; i++, time = time.plusHours(1)) {
             if (i % 4 != 0) continue; // Only use a few
             int eventStress = (r.nextInt() % 3) - 1;
-            priorEvents.add(new EventData(i + "", time, eventStress));
-            nextEvents.add(new EventData(i + "", time, eventStress));
+            priorEvents.add(new EventData(i + "", time, eventStress, DateTimeConstants.MILLIS_PER_HOUR));
+            nextEvents.add(new EventData(i + "", time, eventStress, DateTimeConstants.MILLIS_PER_HOUR));
         }
 
 

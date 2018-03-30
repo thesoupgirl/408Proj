@@ -23,7 +23,7 @@ public class ReschedulingMachineLearningManager extends MachineLearningManager {
      */
 
     // Singleton nonsense
-    private static ReschedulingMachineLearningManager ourInstance = new ReschedulingMachineLearningManager();
+    private final static ReschedulingMachineLearningManager ourInstance = new ReschedulingMachineLearningManager();
 
     public static synchronized ReschedulingMachineLearningManager getInstance() {
         return ourInstance;
