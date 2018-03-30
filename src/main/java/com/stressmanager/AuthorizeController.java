@@ -56,6 +56,7 @@ public class AuthorizeController {
     }
     try {
       System.out.println("meow: " + session.getAttribute("tokens"));
+      response.sendRedirect("/outlook/events");
       return "yay?";
       //response.sendRedirect("/");
     }
