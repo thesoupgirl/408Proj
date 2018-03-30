@@ -15,11 +15,19 @@ class UserPage extends React.Component {
         this.state = {
             calID: ''
         }
+         const { yesOutlook } = this.props
         console.log("at user page")
         console.log("is it outlook")
         console.log(this.props.yesOutlook)
+        console.log(yesOutlook)
         console.log(this.props.getEventList)
-        this.props.getEventList()
+        //this.props.getEventList()
+        setTimeout(() => {(this.getEventList(), function(){
+                console.log(this.state.yesOutlook, 'outlook from user page'); 
+                  
+
+         });
+      }, 500)
     }
 
     accessor(time, event) {
@@ -58,7 +66,7 @@ class UserPage extends React.Component {
             return (
                 <BigCalendar
                     defaultView='week'
-                    views={['week']}
+                    views={['day', 'week', 'month']}
                     events={this.props.eventList}
                     eventPropGetter={(event, start, end, isSelected) => this.eventPropGetter(event, start, end, isSelected)}
                     startAccessor={event => this.accessor('start', event)}

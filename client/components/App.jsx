@@ -32,6 +32,7 @@ class App extends React.Component {
       yesOutlook: false,
       eventy: []
     }
+    
   }
 
   // Component Lifecycle Methods
@@ -95,23 +96,23 @@ class App extends React.Component {
    getEventList() {
    	const { yesOutlook} = this.props
   		console.log("is it outlook")
-  		console.log(this.yesOutlook)
+  		console.log(this.state.yesOutlook)
       
 
-  	 if (this.yesOutlook){
+  	 if (this.state.yesOutlook){
   		//window.location.href = 'http://localhost:8080/'
 
 		 	
   	 		ajax({
 		      url: '/outlook/events',
 		      type: 'get',
-		      contentType: 'application/json',
-          	  data: JSON.stringify(data),
+		     // contentType: 'application/json',
+          	  //data: JSON.stringify(data),
 		      success: (data, xhr) => {
 
 		      		console.log("outlook event success")
 		        	console.log(data)
-		        	window.location.href = 'http://localhost:8080/'
+		        	//window.location.href = 'http://localhost:8080/'
 		          	this.setState({ eventList: data.items })
 		          	this.setActiveView(UserPage)
 		          	this.setState({alert: false})
@@ -167,7 +168,11 @@ class App extends React.Component {
       }
     })
   }
+
+ 
+
    getOutlook() {
+   	 console.log("isOutlook")
     ajax({
       url: '/outlooksignin',
       type: 'get',
@@ -176,10 +181,27 @@ class App extends React.Component {
        // this.setActiveView(UserPage)
         console.log("outlook success")
         console.log(data)
-        this.setState({yesOutlook: true})
-        console.log(this.yesOutlook)
+        //this.setState({yesOutlook: true})
+       
+       // this.yesOutlook = true
         window.location = data
+        
+      setTimeout(() => {this.setState({yesOutlook: true}, function(){
+                console.log(this.state.yesOutlook, 'yesOutlook'); 
+                  
 
+         });
+      }, 300)
+        setTimeout(() => {(this.getEventList(), function(){
+                console.log(this.state.yesOutlook, 'call func yesOutlook'); 
+                  
+
+         });
+      }, 500)
+ 
+       
+       
+    
        
       },
       error: response => {
@@ -285,6 +307,7 @@ class App extends React.Component {
   isActiveView(view) {
     return view === this.state.activeView
   }
+
 
   setActiveView(activeView) {
     this.setState({ activeView })
