@@ -26,8 +26,17 @@ class UserPage extends React.Component {
         }
 
          this.RescheduleAction = this.RescheduleAction.bind(this);
+         this.message = this.message.bind(this);
+         this.prompt = this.prompt.bind(this);
          this.props.getWaitTime()
          this.start =  new Date().getTime()/1000;
+
+
+        //setTimeout(function(){ alert("Looks like you are having a stressful week. Would you like some rescheduling suggestions? If so please click the Reschedule button at the buttom of the page."); },20000);
+
+       
+
+            
          
     }
 
@@ -73,8 +82,12 @@ class UserPage extends React.Component {
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>
+
                 </SweetAlert>
+
+
             )
+
         }
         return (
             <div></div>
@@ -127,12 +140,22 @@ class UserPage extends React.Component {
 
 
     }
+    message(){
+        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n If so please click the Reschedule button at the buttom of the page.")
+    }
+    prompt(){
+        const { alert } = this.props
+        if(!alert){
+        setTimeout(this.message() , 100000);
+        }
+    }
 
     render() {
         return (
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
+                {this.prompt()}
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>

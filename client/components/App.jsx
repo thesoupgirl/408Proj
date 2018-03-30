@@ -85,7 +85,7 @@ getReschedule() {
 	          },
 	          error: (response, data )=> {
 	              // TODO give feedback to user
-	              console.log("error")
+	              console.log("error with resch suggest")
 	              console.log(response)
 	              console.log("data")
 	               console.log(data)
