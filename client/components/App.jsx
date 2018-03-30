@@ -141,6 +141,7 @@ class App extends React.Component {
     ajax({
       url: '/outlooksignin',
       type: 'get',
+      async: false,
       success: (data) => {
        // this.setActiveView(UserPage)
         console.log("outlook success")
@@ -157,11 +158,19 @@ class App extends React.Component {
     ajax({
       url: '/outlook/events',
       type: 'get',
-      success: (data) => {
-       // this.setActiveView(UserPage)
-        console.log("outlook success")
-        console.log(data)
-        window.location = data
+      async: false,
+      success: (data, xhr) => {
+
+      	if (this.responseIsJson(xhr)) {
+      		console.log("outlook event success")
+        	console.log(data)
+          	this.setState({ eventList: data.items })
+            this.setState({alert: false})
+          	this.setActiveView(UserPage)
+    
+
+        }
+       
        
       },
       error: response => {
