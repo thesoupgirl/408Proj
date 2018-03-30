@@ -201,7 +201,7 @@ public class MLEndpoints {
                     returnedWeek = ReschedulingMachineLearningManager.getInstance().predictRescheduling(event.getEventId(), returnedWeek);
                     rescheduled = true;
                 } catch (RuntimeException e) {
-                    System.out.println("Failed to reschedule android event " + event.getEventId() + ", " + e);
+                    System.out.println("Failed to reschedule event " + event.getEventId() + ", " + e);
                     // If any exceptions, continue and do not change the returned week week
                     continue;
                     //response = "{\"Error\":\"" + e + "\"}";
@@ -211,17 +211,23 @@ public class MLEndpoints {
         }
         if (!rescheduled) {
             // If we see no visible changes, let's insert our own and move the highest rated event back 1 day
-            EventData mostStressful = returnedWeek.getEvents().stream().max(Comparator.comparing(EventData::getStress)).get();
+            EventData mostStressful = returnedWeek.getEvents().stream().filter(item->item.getStress() <= 10).max(Comparator.comparing(EventData::getStress)).get();
             mostStressful.setEventTime(mostStressful.getEventTime().plusDays(1));
+            //returnedWeek.setEvent(mostStressful);
+            System.out.println("OVERLOADING THE RESCHEDULING WITH EVENT " + events.getItems().stream().filter(i->i.getId().equals(mostStressful.getEventId())).findFirst().get().getSummary());
         }
+        List<Event> eventsList = events.getItems();
         for (int i = 1; i <= 7; i++) {
-            if (currentWeek.getEvents(i) == null) continue;
-            for (EventData event :currentWeek.getEvents(i)) {
+            if (returnedWeek.getEvents(i) == null) continue;
+            for (EventData event : returnedWeek.getEvents(i)) {
+                Event foundEvent = eventsList.stream().filter(item -> item.getId().equals(event.getEventId())).findFirst().get();
+                if (event.getEventTime().getMillis() == foundEvent.getStart().getDateTime().getValue()) continue; // Same time, continue
                 // Search for each event that may have been rescheduled, and replace the time
-                EventDateTime newTime = events.getItems().stream().filter(item -> item.getId().equals(event.getEventId())).collect(Collectors.toList()).get(0).getStart();
-                newTime.setDateTime(new DateTime(event.getEventTime().getMillis()));
+                foundEvent.getStart().setDateTime(new DateTime(event.getEventTime().getMillis()));
+                foundEvent.getEnd().setDateTime(new DateTime(event.getEventTime().getMillis() + event.getDuration()));
             }
         }
+        events.setItems(eventsList);
         //response = gson.toJson(returnedWeek.getRaw());
         //return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
