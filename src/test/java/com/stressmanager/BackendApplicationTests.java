@@ -160,8 +160,7 @@ public class BackendApplicationTests extends AbstractTestNGSpringContextTests {
 	public void TestAdviceRoute() throws Exception{
         System.out.println("\nRunnning test case 13: Checking that the route /advice works.");
         mvc.perform(get("/advice"))
-            .andExpect(status().isMovedTemporarily())
-            .andExpect(redirectedUrl("http://localhost/"));
+            .andExpect(status().isOk());
 
 	}
 

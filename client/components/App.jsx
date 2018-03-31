@@ -13,6 +13,8 @@ import StressFormPage from './StressFormPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
 import ReschedulePage from './ReschedulePage'
+import SettingsPage from './SettingsPage'
+import HomePage from './HomePage'
 
 
 
@@ -150,7 +152,7 @@ getReschedule() {
       success: (user, status, xhr) => {
         if (this.responseIsJson(xhr)) {
             this.setState({ user, authorized: true })
-            this.setActiveView(UserPage)
+            this.setActiveView(HomePage)
             this.getEventList()
           return
         }

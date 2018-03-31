@@ -7,15 +7,28 @@ security:
       auto-approve-scopes: '.*'
 google:
     client:
+<<<<<<< HEAD
       clientId: 30354291750-bs651utajfcpf0a5outo8nqnmd8thm86.apps.googleusercontent.com
       clientSecret: 8BrM4VbRR5dgYlinrySTKNU5
       accessTokenUri: https://www.googleapis.com/oauth2/v4/token
       userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
       clientAuthenticationScheme: form
       scope: profile, email, https://www.googleapis.com/auth/calendar
+=======
+      clientId: 790792992050-fms6jom646j8ksu30n19nvnnofaj2o2r.apps.googleusercontent.com
+      clientSecret: _Sxg7BaRBBNzhrHB-LIbNo_5
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope: profile, email, https://www.googleapis.com/auth/calendar	
+>>>>>>> eafa9ef7711b1dd40ab72741f3b98d36720ea170
     resource:
       userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
       preferTokenInfo: true
 logging:
   level:
+<<<<<<< HEAD
     org.springframework.security: DEBUG
+=======
+    org.springframework.security: DEBUG
+>>>>>>> eafa9ef7711b1dd40ab72741f3b98d36720ea170
