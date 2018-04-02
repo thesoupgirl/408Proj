@@ -109,7 +109,7 @@ public class CalendarImportActivity extends AppCompatActivity {
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (url.contains("localhost") || url.contains("heroku")) {
+                if (url.equals("http://localhost:8080/authorize")) {
                     dialog.dismiss();
                     finish();
                 }
