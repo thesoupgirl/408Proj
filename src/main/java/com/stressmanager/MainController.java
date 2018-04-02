@@ -138,6 +138,7 @@ public class MainController {
         String stress = (String)request.get("stressValue");
         String eventID = (String)request.get("calEvent");
         String userName = (String)request.get("userName");
+	userName = userName.replace("@", "");
         System.out.println(stress+"  "+eventID + "  "+userName);
 
         //get the event from the API
