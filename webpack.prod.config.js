@@ -62,13 +62,13 @@ const config = {
         evaluate: true,
         if_return: true,
         join_vars: true,
-        drop_debugger: true,
-        drop_console: true,
+        drop_debugger: false,
+        drop_console: false,
       }
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
-      debug: false
+      debug: true
     }),
     new ExtractTextPlugin({
       filename: 'css/style.css'

@@ -1,6 +1,11 @@
 
 package com.stressmanager;
 
+import java.util.UUID;
+
+import org.springframework.ui.Model;
+import com.stressmanager.AuthHelper;
+
 import java.util.*;
 import javax.servlet.http.*;
 
@@ -133,6 +138,7 @@ public class MainController {
         String stress = (String)request.get("stressValue");
         String eventID = (String)request.get("calEvent");
         String userName = (String)request.get("userName");
+	userName = userName.replace("@", "");
         System.out.println(stress+"  "+eventID + "  "+userName);
 
         //get the event from the API
@@ -146,7 +152,6 @@ public class MainController {
 
         //add the stresslvl the user's table for events
         //cheanges the username to something usable
-        userName = userName.replace("@", "");
         userName = userName.replaceAll(" ", "_");
         Item new1 = new Item();
         new1.withString("eventID", eventID);
@@ -207,7 +212,6 @@ public class MainController {
         String eventID = (String)request.get("eventID");
         String username = (String)request.get("userName");
         //get the Table
-        username = username.replace("@", "");
         Table tab = DBSetup.getTable(username.replaceAll(" ","_"));
 
         //get the stress value with that eventID
@@ -228,7 +232,7 @@ public class MainController {
         String resp = gson.toJson(add, listType.getType());
 
         //Send response to client
-        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.ACCEPTED);
+        return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
     }
 
     //Route that adds the CalendarID under that user
@@ -249,7 +253,7 @@ public class MainController {
         //get the User Info
         username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
-               .withPrimaryKey("username", username);
+                .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
 
         //add the calendar ID to the current User's CalendarID list

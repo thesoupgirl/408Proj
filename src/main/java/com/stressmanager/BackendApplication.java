@@ -3,12 +3,9 @@ package com.stressmanager;
 import java.security.Principal;
 import java.util.*;
 
-import io.jsonwebtoken.*;
-
-import javax.crypto.spec.SecretKeySpec;
-
 import javax.servlet.Filter;
 import javax.servlet.http.*;
+
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -22,9 +19,6 @@ import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-
-import org.springframework.web.client.RestTemplate;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.CalendarScopes;
@@ -50,6 +44,8 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -59,8 +55,6 @@ import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilt
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -80,6 +74,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 
+import java.util.UUID;
+
+import org.springframework.ui.Model;
+import com.stressmanager.AuthHelper;
+
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
@@ -92,39 +91,88 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileReader;
+
 
 @RestController
 @EnableOAuth2Client
 @EnableAuthorizationServer
 @SpringBootApplication
 @EnableAutoConfiguration
+@PropertySource("classpath:application.yml")
 @Order(6)
 public class BackendApplication extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    OAuth2ClientContext oauth2ClientContext;
+	@Autowired
+	OAuth2ClientContext oauth2ClientContext;
 
+	DBHelper db = new DBHelper();
+	@Value("${outlook.client.appId}")
+  	public static String appId;
 
-	@Value("${google.client.clientId}")
+  	@Value("${google.client.clientId}")
 	static String clientID;
 
 	@Value("${google.client.clientSecret}")
 	static String clientSecret;
 
-    private static String email = "";
+	private static String email = "";
 
 	static String access = "";
 
-    DBHelper db = new DBHelper();
     private Map<String, String> dbCreds = new LinkedHashMap<>();
     private Map<String, GoogleIdToken> googleCreds = new LinkedHashMap<>();
 
-    //static Credentials credz;
+	//static Credentials credz;
 
-    static com.google.api.services.calendar.Calendar service;
+	static com.google.api.services.calendar.Calendar service;
+
+	//starting point for outlook, spawns auth
+	@CrossOrigin(origins = "http://localhost:8080")
+	@RequestMapping({ "/outlooksignin" })
+	@ResponseBody
+	public String outlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		UUID state = UUID.randomUUID();
+  		UUID nonce = UUID.randomUUID();
+  		System.out.println("app id is..." + appId);
+  		System.out.println("clientid thing..." + System.getenv("GOOGLE_CLIENT_ID"));
+
+  		System.out.println("google id is..." + clientID);
+  		System.out.println("app id is..." + System.getenv("APP_ID"));
+  		// Save the state and nonce in the session so we can
+		// verify after the auth process redirects back
+		HttpSession session = request.getSession();
+		session.setAttribute("expected_state", state);
+		session.setAttribute("expected_nonce", nonce);
+		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
+		model.addAttribute("loginUrl", loginUrl);
+		return loginUrl;
+  		//response.sendRedirect(loginUrl);
+	}
+
+	//starting point for outlook, spawns auth
+	@CrossOrigin(origins = "http://localhost:8080")
+	@RequestMapping({ "/android/outlooksignin" })
+	@ResponseBody
+	public void androidOutlookSignIn(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		UUID state = UUID.randomUUID();
+  		UUID nonce = UUID.randomUUID();
+  		System.out.println("app id is..." + appId);
+  		System.out.println("app id is..." + System.getenv("APP_ID"));
+  		// Save the state and nonce in the session so we can
+		// verify after the auth process redirects back
+		HttpSession session = request.getSession();
+		session.setAttribute("expected_state", state);
+		session.setAttribute("expected_nonce", nonce);
+		String loginUrl = AuthHelper.getLoginUrl(state, nonce);
+		model.addAttribute("loginUrl", loginUrl);
+		//return loginUrl;
+  		response.sendRedirect(loginUrl);
+	}
+
 
     @RequestMapping({"/androidlogin"})
     @ResponseBody
@@ -1094,6 +1142,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
     }
 
+
     /*
      * Spring Security Set up
      */
@@ -1101,7 +1150,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/calendar/event", "/api/calendar/androidevents").permitAll().anyRequest()
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/android/outlooksignin", "/calendar/event", "/api/calendar/androidevents").permitAll().anyRequest()
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -1125,6 +1174,12 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
             http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/event").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/add").authorizeRequests().anyRequest().authenticated();
+
+            http.antMatcher("/outlooksignin").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/android/outlooksignin").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/authorize").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/outlook/logout").authorizeRequests().anyRequest().authenticated();
+			http.antMatcher("/outlook/events").authorizeRequests().anyRequest().authenticated();
             // @formatter:on
         }
     }
@@ -1199,52 +1254,52 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 class ClientResources {
 
-    @NestedConfigurationProperty
-    private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
+	@NestedConfigurationProperty
+	private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
 
-    @NestedConfigurationProperty
-    private ResourceServerProperties resource = new ResourceServerProperties();
+	@NestedConfigurationProperty
+	private ResourceServerProperties resource = new ResourceServerProperties();
 
 
-    public ClientResources() {
-        client.setClientId(System.getenv("GOOGLE_CLIENT_ID"));
-        client.setClientSecret(System.getenv("GOOGLE_CLIENT_SECRET"));
-        List<String> str = new ArrayList<>();
-        str.add(CalendarScopes.CALENDAR);
-        client.setScope(str);
-    }
+	public ClientResources() {
+		client.setClientId(System.getenv("GOOGLE_CLIENT_ID"));
+		client.setClientSecret(System.getenv("GOOGLE_CLIENT_SECRET"));
+		System.out.println("clientid thing..." + System.getenv("GOOGLE_CLIENT_ID"));
+		List<String> str = new ArrayList<>();
+		str.add(CalendarScopes.CALENDAR);
+		client.setScope(str);
+	}
 
-    public AuthorizationCodeResourceDetails getClient() {
-        return client;
-    }
+	public AuthorizationCodeResourceDetails getClient() {
+		return client;
+	}
 
-    public ResourceServerProperties getResource() {
-        return resource;
-    }
+	public ResourceServerProperties getResource() {
+		return resource;
+	}
 }
-
 class ClientResourcesTest {
 
-    @NestedConfigurationProperty
-    private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
+	@NestedConfigurationProperty
+	private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
 
-    @NestedConfigurationProperty
-    private ResourceServerProperties resource = new ResourceServerProperties();
+	@NestedConfigurationProperty
+	private ResourceServerProperties resource = new ResourceServerProperties();
 
 
-    public ClientResourcesTest() {
-        client.setClientId(System.getenv("GOOGLE_CLIENT_ID_TEST"));
-        client.setClientSecret(System.getenv("GOOGLE_CLIENT_SECRET_TEST"));
-        List<String> str = new ArrayList<>();
-        str.add(CalendarScopes.CALENDAR);
-        client.setScope(str);
-    }
+	public ClientResourcesTest() {
+		client.setClientId(System.getenv("GOOGLE_CLIENT_ID_TEST"));
+		client.setClientSecret(System.getenv("GOOGLE_CLIENT_SECRET_TEST"));
+		List<String> str = new ArrayList<>();
+		str.add(CalendarScopes.CALENDAR);
+		client.setScope(str);
+	}
 
-    public AuthorizationCodeResourceDetails getClient() {
-        return client;
-    }
+	public AuthorizationCodeResourceDetails getClient() {
+		return client;
+	}
 
-    public ResourceServerProperties getResource() {
-        return resource;
-    }
+	public ResourceServerProperties getResource() {
+		return resource;
+	}
 }

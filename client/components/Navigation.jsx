@@ -18,11 +18,7 @@ import HomePage from './HomePage'
 
 class Navigation extends React.Component {
   constructor(props) {
-    console.log("-----nav props----");
-    console.log(props);
     super(props)
-    console.log("Navigation")
-     console.log(props)
 
     this.state = {
       alertVisible: false
@@ -47,7 +43,7 @@ class Navigation extends React.Component {
   }
 
   renderDropdown() {
-    const { advice, authorized, getCalendars, getCalendarType, getLogout, setActiveView } = this.props
+    const { advice, authorized, getCalendars, getLogout, setActiveView } = this.props
 
     if (authorized) {
       return (
@@ -58,7 +54,7 @@ class Navigation extends React.Component {
             </MenuItem>
              <MenuItem onClick={() =>  setActiveView(CalendarPage)}>
               Choose Calendar Service
-            </MenuItem>
+              </MenuItem>
             <MenuItem onClick={() => getCalendars()}>
               Import Calendar
             </MenuItem>

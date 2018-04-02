@@ -2,22 +2,20 @@ import React from 'react'
 
 import Navigation from './Navigation'
 
-
 class MainLayout extends React.Component {
   render() {
     return (
       <div>
-
         <Navigation
           advice={this.props.advice}
           authorized={this.props.authorized}
           getCalendars={() => this.props.getCalendars()}
-          getCalendarType={() => this.props.getCalendarType()}
+          getOutlook={() => this.props.getOutlook()}
           getLogout={() => this.props.getLogout()}
           setActiveView={activeView => this.props.setActiveView(activeView)}
           user={this.props.user}
+          yesOutlook={this.props.yesOutlook}
         />
-      
         <this.props.activeView
           calendarList={this.props.calendarList}
           eventList={this.props.eventList}
@@ -29,6 +27,7 @@ class MainLayout extends React.Component {
           user={this.props.user}
           setActiveView={activeView => this.props.setActiveView(activeView)}
           getCalendars={() => this.props.getCalendars()}
+          getOutlook={() => this.props.getOutlook()}
         />
       </div>
     )
