@@ -4,6 +4,7 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
+import {AdviceProvider} from './AdviceProvider.jsx'
 
 
 BigCalendar.momentLocalizer(moment)
@@ -25,7 +26,7 @@ class dayViewCalendar extends React.Component {
             return moment(event[time]['dateTime']).toDate()
         } else if (has(event, dateString)) {
             return moment(event[time]['date']).toDate()
-        }
+        }l
     }
 
 
@@ -34,7 +35,7 @@ class dayViewCalendar extends React.Component {
         if (alert) {
             return (
                 <SweetAlert
-                    title="Loading User Data"
+                    title={() => AdviceProvider()}
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>

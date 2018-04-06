@@ -4,6 +4,7 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
+import {AdviceProvider} from './AdviceProvider.jsx'
 
 
 BigCalendar.momentLocalizer(moment)
@@ -27,14 +28,13 @@ class UserPage extends React.Component {
             return moment(event[time]['date']).toDate()
         }
     }
-
-
+    
     renderAlert() {
         const { alert } = this.props
         if (alert) {
             return (
                 <SweetAlert
-                    title="Loading User Data"
+                    title={() => AdviceProvider()}
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>
