@@ -10,6 +10,7 @@ import xyz.jhughes.epsteinandroid.models.Calendars.CalendarToImport;
 import xyz.jhughes.epsteinandroid.models.Calendars.Calendars;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
 import xyz.jhughes.epsteinandroid.models.Events.RateEvent;
+import xyz.jhughes.epsteinandroid.models.MLTime;
 
 public interface EpsteinApi {
     @POST("androidlogin")
@@ -29,4 +30,10 @@ public interface EpsteinApi {
 
     @POST("calendar/event")
     Call<Void> updateStreeEvent(@Body RateEvent model);
+
+    @GET("outlooksignin")
+    Call<String> getOutlookUrl();
+
+    @GET("calendar/androidsuggest")
+    Call<Events> getEventsToRescheduleSuggestions(@Header("email") String email, @Header("idToken") String idToken);
 }

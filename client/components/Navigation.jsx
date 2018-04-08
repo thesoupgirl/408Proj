@@ -13,14 +13,12 @@ import UserPage from './UserPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
+import HomePage from './HomePage'
+
 
 class Navigation extends React.Component {
   constructor(props) {
-    console.log("-----nav props----");
-    console.log(props);
     super(props)
-    console.log("Navigation")
-     console.log(props)
 
     this.state = {
       alertVisible: false
@@ -45,20 +43,26 @@ class Navigation extends React.Component {
   }
 
   renderDropdown() {
-    const { advice, authorized, getCalendars, getCalendarType, getLogout, setActiveView } = this.props
+    const { advice, authorized, getCalendars, getLogout, setActiveView } = this.props
 
     if (authorized) {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+            <MenuItem onClick={() => setActiveView(HomePage)}>
+              Home Page
+            </MenuItem>
              <MenuItem onClick={() =>  setActiveView(CalendarPage)}>
               Choose Calendar Service
-            </MenuItem>
+              </MenuItem>
             <MenuItem onClick={() => getCalendars()}>
               Import Calendar
             </MenuItem>
             <MenuItem onClick={() => setActiveView(StressFormPage)}>
               Rate Events
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(UserPage)}>
+              Calendar
             </MenuItem>
             <MenuItem onClick={() => setActiveView(Games)}>
               Games
@@ -84,7 +88,7 @@ class Navigation extends React.Component {
       <Navbar fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#" onClick={() => this.props.setActiveView(UserPage)}>Epstein</a>
+            <a href="#" onClick={() => this.props.setActiveView(HomePage)}>Epstein</a>
           </Navbar.Brand>
         </Navbar.Header>
         {this.renderDropdown()}
