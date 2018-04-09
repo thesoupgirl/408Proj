@@ -46,7 +46,7 @@ class HomePage extends React.Component {
 
      
       <Carousel.Item>
-       <img  width={700} height={300} alt="900x600"  src={require('../image/EpsteinIcon.png')} style={{position: "relative", left: 250}} onClick={() => this.props.setActiveView(UserPage)} /> 
+       <img  width={600} height={300} alt="900x600"  src={require('../image/EpsteinIcon.png')} style={{position: "relative", left: 250}} onClick={() => this.props.setActiveView(UserPage)} /> 
         <Carousel.Caption>
           <h3>Welcome to Epstein</h3>
           <h4>A smart calendar to help users recognize and manage the chaos of life. 
@@ -74,7 +74,7 @@ class HomePage extends React.Component {
 
        <h3  style={{textAlign: "center"}}>Try Epstein on Android.
          </h3>
-      <img  width={700} height="auto" alt="900x600"  src={require('../image/EpsteinThree.png')} style={{position: "relative", left: 250}}  /> 
+      <img  width={700} height="auto" alt="900x600"  src={require('../image/EpsteinThree.png')} style={{position: "relative", left: 250}} onClick={() => this.props.setActiveView(CalendarPage)} /> 
 
 
       

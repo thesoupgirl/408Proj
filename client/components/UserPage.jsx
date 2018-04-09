@@ -15,6 +15,9 @@ class UserPage extends React.Component {
         this.state = {
             calID: ''
         }
+        this.selectEvent = this.selectEvent.bind(this);
+        this.selectSlot = this.selectSlot.bind(this);
+
     }
 
     accessor(time, event) {
@@ -45,13 +48,28 @@ class UserPage extends React.Component {
             <div></div>
         )
     }
-    renderCalendar() {
+     selectEvent(event){
+       alert(event.summary)
+             
+        
+    }
+    selectSlot(slotInfo){
+         alert(
+                    `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+                    `\nend: ${slotInfo.end.toLocaleString()}` 
+            )
+           
+        
+    }
+   
+     renderCalendar() {
         //console.log("arf" + this.props.eventList)
         //console.log("meow" + this.props.eventy)
         const { alert } = this.props
         if (!alert) {
             return (
                 <BigCalendar
+                    selectable
                     defaultView='week'
                     views={['day', 'week', 'month']}
                     events={this.props.eventList}
@@ -60,7 +78,13 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
-                    />
+
+                   
+                   
+
+                    onSelectEvent={event => this.selectEvent(event)}
+                    onSelectSlot={slotInfo => this.selectSlot(slotInfo)}
+                />
             )
         }
         return (
@@ -82,7 +106,7 @@ class UserPage extends React.Component {
 
         return { className: `event-unrated${selected}` }
     }
-//{this.renderAlert()}
+
     render() {
         return (
             <div className='container'>

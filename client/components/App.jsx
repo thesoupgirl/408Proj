@@ -98,9 +98,7 @@ class App extends React.Component {
       
 
   	 if (this.yesOutlook){
-  		window.location.href = 'http://localhost:8080/'
-
-		 	
+  		 	
   	 		ajax({
 		      url: '/outlook/events',
 		      type: 'get',
