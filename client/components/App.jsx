@@ -15,7 +15,7 @@ import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
-
+import DestressPage from './DestressPage'
 
 class App extends React.Component {
   constructor(props) {

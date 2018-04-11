@@ -14,6 +14,7 @@ import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
+import DestressPage from './DestressPage'
 
 
 class Navigation extends React.Component {
@@ -63,6 +64,9 @@ class Navigation extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => setActiveView(UserPage)}>
               Calendar
+            </MenuItem>
+            <MenuItem onClick={() => setActiveView(DestressPage)}>
+              DestressPage
             </MenuItem>
             <MenuItem onClick={() => setActiveView(Games)}>
               Games
