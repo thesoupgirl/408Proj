@@ -31,12 +31,14 @@ class DestressPage extends React.Component {
    
 
 
-          <p style={{color: "black", fontWeight: 'bold', fontSize: '50px', textDecorationStyle: "solid", border:'10px solid #000000'}}> Destressing Methods </p>
+          <p style={{color: "black", fontWeight: 'bold', fontSize: '50px', textDecorationStyle: "solid", border:'10px solid #000000', textAlign: 'center' }}> Destressing Methods </p>
 
-       
+     
         </Jumbotron>
 
-<p style={{color: "red", fontWeight: 'bold', fontSize: '30px',  textDecorationLine: "underline", textDecorationStyle: "solid", fontStyle: 'italic'}}>Understanding stress symptoms </p>
+  <img  width={900} height={600} alt="900x600"  src={require('../image/EpsteinOne.png')} style={{position: "relative",   left: 125, right: 125}} />
+
+<p style={{color: "red", fontWeight: 'bold', fontSize: '35px',  textDecorationLine: "underline", textDecorationStyle: "solid", fontStyle: 'italic'}}>Understanding stress symptoms </p>
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Cognitive symptoms</p>
 <p> • Memory problems</p>
 <p> • Inability to concentrate</p>
@@ -69,7 +71,7 @@ class DestressPage extends React.Component {
 <p>One recommendation commonly offered by doctors for seeking psychological help is counselling and psychotherapy. Talking with a professional about the difficulties you're experiencing can help you understand any underlying issues that may be causing your stress - for example, low self-esteem.</p>
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Safety Plan</p>
 <p> Seek self-help stress management support groups.</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Information on de-stressing methods. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Information on de-stressing methods </p>
 <p> • Regular exercise can lift your mood and serve as a distraction from worries, allowing you to break out of the cycle of negative thoughts that feed stress.</p>
 <p> • The simple act of talking face-to-face with another human can trigger hormones that relieve stress when you're feeling agitated or insecure.</p>
 <p> • Engage one or more of your senses—sight, sound, taste, smell, touch, or movement. </p>
