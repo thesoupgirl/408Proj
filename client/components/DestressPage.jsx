@@ -67,7 +67,7 @@ class DestressPage extends React.Component {
 <p>• Procrastinating or neglecting responsibilities</p>
 <p>• Using alcohol, cigarettes, or drugs to relax</p>
 <p>• Nervous habits (e.g. nail biting, pacing)</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Seeking psychological help & Safety Plan</p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Seeking psychological help </p>
 <p>One recommendation commonly offered by doctors for seeking psychological help is counselling and psychotherapy. Talking with a professional about the difficulties you're experiencing can help you understand any underlying issues that may be causing your stress - for example, low self-esteem.</p>
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Safety Plan</p>
 <p> Seek self-help stress management support groups.</p>
