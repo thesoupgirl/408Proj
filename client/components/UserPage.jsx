@@ -4,14 +4,9 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
-import { Button, Jumbotron } from 'react-bootstrap'
-
-
-
 
 
 BigCalendar.momentLocalizer(moment)
-
 
 class UserPage extends React.Component {
     constructor(props) {
@@ -21,6 +16,7 @@ class UserPage extends React.Component {
         console.log(props)
         console.log("apply")
         console.log(this.props.apply)
+
         this.state = {
             calID: ''
         }
@@ -98,12 +94,13 @@ class UserPage extends React.Component {
         )
     }
     renderCalendar() {
+        //console.log("arf" + this.props.eventList)
+        //console.log("meow" + this.props.eventy)
         const { alert } = this.props
-
         if (!alert) {
             return (
                 <BigCalendar
-                    defaultView= 'week'
+                    defaultView='week'
                     views={['day', 'week', 'month']}
                     events={this.props.eventList}
                     eventPropGetter={(event, start, end, isSelected) => this.eventPropGetter(event, start, end, isSelected)}
@@ -161,6 +158,7 @@ class UserPage extends React.Component {
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
+
             </div>
         )
     }

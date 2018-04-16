@@ -11,8 +11,7 @@
     "build": "webpack --config webpack.prod.config.js",
     "heroku-postbuild": "webpack --config webpack.prod.config.js",
     "cleanup": "rm -r client/__tests__/__snapshots__/",
-    "test": "jest",
-    "test-game": "jasmine"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -50,6 +49,7 @@
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-sweetalert": "^3.0.0",
     "react-dom": "^15.4.2",
+    "react-iframe": "^1.1.0",
     "react-native": "^0.41.2",
     "react-test-renderer": "^15.4.2",
     "sinon-spy-react": "^2.0.1",
@@ -64,12 +64,9 @@
     "preset": "react-native"
   },
   "devDependencies": {
-    "html-loader": "^0.5.5",
-    "jasmine": "^3.0.0",
     "jest": "^17.0.3",
     "jsdom": "9.10.0",
     "jsdom-global": "2.1.1",
-    "react-iframe": "^1.1.0",
     "react-native-babel-jest": "^0.2.0"
   }
 }
