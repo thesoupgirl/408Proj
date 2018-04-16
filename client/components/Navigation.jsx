@@ -14,6 +14,7 @@ import Games from './Games'
 import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
+import {Collapse} from './Collapse'
 
 
 class Navigation extends React.Component {
@@ -46,6 +47,7 @@ class Navigation extends React.Component {
     const { advice, authorized, getCalendars, getLogout, setActiveView } = this.props
 
     if (authorized) {
+
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
@@ -73,9 +75,12 @@ class Navigation extends React.Component {
             <MenuItem onClick={() => setActiveView(SettingsPage)}>
               Settings
             </MenuItem>
+            <MenuItem onClick={() => Collapse(this.context)}>
+                <font color="FF0000">PANIC</font>
+            </MenuItem>
             <MenuItem divider/>
             <MenuItem onClick={() => getLogout()}>
-              Logout
+                Logout
             </MenuItem>
           </NavDropdown>
         </Nav>
