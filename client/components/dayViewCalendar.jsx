@@ -26,7 +26,7 @@ class dayViewCalendar extends React.Component {
             return moment(event[time]['dateTime']).toDate()
         } else if (has(event, dateString)) {
             return moment(event[time]['date']).toDate()
-        }l
+        }
     }
 
 
