@@ -32,7 +32,7 @@ class App extends React.Component {
       user: {},
       alert: true,
       apply: false,
-      time: 0
+      time: 0,
       yesOutlook: false,
       eventy: []
     }
