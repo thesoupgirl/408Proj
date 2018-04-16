@@ -33,9 +33,11 @@ class dayViewCalendar extends React.Component {
     renderAlert() {
         const { alert } = this.props
         if (alert) {
+            var totle = AdviceProvider();
+            console.log(totle);
             return (
                 <SweetAlert
-                    title={() => AdviceProvider()}
+                    title={ totle }
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>
