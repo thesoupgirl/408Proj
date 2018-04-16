@@ -130,7 +130,6 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	//static Credentials credz;
 
-	static com.google.api.services.calendar.Calendar service;
 
 	//starting point for outlook, spawns auth
 	@CrossOrigin(origins = "http://localhost:8080")

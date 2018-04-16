@@ -4,6 +4,16 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
+import {
+  Button,
+  FormControl,
+  FormGroup,
+  Jumbotron,
+  MenuItem,
+  Nav,
+  Navbar,
+  NavDropdown
+} from 'react-bootstrap'
 
 
 BigCalendar.momentLocalizer(moment)
@@ -26,6 +36,7 @@ class UserPage extends React.Component {
          this.prompt = this.prompt.bind(this);
          this.props.getWaitTime()
          this.start =  new Date().getTime()/1000;
+         this.setState({alert:true})
 
 
 
