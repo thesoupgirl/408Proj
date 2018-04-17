@@ -168,6 +168,8 @@ class UserPage extends React.Component {
                 {this.renderCalendar()}
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
+                <img  width={300} height={300} alt="300x300"  src={require('../image/Legend.png')} style={{position: "relative",  left: 125, right: 125}} />
+
                  </Jumbotron>
 
             </div>

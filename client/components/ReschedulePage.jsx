@@ -108,6 +108,7 @@ class ReschedulePage extends React.Component {
            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <Button bsStyle='primary' className='Cancelbtn'onClick={() => this.props.setActiveView(UserPage)} > Cancel </Button>
           
+          
         </Jumbotron>
         
       </div>
