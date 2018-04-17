@@ -1,17 +1,14 @@
 import React from 'react'
 import $ from 'jquery'
 
-export function Collapse (context) {
+export function Collapse () {
 //javascript:
     /*if (!window.jQuery) {
         var s = document.createElement('script');
         s.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js';
         document.body.appendChild(s);
     }*/
-    if (context.started) {
-        // Has started, can't twice
-        return;
-    }
+
 
     var maxTime = 50;
 
@@ -19,7 +16,6 @@ export function Collapse (context) {
     var allItems = $(".rbc-event").not(".rbc-event-allday");
     var time = 0;
     var itemData = [];
-    context.started = true;
 
     function tick() {
         time++;
@@ -32,7 +28,10 @@ export function Collapse (context) {
         allItems.each(function (index) {
             var top = parseFloat($(this).css('top'));
             var left = parseFloat($(this).css('left'));
+
             if (time == 1) {
+                //console.log($(this).css({'transform' : 'rotate'}));
+
                 // populate the item data
                 var newItem = new function() {
                     this.originalTop = top;
@@ -66,6 +65,5 @@ export function Collapse (context) {
             $(this).css('left', itemData[index].originalLeft);
             $(this).css({'transform' : 'rotate('+ 0 +'deg)'});
         });
-        context.started = false;
     }
 }

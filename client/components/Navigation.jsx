@@ -47,7 +47,6 @@ class Navigation extends React.Component {
     const { advice, authorized, getCalendars, getLogout, setActiveView } = this.props
 
     if (authorized) {
-
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
@@ -75,7 +74,7 @@ class Navigation extends React.Component {
             <MenuItem onClick={() => setActiveView(SettingsPage)}>
               Settings
             </MenuItem>
-            <MenuItem onClick={() => Collapse(this.context)}>
+            <MenuItem onClick={() => Collapse()}>
                 <font color="FF0000">PANIC</font>
             </MenuItem>
             <MenuItem divider/>
