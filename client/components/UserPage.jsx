@@ -60,11 +60,16 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
+
                     />
             )
         }
         return (
-             <div></div>
+             <div>
+
+<img  width={100} height={100} alt="100x100"  src={require('../image/Legend.png')} style={{position: "relative",   left: 125, right: 125}} />
+
+             </div>
          )
     }
     eventPropGetter(event, start, end, isSelected) {
@@ -88,9 +93,11 @@ class UserPage extends React.Component {
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
+
             </div>
         )
     }
+
 }
 
 module.exports = UserPage
