@@ -12,6 +12,7 @@ import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
 
