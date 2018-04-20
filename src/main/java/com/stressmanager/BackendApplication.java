@@ -257,15 +257,15 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		//check if the Table for that UserName exists
 		System.out.println("maybe this is it? " + name.replaceAll(" ", "_"));
 		System.out.println("User is..." + name);
-		Table tab = DBSetup.getTable(email);
+		Table tab = DBSetup.getTable(name.replaceAll(" ", "_"));
 		if(tab == null) { //the Table doesn't Exist!!!
-			System.out.println("Creating a table for "+ email +"\'s events");
+			System.out.println("Creating a table for "+ name.replaceAll(" ", "_") +"\'s events");
 			//make the table! :D
-			DBSetup.createTable(email);
+			DBSetup.createTable(name.replaceAll(" ", "_"));
 		}
 
 		tab = DBSetup.getUsersTable();
-		tab.putItem(new Item().withString("username", email)
+		tab.putItem(new Item().withString("username", name.replaceAll(" ", "_"))
             .withString("calID","primary")
             .withString("token",accessToken)
             .withString("idtoken", androidIdToken));
