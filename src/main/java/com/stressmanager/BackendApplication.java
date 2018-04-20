@@ -255,7 +255,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		DBSetup.remoteDB();
 
 		//check if the Table for that UserName exists
-		System.out.println("maybe this is it? " + userId.replaceAll(" ", "_")
+		System.out.println("maybe this is it? " + userId.replaceAll(" ", "_"));
 		System.out.println("User is..." + userId);
 		Table tab = DBSetup.getTable(email);
 		if(tab == null) { //the Table doesn't Exist!!!
