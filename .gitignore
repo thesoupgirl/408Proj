@@ -37,3 +37,10 @@ nbdist/
 ### Jest ###
 client/__tests__/__snapshots__/
 *.snap
+
+### Tensorflow ##
+checkpoint*/
+
+client_secrets.json
+application.yml
+*.swp # Vim turds
