@@ -4,7 +4,7 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
-
+import ImportPage from './ImportPage'
 
 BigCalendar.momentLocalizer(moment)
 
@@ -49,7 +49,9 @@ class UserPage extends React.Component {
         )
     }
      selectEvent(event){
-       alert(event.summary)
+      if(confirm(event.summary)){
+        this.props.setActiveView(ImportPage)
+      }
              
         
     }
@@ -78,9 +80,6 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
-
-                   
-                   
 
                     onSelectEvent={event => this.selectEvent(event)}
                     onSelectSlot={slotInfo => this.selectSlot(slotInfo)}
