@@ -4,6 +4,7 @@ import { has } from 'lodash'
 import { ajax } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
+import {AdviceProvider} from './AdviceProvider.jsx'
 import {
   Button,
   FormControl,
@@ -81,14 +82,15 @@ class UserPage extends React.Component {
         }
          //this.props.setApplyState(this.props.apply)
     }
-
-
+    
     renderAlert() {
         const { alert } = this.props
         if (alert) {
+            var totle = AdviceProvider();
+            console.log(totle);
             return (
                 <SweetAlert
-                    title="Loading User Data"
+                    title={ totle }
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>
