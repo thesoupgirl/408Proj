@@ -30,62 +30,38 @@ class ApplicationGuide extends React.Component {
         <Jumbotron>
    
 
-
-          <p style={{color: "black", fontWeight: 'bold', fontSize: '50px', textDecorationStyle: "solid", border:'10px solid #000000', textAlign: 'center' }}> Destressing Methods </p>
+          <p style={{color: "black", fontWeight: 'bold', fontSize: '50px', textDecorationStyle: "solid", border:'10px solid #000000', textAlign: 'center' }}> Application Guide </p>
 
      
         </Jumbotron>
 
   <img  width={900} height={600} alt="900x600"  src={require('../image/EpsteinOne.png')} style={{position: "relative",   left: 125, right: 125}} />
 
-<p style={{color: "red", fontWeight: 'bold', fontSize: '35px',  textDecorationLine: "underline", textDecorationStyle: "solid", fontStyle: 'italic'}}>Understanding stress symptoms </p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Cognitive symptoms</p>
-<p> • Memory problems</p>
-<p> • Inability to concentrate</p>
-<p> • Poor judgement</p>
-<p> • Seeing only the negative</p>
-<p> • Anxious or racing thoughts</p>
-<p> • Constant worrying</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Physical symptoms</p>
-<p>• Aches and pains</p>
-<p>• Diarrhea or constipation</p>
-<p>• Nausea, dizziness</p>
-<p>• Chest pain, rapid heart rate</p>
-<p>• Loss of sex drive</p>
-<p>• Frequent colds or flu</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Emotional symptoms</p>
-<p>• Depression or general unhappiness</p>
-<p>• Anxiety and agitation</p>
-<p>• Moodiness, irritability, or anger</p>
-<p>• Feeling overwhelmed</p>
-<p>• Loneliness and isolation</p>
-<p>• Other mental or emotional health problems</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Behavioral symptoms</p>
-<p>• Eating more or less</p>
-<p>• Sleeping too much or too little</p>
-<p>• Withdrawing from others</p>
-<p>• Procrastinating or neglecting responsibilities</p>
-<p>• Using alcohol, cigarettes, or drugs to relax</p>
-<p>• Nervous habits (e.g. nail biting, pacing)</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Seeking psychological help </p>
-<p>One recommendation commonly offered by doctors for seeking psychological help is counselling and psychotherapy. Talking with a professional about the difficulties you're experiencing can help you understand any underlying issues that may be causing your stress - for example, low self-esteem.</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Safety Plan</p>
-<p> Seek self-help stress management support groups.</p>
-<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Information on de-stressing methods </p>
-<p> • Regular exercise can lift your mood and serve as a distraction from worries, allowing you to break out of the cycle of negative thoughts that feed stress.</p>
-<p> • The simple act of talking face-to-face with another human can trigger hormones that relieve stress when you're feeling agitated or insecure.</p>
-<p> • Engage one or more of your senses—sight, sound, taste, smell, touch, or movement. </p>
-<p> • Relaxation techniques such as yoga, meditation, and deep breathing activate the body’s relaxation response, a state of restfulness that is the polar opposite of the stress response.</p>
-<p> • Eat a diet rich in fresh fruit and vegetables, high-quality protein, and omega-3 fatty acids.</p>
-<p> • Take good care of yourself and get plenty of rest.</p>
+<p style={{color: "red", fontWeight: 'bold', fontSize: '35px',  textDecorationLine: "underline", textDecorationStyle: "solid", fontStyle: 'italic'}}> Here is a video tour of our application, Epstein:</p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Hello and welcome to Epstein’s application guide! We hope this application guide will help you navigate through our application in the best way possible. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Navigation Bar </p>
+<p> First off, Epstein has a navigation bar to make the user’s life simple while navigating through the application. This bar which is located at the top right of the page under ‘Tools’ will show the user all the different pages they can access on the web version of the application. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Home Page </p>
+<p> The ‘Home Page’ tab gives a brief overview of our application’s purpose and various features on our Web and Mobile (Android) versions. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Choose Calendar Service </p>
+<p> The ‘Choose Calendar Service’ tab will allow the user to choose which calendar service they would like, either Google or Outlook. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Import Calendar </p>
+<p> The ‘Import Calendar’ tab will allow the user to select a calendar from their Google or Outlook account to import using a dropdown menu.</p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Rate Events </p>
+<p> The ‘Rate Events’ tab allows the user to rate an event based on its stress level on a scale from negative ten to ten. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Calendar </p>
+<p> The ‘Calendar’ tab is where the user can view all their events on the calendar with the various stress ratings in day, week, or month view, see a legend which shows the different colors that go with the different stress ratings for an event, reschedule an event, and navigate to different days, weeks, and months in the calendar using the today, back, and next buttons.</p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Destress Page </p>
+<p> The ‘Destress Page’ tab offers the user information on recommendations on de-stressing activities. To be specific, there is concise information available for our users for understanding stress symptoms, information on seeking psychological help, information on a safety plan, information on de-stressing methods. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Entertainment </p>
+<p> The ‘Entertainment’ tab can be explored for a plethora of fun methods for de-stressing. The user can easily access and play multiple, different games, listen to soothing Spotify music playlists, and watch YouTube videos with de-stressing music. </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Advice </p>
+<p> The ‘Advice’ tab gives the user different advice and motivational quotes based on the day of the week it is! </p>
+<p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Settings </p>
+<p> The ‘Settings’ tab will allow the user to choose different colors for the text as well as choose different colors for the backgrounds of all of the various pages of the application. </p>
+<p style={{color: "red", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> PANIC </p>
+<p> The ‘PANIC’ tab can be pressed by the user if they feel overwhelmingly stressed out. The user can satisfyingly watch all of their events just fade away for a second before they reappear on the calendar again. </p>
 
-<p style={{color: "grey", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> List of sources:</p>
-<p>https://www.webmd.com/balance/stress-management/stress-management-topic-overview#2</p>
-<p>https://www.counselling-directory.org.uk/stress.html</p>
-
-
-
-        
       </div>
       )
    }
