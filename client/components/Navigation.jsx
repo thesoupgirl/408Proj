@@ -15,6 +15,7 @@ import CalendarPage from './CalendarPage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
 import DestressPage from './DestressPage'
+import ApplicationGuide from './ApplicationGuide'
 
 
 class Navigation extends React.Component {
@@ -50,6 +51,9 @@ class Navigation extends React.Component {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+            <MenuItem onClick={() => setActiveView(ApplicationGuide)}>
+              Application Guide
+            </MenuItem>
             <MenuItem onClick={() => setActiveView(HomePage)}>
               Home Page
             </MenuItem>
@@ -66,10 +70,10 @@ class Navigation extends React.Component {
               Calendar
             </MenuItem>
             <MenuItem onClick={() => setActiveView(DestressPage)}>
-              DestressPage
+              Destress Page
             </MenuItem>
             <MenuItem onClick={() => setActiveView(Games)}>
-              Games
+              Entertainment
             </MenuItem>
             <MenuItem onClick={() => this.setState({ alertVisible: true })}>
               Advice
