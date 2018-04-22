@@ -8,7 +8,7 @@ import HomePage from '../components/HomePage';
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
 
-//tests to see if HomePage exists
+//tests to see if Home Page exists
 test('Check to see if HomePage exists', () => {
 
   	const home = shallow(
