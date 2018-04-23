@@ -5,20 +5,12 @@ import ImportPage from '../components/ImportPage';
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
 
-//tests to see if import page renders correctly
-test('Renders import page correctly', () => {
-  const tree = renderer.create(
-    <ImportPage />
-  ).toJSON();
-  expect(tree).toMatchSnapshot();
-});
+//tests to see if Application Guide exists
+test('Check to see if Destress Page exists', () => {
 
-//tests to see if submit button is clickable
-test('Check to see if submit button exists and can click it', () => {
-
-  	const submitButton = shallow(
-	  	<ImportPage />
+  	const home = shallow(
+	  	<DestressPage />
     );
-    submitButton.simulate('click');
-	expect(submitButton.contains('Submit'));
+    
+	expect(home.contains('DestressPage'));
 });
