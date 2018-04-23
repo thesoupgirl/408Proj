@@ -15,9 +15,11 @@ import CalendarPage from './CalendarPage'
 import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
+import {Collapse} from './Collapse'
 import DestressPage from './DestressPage'
 import ApplicationGuide from './ApplicationGuide'
-import {Collapse} from './Collapse'
+
+
 
 
 

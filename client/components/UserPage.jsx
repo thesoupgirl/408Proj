@@ -178,7 +178,6 @@ class UserPage extends React.Component {
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
 
-
             </div>
         )
     }
