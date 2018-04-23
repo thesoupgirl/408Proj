@@ -15,6 +15,7 @@ import CalendarPage from './CalendarPage'
 import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
+import {Collapse} from './Collapse'
 
 
 class Navigation extends React.Component {
@@ -74,9 +75,12 @@ class Navigation extends React.Component {
             <MenuItem onClick={() => setActiveView(SettingsPage)}>
               Settings
             </MenuItem>
+            <MenuItem onClick={() => Collapse()}>
+                <font color="FF0000">PANIC</font>
+            </MenuItem>
             <MenuItem divider/>
             <MenuItem onClick={() => getLogout()}>
-              Logout
+                Logout
             </MenuItem>
           </NavDropdown>
         </Nav>
