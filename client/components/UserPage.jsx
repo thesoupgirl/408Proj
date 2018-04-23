@@ -35,9 +35,9 @@ class UserPage extends React.Component {
          this.RescheduleAction = this.RescheduleAction.bind(this);
          this.message = this.message.bind(this);
          this.prompt = this.prompt.bind(this);
-         this.props.getWaitTime()
+        // this.props.getWaitTime()
          this.start =  new Date().getTime()/1000;
-         this.setState({alert:true})
+        // this.setState({alert:true})
 
 
 
