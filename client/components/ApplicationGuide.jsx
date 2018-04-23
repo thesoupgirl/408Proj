@@ -69,7 +69,7 @@ class ApplicationGuide extends React.Component {
 
   <img  width={900} height={600} alt="900x600"  src={require('../image/Calendar.png')} style={{position: "relative",   left: 125, right: 125}} />
 
-  <p> In order to reschedule an event, the user can click on their desired event and a pop-up will then appear which will ask if the user would like to reschedule the event. Then, if the user presses 'Ok', the user will be given a suggestion of what the rescheduled calendar would like and if they press apply the changes will apply to the calendar. </p>
+  <p> In order to reschedule an event, the user can click on their desired event and a pop-up will then appear which will ask if the user would like to reschedule the event. Then, if the user presses 'OK', the user will be given a suggestion of what the rescheduled calendar would like and if they press apply the changes will apply to the calendar. </p>
 
   <img  width={900} height={600} alt="900x600"  src={require('../image/Prompt.png')} style={{position: "relative",   left: 125, right: 125}} />
 
