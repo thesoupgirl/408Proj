@@ -11,8 +11,7 @@ import {
 } from 'react-bootstrap'
 import { map } from 'lodash'
 import SweetAlert from 'react-bootstrap-sweetalert'
-
-
+import Iframe from 'react-iframe'
 
 
 
@@ -38,6 +37,9 @@ class ApplicationGuide extends React.Component {
 
 
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Hello and welcome to Epstein’s application guide! We hope this application guide will help you navigate through our application in the best way possible. Here is a video tour of our application, Epstein: </p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tY5966XsFD4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Navigation Bar </p>
 <p> First off, Epstein has a navigation bar to make the user’s life simple while navigating through the application. This bar which is located at the top right of the page under ‘Tools’ will show the user all the different pages they can access on the web version of the application. </p>
   <img  width={400} height={500} alt="400x400"  src={require('../image/NavigationBar.png')} style={{position: "relative",   left: 125, right: 125}} />
