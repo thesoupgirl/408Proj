@@ -36,7 +36,7 @@ class DestressPage extends React.Component {
      
         </Jumbotron>
 
-  <img  width={900} height={600} alt="900x600"  src={require('../image/EpsteinOne.png')} style={{position: "relative",   left: 125, right: 125}} />
+  <img  width={900} height={600} alt="900x600"  src={require('../image/Relax.png')} style={{position: "relative",   left: 125, right: 125}} />
 
 <p style={{color: "red", fontWeight: 'bold', fontSize: '35px',  textDecorationLine: "underline", textDecorationStyle: "solid", fontStyle: 'italic'}}>Understanding stress symptoms </p>
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}>Cognitive symptoms</p>
