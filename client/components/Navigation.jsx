@@ -12,10 +12,14 @@ import StressFormPage from './StressFormPage'
 import UserPage from './UserPage'
 import Games from './Games'
 import CalendarPage from './CalendarPage'
+import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
-import DestressPage from './DestressPage'
+
+import {Collapse} from './Collapse'
+
 import ApplicationGuide from './ApplicationGuide'
+
 
 
 class Navigation extends React.Component {
@@ -81,9 +85,12 @@ class Navigation extends React.Component {
             <MenuItem onClick={() => setActiveView(SettingsPage)}>
               Settings
             </MenuItem>
+            <MenuItem onClick={() => Collapse()}>
+                <font color="FF0000">PANIC</font>
+            </MenuItem>
             <MenuItem divider/>
             <MenuItem onClick={() => getLogout()}>
-              Logout
+                Logout
             </MenuItem>
           </NavDropdown>
         </Nav>

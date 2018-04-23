@@ -8,6 +8,8 @@ client/mock/
 package-lock.json
 target/
 !.mvn/wrapper/maven-wrapper.jar
+client_secrets.json
+target/client_secrets.json
 
 ### STS ###
 .apt_generated
@@ -37,3 +39,10 @@ nbdist/
 ### Jest ###
 client/__tests__/__snapshots__/
 *.snap
+
+### Tensorflow ##
+checkpoint*/
+
+client_secrets.json
+application.yml
+*.swp # Vim turds
