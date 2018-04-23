@@ -42,7 +42,7 @@ class ApplicationGuide extends React.Component {
 
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Navigation Bar </p>
 <p> First off, Epstein has a navigation bar to make the user’s life simple while navigating through the application. This bar which is located at the top right of the page under ‘Tools’ will show the user all the different pages they can access on the web version of the application. </p>
-  <img  width={400} height={500} alt="400x400"  src={require('../image/NavigationBar.png')} style={{position: "relative",   left: 125, right: 125}} />
+  <img  width={300} height={600} alt="400x400"  src={require('../image/NavigationBar.png')} style={{position: "relative",   left: 125, right: 125}} />
 
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Home Page </p>
 <p> The ‘Home Page’ tab gives a brief overview of our application’s purpose and various features on our Web and Mobile (Android) versions. </p>
