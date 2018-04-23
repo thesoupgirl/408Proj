@@ -70,6 +70,7 @@ class App extends React.Component {
       success: (data, status, xhr) => {
         
   			this.getEventList();
+  			this.setActiveView(UserPage);
       },
       error: response => {
         // TODO give feedback to user

@@ -97,9 +97,12 @@ class ReschedulePage extends React.Component {
       this.props.getApplyReschedule() 
       
       this.props.setActiveView(UserPage)
-    }
-    applyResch(() => {  this.props.getApplyReschedule() , function(){ this.props.eventList}})
+      applyResch(() => {  this.props.getApplyReschedule() , function(){ this.props.eventList}})
+      this.props.getApplyReschedule().done(this.props.eventList()).fail(error);
+      this.props.getApplyReschedule().done(this.props.eventList().done(this.props.setActiveView(UserPage)).fail(error)).fail(error);
 
+    }
+    
    render() {
     return (
       <div className='container'>
