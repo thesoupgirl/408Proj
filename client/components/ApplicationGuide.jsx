@@ -35,6 +35,8 @@ class ApplicationGuide extends React.Component {
      
         </Jumbotron>
 
+
+
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Hello and welcome to Epstein’s application guide! We hope this application guide will help you navigate through our application in the best way possible. Here is a video tour of our application, Epstein: </p>
 <p style={{color: "blue", fontWeight: 'bold', fontSize: '20px',  textDecorationLine: "underline", textDecorationStyle: "solid"}}> Navigation Bar </p>
 <p> First off, Epstein has a navigation bar to make the user’s life simple while navigating through the application. This bar which is located at the top right of the page under ‘Tools’ will show the user all the different pages they can access on the web version of the application. </p>
