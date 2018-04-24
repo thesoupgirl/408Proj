@@ -81,12 +81,27 @@ public class MainController {
     //A route to get the calendarList
     @RequestMapping(value = "/calendar/list")
     @ResponseBody
-    public ResponseEntity<String> calList() throws Exception{
+    public ResponseEntity<String> calList(@RequestBody GenericJson request) throws Exception{
         final HttpHeaders httpHeaders = new HttpHeaders();
         CalendarList callist = BackendApplication.service.calendarList().list().execute();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        Table users = DBSetup.getUsersTable();
+
+        String username = (String)request.get("username");
+
+        username = username.replace("@", "");
+        GetItemSpec spec = new GetItemSpec()
+                .withPrimaryKey("username", username);
+        Item got = table.getItem(spec);
+        String adds = got.getString("calID");
+
         List<CalendarListEntry> list = callist.getItems();
         for (CalendarListEntry event : list) {
+            if(adds.contains(event.getId())) {
+                list.remove(event);
+            }
+            System.out.println("id is..." + event.getId());
             System.out.printf(Colors.ANSI_PURPLE+"%s (%s)\n", event.getSummary(), event.getColorId());
         }
 
