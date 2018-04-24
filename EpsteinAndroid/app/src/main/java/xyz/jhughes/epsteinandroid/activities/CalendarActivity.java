@@ -169,6 +169,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
 
     private void suggestEvents() {
+        dialog = ProgressDialog.show(this, "", "Loading suggestions. Please wait...", true);
+        dialog.show();
+
         EpsteinApiHelper.getInstance().getEventsToRescheduleSuggestions(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
                 SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
@@ -176,13 +179,26 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             @Override
             public void onResponse(Call<Events> call, Response<Events> response) {
                 if (response.code() == 200 && response.body() != null) {
-                    List<String> eventTitles = new ArrayList<>();
+                    dialog.cancel();
+
+                    List<Event> events = new ArrayList<>();
+                    List<String> eventsThatHaveOccured = new ArrayList<>();
                     for (Event e : response.body().items) {
+                        if (eventsThatHaveOccured.contains(e.recurringEventId)) {
+                            continue;
+                        }
+                        events.add(e);
+                        eventsThatHaveOccured.add(e.recurringEventId);
+                    }
+
+                    List<String> eventTitles = new ArrayList<>();
+                    for (Event e : events) {
                         eventTitles.add(e.summary);
                     }
 
                     ListView lv = new ListView(CalendarActivity.this);
                     lv.setAdapter(new ArrayAdapter<>(CalendarActivity.this, android.R.layout.simple_list_item_1, eventTitles));
+                    lv.setPadding(4, 4, 4, 4);
 
                     android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(CalendarActivity.this)
                             .setTitle("Suggested Events")
@@ -199,6 +215,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
             @Override
             public void onFailure(Call<Events> call, Throwable t) {
+                dialog.cancel();
                 System.out.println("failed");
             }
         });
