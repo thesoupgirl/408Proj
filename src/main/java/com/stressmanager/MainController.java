@@ -145,6 +145,7 @@ public class MainController {
         //String stress = (String)request.get("stressValue");
         String calID = (String)request.get("calID");
         String userName = (String)request.get("userName");
+        userName = "Testing_69";
         System.out.println("  "+calID + "  "+userName+"  "+DBSetup.currentDB.toString());
 
         //add the CalID to the user in the DB
