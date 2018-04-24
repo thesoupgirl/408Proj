@@ -2,9 +2,12 @@ package xyz.jhughes.epsteinandroid.activities;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
+import android.net.Uri;
+import android.provider.CalendarContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,7 +39,6 @@ import xyz.jhughes.epsteinandroid.R;
 import xyz.jhughes.epsteinandroid.models.Advice;
 import xyz.jhughes.epsteinandroid.models.Events.Event;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
-import xyz.jhughes.epsteinandroid.models.MLTime;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 
@@ -52,6 +54,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     public static final int IMPORTED_CALENDAR = 280;
     public static final int FAILED_IMPORT_CALENDAR = 281;
 
+    private boolean hasLaunchedCalendar = false;
+    private boolean hasUpdatedCalendar = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,17 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         weekView.setMonthChangeListener(this);
 
         getCalendarDataAndUpdateUi();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!hasLaunchedCalendar && hasUpdatedCalendar) {
+            getCalendarDataAndUpdateUi();
+        }
+        if (hasLaunchedCalendar) {
+            hasLaunchedCalendar = false;
+        }
     }
 
     private void getCalendarDataAndUpdateUi() {
@@ -245,6 +261,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 calendarEventToAdd.setColor(getResources().getColor(R.color.colorZeroStressLevel));
             }
 
+            calendarEventToAdd.setIdentifier(event.htmlLink);
+
             events.add(calendarEventToAdd);
         }
 
@@ -260,7 +278,15 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        // Nothing yet!
+        System.out.println(event.getIdentifier());
+        Intent calIntent = new Intent(Intent.ACTION_VIEW)
+                .setType("vnd.android.cursor.item/event")
+                .setData(Uri.parse(event.getIdentifier()))
+                .putExtra(CalendarContract.Events._ID, event.getIdentifier());
+        calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        hasLaunchedCalendar = true;
+        hasUpdatedCalendar = true;
+        startActivity(calIntent);
     }
 
     private void getAndDisplayAdvice() {

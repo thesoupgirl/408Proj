@@ -93,7 +93,7 @@ public class MainController {
         username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
                 .withPrimaryKey("username", username);
-        Item got = table.getItem(spec);
+        Item got = users.getItem(spec);
         String adds = got.getString("calID");
 
         List<CalendarListEntry> list = callist.getItems();
