@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.client.util.DateTime;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -81,25 +82,50 @@ public class MainController {
     //A route to get the calendarList
     @RequestMapping(value = "/calendar/list")
     @ResponseBody
-    public ResponseEntity<String> calList(@RequestBody GenericJson request) throws Exception{
+    public ResponseEntity<String> calList() throws Exception{
         final HttpHeaders httpHeaders = new HttpHeaders();
         CalendarList callist = BackendApplication.service.calendarList().list().execute();
+        // List<CalendarListEntry> list = callist.getItems();
+
+
+        //         //System.out.println(event.Creator.getId());
+
+
+        // DateTime now = new DateTime(System.currentTimeMillis());
+
+        // Events events = BackendApplication.service.events().list("primary")
+        //             .setMaxResults(50)
+        //             .setTimeMin(now)
+        //             .setSingleEvents(false)
+        //             .execute();
+
+        // List<Event> items = events.getItems();
+        // Event.Organizer meow = items.get(0).getOrganizer();
+        // System.out.printf(Colors.ANSI_PURPLE+"%s (%s)\n", items.get(0).getSummary(), meow.getId());
+        // System.out.println("should be an event...mf" + items.get(0).getSummary());
+        // System.out.println("kill me pls..." + meow.getId());
+        //BackendApplication.service.Event.Creator.getId();
+
+
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         Table users = DBSetup.getUsersTable();
 
-        String username = (String)request.get("username");
+        //String username = meow.getId();
 
+        String username = "Testing_69";
         username = username.replace("@", "");
         GetItemSpec spec = new GetItemSpec()
                 .withPrimaryKey("username", username);
-        Item got = table.getItem(spec);
+        Item got = users.getItem(spec);
         String adds = got.getString("calID");
-
+        System.out.println("calID thingy..." + adds);
         List<CalendarListEntry> list = callist.getItems();
-        for (CalendarListEntry event : list) {
+        for (Iterator<CalendarListEntry> it = list.iterator(); it.hasNext();) {
+            CalendarListEntry event = it.next();
             if(adds.contains(event.getId())) {
-                list.remove(event);
+                System.out.println("maybe this is a thing?" + event.getId());
+                it.remove();
             }
             System.out.println("id is..." + event.getId());
             System.out.printf(Colors.ANSI_PURPLE+"%s (%s)\n", event.getSummary(), event.getColorId());
@@ -267,6 +293,7 @@ public class MainController {
 
         //get the User Info
         username = username.replace("@", "");
+        username = username.replace(" ", "_");
         GetItemSpec spec = new GetItemSpec()
                 .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
