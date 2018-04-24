@@ -303,8 +303,21 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 	@ResponseBody
 	public ResponseEntity<String> reschedule(Principal principal) throws Exception{
 		final HttpHeaders httpHeaders = new HttpHeaders();
-		
-		return new ResponseEntity<String>("yay", httpHeaders, HttpStatus.ACCEPTED);
+
+		Table table = DBSetup.getTable(principal.getName().replaceAll(" ","_"));
+		if (table == null) {
+			System.out.println("No upcoming events found.");
+			return new ResponseEntity<String>("no events to change", httpHeaders, HttpStatus.ACCEPTED);
+		}
+		else {
+			Event event = service.events().get("primary", "eventId").execute();
+
+			event.setSummary("Appointment at Somewhere");
+			Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
+
+			System.out.println(updatedEvent.getUpdated());
+			return new ResponseEntity<String>("yay", httpHeaders, HttpStatus.ACCEPTED);
+		}
 	}
 
 	//set up the access token and check that is works
