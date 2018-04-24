@@ -299,6 +299,14 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		return false;
 	}
 
+	@RequestMapping({ "/reschedule" })
+	@ResponseBody
+	public ResponseEntity<String> reschedule(Principal principal) throws Exception{
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		
+		return new ResponseEntity<String>("yay", httpHeaders, HttpStatus.ACCEPTED);
+	}
+
 	//set up the access token and check that is works
 	@RequestMapping({ "/user", "/me" })
 	@ResponseBody
