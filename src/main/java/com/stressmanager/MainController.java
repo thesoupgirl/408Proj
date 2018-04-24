@@ -7,20 +7,13 @@ import org.springframework.ui.Model;
 import com.stressmanager.AuthHelper;
 
 import java.util.*;
-import javax.servlet.http.*;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.GenericJson;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.auth.oauth2.*;
 import com.google.api.services.calendar.model.*;
-import com.google.api.client.auth.oauth2.Credential;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import com.stressmanager.ml.EventData;
+import com.stressmanager.ml.ReschedulingMachineLearningManager;
+import com.stressmanager.ml.WeekData;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -293,5 +286,8 @@ public class MainController {
         //Send response to client
         return new ResponseEntity<String>(resp, httpHeaders, HttpStatus.OK);
     }
+
+
+
 
 }
