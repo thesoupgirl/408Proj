@@ -8,6 +8,7 @@ public class Event implements Serializable {
     public String status;
     public String id;
     public String recurringEventId;
+    public String htmlLink;
 
     public CalendarUser creator;
     public CalendarUser organizer;

@@ -15,7 +15,7 @@ import {
   Navbar,
   NavDropdown
 } from 'react-bootstrap'
-
+import ImportPage from './ImportPage'
 
 BigCalendar.momentLocalizer(moment)
 
@@ -42,9 +42,10 @@ class UserPage extends React.Component {
 
 
 
-        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page."); },20000);
+        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions?\nCheck out all our resources in the toolbar\n "); },20000);
 
-    
+        this.selectEvent = this.selectEvent.bind(this);
+        this.selectSlot = this.selectSlot.bind(this);
 
 
             
@@ -106,6 +107,21 @@ class UserPage extends React.Component {
             <div></div>
         )
     }
+    selectEvent(event){
+      if(confirm("Would you like to reschedule this event:\n\n" + event.summary)){
+        this.RescheduleAction()
+      }
+             
+        
+    }
+    selectSlot(slotInfo){
+         alert(
+                    `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+                    `\nend: ${slotInfo.end.toLocaleString()}` 
+            )
+           
+        
+    }
     renderCalendar() {
         //console.log("arf" + this.props.eventList)
         //console.log("meow" + this.props.eventy)
@@ -121,6 +137,9 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
+
+                    onSelectEvent={event => this.selectEvent(event)}
+                    onSelectSlot={slotInfo => this.selectSlot(slotInfo)}
 
                     />
             )
@@ -160,7 +179,7 @@ class UserPage extends React.Component {
 
     }
     message(){
-        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page.")
+        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n")
     }
     prompt(){
         const { alert } = this.props

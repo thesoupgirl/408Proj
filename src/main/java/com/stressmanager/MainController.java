@@ -8,6 +8,11 @@ import com.stressmanager.AuthHelper;
 
 import java.util.*;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.client.util.DateTime;
+import com.google.api.client.json.JsonFactory;
+
 import com.google.api.client.json.GenericJson;
 import com.google.api.services.calendar.model.*;
 
@@ -77,45 +82,56 @@ public class MainController {
     public ResponseEntity<String> calList() throws Exception{
         final HttpHeaders httpHeaders = new HttpHeaders();
         CalendarList callist = BackendApplication.service.calendarList().list().execute();
+        // List<CalendarListEntry> list = callist.getItems();
+
+
+        //         //System.out.println(event.Creator.getId());
+
+
+        // DateTime now = new DateTime(System.currentTimeMillis());
+
+        // Events events = BackendApplication.service.events().list("primary")
+        //             .setMaxResults(50)
+        //             .setTimeMin(now)
+        //             .setSingleEvents(false)
+        //             .execute();
+
+        // List<Event> items = events.getItems();
+        // Event.Organizer meow = items.get(0).getOrganizer();
+        // System.out.printf(Colors.ANSI_PURPLE+"%s (%s)\n", items.get(0).getSummary(), meow.getId());
+        // System.out.println("should be an event...mf" + items.get(0).getSummary());
+        // System.out.println("kill me pls..." + meow.getId());
+        //BackendApplication.service.Event.Creator.getId();
+
+
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        Table users = DBSetup.getUsersTable();
+
+        //String username = meow.getId();
+
+        String username = "Testing_69";
+        username = username.replace("@", "");
+        GetItemSpec spec = new GetItemSpec()
+                .withPrimaryKey("username", username);
+        Item got = users.getItem(spec);
+        String adds = got.getString("calID");
+        System.out.println("calID thingy..." + adds);
         List<CalendarListEntry> list = callist.getItems();
-        for (CalendarListEntry event : list) {
+        for (Iterator<CalendarListEntry> it = list.iterator(); it.hasNext();) {
+            CalendarListEntry event = it.next();
+            if(adds.contains(event.getId())) {
+                System.out.println("maybe this is a thing?" + event.getId());
+                it.remove();
+            }
+            System.out.println("id is..." + event.getId());
             System.out.printf(Colors.ANSI_PURPLE+"%s (%s)\n", event.getSummary(), event.getColorId());
         }
 
         return new ResponseEntity<String>(callist.toPrettyString(), httpHeaders, HttpStatus.OK);
     }
 
-    //A route for setting an the calendar that is added
-    @RequestMapping(value = "/calendar/addEx", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String calendarAdd(@RequestBody GenericJson request) throws Exception{
 
-        //set up the HTTP Headers
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        //get the eventID
-        System.out.println("URL: "+request.toPrettyString());
-        //String stress = (String)request.get("stressValue");
-        String calID = (String)request.get("calID");
-        String userName = (String)request.get("userName");
-        System.out.println("  "+calID + "  "+userName+"  "+DBSetup.currentDB.toString());
-
-        //add the CalID to the user in the DB
-        Table users = DBSetup.getUsersTable();
-        Item item = new Item();
-        item.withString("userID", userName);
-        item.withString("calID", calID);
-        users.putItem(item);
-
-        //make a table for the UserID that will be store eventIDs and stress values
-        int ok = DBSetup.createTable(userName.replaceAll(" ","_"));
-
-
-        //return new ResponseEntity<String>(callist.toPrettyString(), httpHeaders, HttpStatus.OK);
-        return "OK";
-    }
 
     //A route for setting an event's stress by eventID
     @RequestMapping(value = "/calendar/event", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -243,8 +259,10 @@ public class MainController {
         //get User table
         Table table = DBSetup.getUsersTable();
 
+        username = "Testing_69";
         //get the User Info
         username = username.replace("@", "");
+        username = username.replace(" ", "_");
         GetItemSpec spec = new GetItemSpec()
                 .withPrimaryKey("username", username);
         Item got = table.getItem(spec);
