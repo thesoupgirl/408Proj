@@ -131,37 +131,7 @@ public class MainController {
         return new ResponseEntity<String>(callist.toPrettyString(), httpHeaders, HttpStatus.OK);
     }
 
-    //A route for setting an the calendar that is added
-    @RequestMapping(value = "/calendar/addEx", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String calendarAdd(@RequestBody GenericJson request) throws Exception{
 
-        //set up the HTTP Headers
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        //get the eventID
-        System.out.println("URL: "+request.toPrettyString());
-        //String stress = (String)request.get("stressValue");
-        String calID = (String)request.get("calID");
-        String userName = (String)request.get("userName");
-        userName = "Testing_69";
-        System.out.println("  "+calID + "  "+userName+"  "+DBSetup.currentDB.toString());
-
-        //add the CalID to the user in the DB
-        Table users = DBSetup.getUsersTable();
-        Item item = new Item();
-        item.withString("userID", userName);
-        item.withString("calID", calID);
-        users.putItem(item);
-
-        //make a table for the UserID that will be store eventIDs and stress values
-        int ok = DBSetup.createTable(userName.replaceAll(" ","_"));
-
-
-        //return new ResponseEntity<String>(callist.toPrettyString(), httpHeaders, HttpStatus.OK);
-        return "OK";
-    }
 
     //A route for setting an event's stress by eventID
     @RequestMapping(value = "/calendar/event", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -289,6 +259,7 @@ public class MainController {
         //get User table
         Table table = DBSetup.getUsersTable();
 
+        username = "Testing_69";
         //get the User Info
         username = username.replace("@", "");
         username = username.replace(" ", "_");
