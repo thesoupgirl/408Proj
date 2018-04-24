@@ -310,13 +310,31 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			return new ResponseEntity<String>("no events to change", httpHeaders, HttpStatus.ACCEPTED);
 		}
 		else {
-			Event event = service.events().get("primary", "eventId").execute();
+			String eventId = null;
+			ScanRequest scanRequest = new ScanRequest()
+			    .withTableName(principal.getName().replaceAll(" ","_"));
 
-			event.setSummary("Appointment at Somewhere");
-			Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
+			ScanResult result = client.scan(scanRequest);
+			  
+			for (Map<String, AttributeValue> item : result.getItems()){
+    			for (Entry<String, AttributeValue> entry : item.entrySet()) {
+    				if(entry.getValue().getS().equals("10") ) {
+    					eventId = entry.getKey();
+    					break;
+    				}
+		            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
+		        }
 
-			System.out.println(updatedEvent.getUpdated());
-			return new ResponseEntity<String>("yay", httpHeaders, HttpStatus.ACCEPTED);
+			}
+			if (eventId != null) {
+				Event event = service.events().get("primary", eventId).execute();
+
+				event.setSummary("Appointment at Somewhere");
+				Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
+
+				System.out.println(updatedEvent.getUpdated());
+			}
+			return new ResponseEntity<String>("event changed", httpHeaders, HttpStatus.ACCEPTED);
 		}
 	}
 
