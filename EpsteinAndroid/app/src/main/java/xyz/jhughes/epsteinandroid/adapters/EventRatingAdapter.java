@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class EventRatingAdapter extends RecyclerView.Adapter<EventRatingAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.eventNameTextView.setText(mDataset.get(position).summary);
         holder.eventNameRatingEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -48,12 +49,36 @@ public class EventRatingAdapter extends RecyclerView.Adapter<EventRatingAdapter.
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mDataset.get(position).stressValue = Integer.parseInt(s.toString());
+                try {
+                    mDataset.get(position).stressValue = (int) Float.parseFloat(s.toString());
+                } catch (NumberFormatException e) {
+                    mDataset.get(position).stressValue = 0;
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mDataset.get(position).stressValue = Integer.parseInt(s.toString());
+                String str = s.toString();
+                int n;
+                int min = -10;
+                int max = 10;
+                EditText ed = holder.eventNameRatingEditText;
+                try {
+                    if (str.equals("") || str.equals("-")) {
+                        return;
+                    }
+                    n = Integer.parseInt(str);
+                    if (n < min) {
+                        ed.setText("" + min);
+                        Toast.makeText(mContext, "Minimum allowed is " + min, Toast.LENGTH_SHORT).show();
+                    } else if (n > max) {
+                        ed.setText("" + max);
+                        Toast.makeText(mContext, "Maximum allowed is " + max, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NumberFormatException nfe) {
+                    ed.setText("" + min);
+                    Toast.makeText(mContext, "Bad format for number!" + max, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

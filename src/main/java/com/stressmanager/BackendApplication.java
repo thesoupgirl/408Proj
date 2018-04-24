@@ -106,8 +106,10 @@ import java.io.FileReader;
 @Order(6)
 public class BackendApplication extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	OAuth2ClientContext oauth2ClientContext;
+
+    @Autowired
+    public OAuth2ClientContext oauth2ClientContext;
+
 
 	DBHelper db = new DBHelper();
 	@Value("${outlook.client.appId}")
@@ -128,7 +130,6 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 	//static Credentials credz;
 
-	static com.google.api.services.calendar.Calendar service;
 
 	//starting point for outlook, spawns auth
 	@CrossOrigin(origins = "http://localhost:8080")
@@ -172,6 +173,8 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		//return loginUrl;
   		response.sendRedirect(loginUrl);
 	}
+
+    public static com.google.api.services.calendar.Calendar service;
 
 
     @RequestMapping({"/androidlogin"})
@@ -1152,7 +1155,9 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //temp = http;
         // @formatter:off
-        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/android/outlooksignin", "/calendar/event", "/api/calendar/androidevents").permitAll().anyRequest()
+
+        http.antMatcher("/**").authorizeRequests().antMatchers("/", "/login**", "/webjars/**", "/androidlogin", "/androidme", "/calendar/suggest/**", "/calendar/androidsuggest", "/calendar/androidsuggest**","/calendar/add", "/advice", "/calendar/list", "/calendar/add", "/api/calendar/androidevents", "/outlooksignin", "/authorize","/outlook/events", "/outlook/logout", "/android/outlooksignin").permitAll().anyRequest()
+
                 .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/")).and().logout()
                 .logoutSuccessUrl("/").permitAll().and().csrf().disable()
@@ -1176,12 +1181,20 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
             http.antMatcher("/androidlogout").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/event").authorizeRequests().anyRequest().authenticated();
             http.antMatcher("/calendar/add").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/suggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/wait/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/train/{userName}").authorizeRequests().anyRequest().authenticated();
+            http.antMatcher("/calendar/androidsuggest/train/").authorizeRequests().anyRequest().authenticated();
 
             http.antMatcher("/outlooksignin").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/android/outlooksignin").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/authorize").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlook/logout").authorizeRequests().anyRequest().authenticated();
 			http.antMatcher("/outlook/events").authorizeRequests().anyRequest().authenticated();
+
             // @formatter:on
         }
     }
@@ -1234,7 +1247,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
      ** Helper Methods
      ** to keep the code clean
      */
-    public boolean tableCheck(String userName) {
+    public static boolean tableCheck(String userName) {
         boolean exists = true;
         Table table = DBSetup.getTable(userName);
         GetItemSpec spec12 = new GetItemSpec()
