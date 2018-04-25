@@ -2,14 +2,19 @@ package xyz.jhughes.epsteinandroid.activities;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.RectF;
+import android.net.Uri;
+import android.provider.CalendarContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -20,6 +25,7 @@ import android.widget.Toast;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.rarepebble.colorpicker.ColorPickerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +42,6 @@ import xyz.jhughes.epsteinandroid.R;
 import xyz.jhughes.epsteinandroid.models.Advice;
 import xyz.jhughes.epsteinandroid.models.Events.Event;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
-import xyz.jhughes.epsteinandroid.models.MLTime;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 
@@ -51,6 +56,10 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     public static final int IMPORTED_CALENDAR = 280;
     public static final int FAILED_IMPORT_CALENDAR = 281;
+    public static final int UPDATED_STRESS_LEVELS = 282;
+
+    private boolean hasLaunchedCalendar = false;
+    private boolean hasUpdatedCalendar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +71,21 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         weekView.setOnEventClickListener(this);
         weekView.setMonthChangeListener(this);
 
+        weekView.setDayBackgroundColor(SharedPrefsHelper.getSharedPrefs(this).getInt("backgroundColor", Color.WHITE));
+        weekView.setEventTextColor(SharedPrefsHelper.getSharedPrefs(this).getInt("textColor", Color.WHITE));
+
         getCalendarDataAndUpdateUi();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!hasLaunchedCalendar && hasUpdatedCalendar) {
+            getCalendarDataAndUpdateUi();
+        }
+        if (hasLaunchedCalendar) {
+            hasLaunchedCalendar = false;
+        }
     }
 
     private void getCalendarDataAndUpdateUi() {
@@ -127,10 +150,16 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                 }
                 Intent i = new Intent(this, EventRatingActivity.class);
                 i.putExtra("events", events);
-                startActivity(i);
+                startActivityForResult(i, UPDATED_STRESS_LEVELS);
                 break;
             case R.id.suggest_reschedule:
                 suggestEvents();
+                break;
+            case R.id.background_picker:
+                pickBackgroundColor();
+                break;
+            case R.id.font_color:
+                pickTextColor();
                 break;
             default:
                 //Nothing
@@ -140,6 +169,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
 
     private void suggestEvents() {
+        dialog = ProgressDialog.show(this, "", "Loading suggestions. Please wait...", true);
+        dialog.show();
+
         EpsteinApiHelper.getInstance().getEventsToRescheduleSuggestions(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
                 SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
@@ -147,13 +179,26 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             @Override
             public void onResponse(Call<Events> call, Response<Events> response) {
                 if (response.code() == 200 && response.body() != null) {
-                    List<String> eventTitles = new ArrayList<>();
+                    dialog.cancel();
+
+                    List<Event> events = new ArrayList<>();
+                    List<String> eventsThatHaveOccured = new ArrayList<>();
                     for (Event e : response.body().items) {
+                        if (eventsThatHaveOccured.contains(e.recurringEventId)) {
+                            continue;
+                        }
+                        events.add(e);
+                        eventsThatHaveOccured.add(e.recurringEventId);
+                    }
+
+                    List<String> eventTitles = new ArrayList<>();
+                    for (Event e : events) {
                         eventTitles.add(e.summary);
                     }
 
                     ListView lv = new ListView(CalendarActivity.this);
                     lv.setAdapter(new ArrayAdapter<>(CalendarActivity.this, android.R.layout.simple_list_item_1, eventTitles));
+                    lv.setPadding(4, 4, 4, 4);
 
                     android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(CalendarActivity.this)
                             .setTitle("Suggested Events")
@@ -162,7 +207,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
-                                    finish();
                                 }
                             });
                     alert.show();
@@ -171,6 +215,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
             @Override
             public void onFailure(Call<Events> call, Throwable t) {
+                dialog.cancel();
                 System.out.println("failed");
             }
         });
@@ -178,7 +223,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == IMPORTED_CALENDAR) {
+        if (requestCode == IMPORTED_CALENDAR || requestCode == UPDATED_STRESS_LEVELS) {
             getCalendarDataAndUpdateUi();
         }
     }
@@ -237,18 +282,85 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                     Integer.parseInt(timeForEnd[0]), Integer.parseInt(timeForEnd[1])                             // End time
             );
 
-            if (event.stressValue > 0) {
-                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositiveStressLevel));
-            } else if (event.stressValue < 0) {
-                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegativeStressLevel));
-            } else {
-                calendarEventToAdd.setColor(getResources().getColor(R.color.colorZeroStressLevel));
-            }
+            setCalendarEventColor(calendarEventToAdd, event);
+
+            calendarEventToAdd.setIdentifier(event.htmlLink);
 
             events.add(calendarEventToAdd);
         }
 
         return events;
+    }
+
+    private void setCalendarEventColor(WeekViewEvent calendarEventToAdd, Event event) {
+        switch (event.stressValue) {
+            case -10:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative10));
+                break;
+            case -9:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative9));
+                break;
+            case -8:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative8));
+                break;
+            case -7:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative7));
+                break;
+            case -6:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative6));
+                break;
+            case -5:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative5));
+                break;
+            case -4:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative4));
+                break;
+            case -3:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative3));
+                break;
+            case -2:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative2));
+                break;
+            case -1:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorNegative1));
+                break;
+            case 0:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorZeroStressLevel));
+                break;
+            case 1:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive1));
+                break;
+            case 2:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive2));
+                break;
+            case 3:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive3));
+                break;
+            case 4:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive4));
+                break;
+            case 5:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive5));
+                break;
+            case 6:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive6));
+                break;
+            case 7:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive7));
+                break;
+            case 8:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive8));
+                break;
+            case 9:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive9));
+                break;
+            case 10:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorPositive10));
+                break;
+            default:
+                calendarEventToAdd.setColor(getResources().getColor(R.color.colorUnrated));
+                break;
+        }
     }
 
     @Override
@@ -260,7 +372,49 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        // Nothing yet!
+        System.out.println(event.getIdentifier());
+        Intent calIntent = new Intent(Intent.ACTION_VIEW)
+                .setType("vnd.android.cursor.item/event")
+                .setData(Uri.parse(event.getIdentifier()))
+                .putExtra(CalendarContract.Events._ID, event.getIdentifier());
+        calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        hasLaunchedCalendar = true;
+        hasUpdatedCalendar = true;
+        startActivity(calIntent);
+    }
+
+    private void pickBackgroundColor() {
+        final ColorPickerView picker = new ColorPickerView(this);
+        picker.setColor(Color.GRAY);
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this)
+                .setTitle("Pick color")
+                .setView(picker)
+                .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPrefsHelper.getSharedPrefs(CalendarActivity.this).edit().putInt("backgroundColor", picker.getColor()).apply();
+                        weekView.setDayBackgroundColor(picker.getColor());
+                        dialog.dismiss();
+                    }
+                });
+        alert.show();
+    }
+
+    private void pickTextColor() {
+        final ColorPickerView picker = new ColorPickerView(this);
+        picker.setColor(Color.GRAY);
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this)
+                .setTitle("Pick color")
+                .setView(picker)
+                .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPrefsHelper.getSharedPrefs(CalendarActivity.this).edit().putInt("textColor", picker.getColor()).apply();
+                        weekView.setEventTextColor(picker.getColor());
+                        dialog.dismiss();
+                    }
+                });
+        alert.show();
     }
 
     private void getAndDisplayAdvice() {
