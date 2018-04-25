@@ -311,21 +311,21 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		}
 		else {
 			String eventId = null;
-			ScanRequest scanRequest = new ScanRequest()
-			    .withTableName(principal.getName().replaceAll(" ","_"));
+			// ScanRequest scanRequest = new ScanRequest()
+			//     .withTableName(principal.getName().replaceAll(" ","_"));
 
-			ScanResult result = client.scan(scanRequest);
+			// ScanResult result = DBSetup.currentDB.scan(scanRequest);
 			  
-			for (Map<String, AttributeValue> item : result.getItems()){
-    			for (Entry<String, AttributeValue> entry : item.entrySet()) {
-    				if(entry.getValue().getS().equals("10") ) {
-    					eventId = entry.getKey();
-    					break;
-    				}
-		            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
-		        }
+			// for (Map<String, AttributeValue> item : result.getItems()){
+   //  			for (Entry<String, AttributeValue> entry : item.entrySet()) {
+   //  				if(entry.getValue().getS().equals("10") ) {
+   //  					eventId = entry.getKey();
+   //  					break;
+   //  				}
+		 //            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
+		 //        }
 
-			}
+			// }
 			if (eventId != null) {
 				Event event = service.events().get("primary", eventId).execute();
 
