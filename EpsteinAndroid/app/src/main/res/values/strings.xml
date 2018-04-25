@@ -10,4 +10,6 @@
     <string name="submit_ratings">Submit Ratings</string>
     <string name="suggest_events_to_reschedule">Suggest Events to Reschedule</string>
     <string name="wait_time">Wait Time</string>
+    <string name="change_background_color">Change background color</string>
+    <string name="font_color">Change font color</string>
 </resources>
