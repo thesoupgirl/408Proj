@@ -75,6 +75,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
+import java.util.Map.*;
 
 import org.springframework.ui.Model;
 import com.stressmanager.AuthHelper;
@@ -87,6 +88,9 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.*;
 import com.amazonaws.services.dynamodbv2.model.*;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
@@ -313,21 +317,23 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		}
 		else {
 			String eventId = null;
-			// ScanRequest scanRequest = new ScanRequest()
-			//     .withTableName(principal.getName().replaceAll(" ","_"));
+			ScanRequest scanRequest = new ScanRequest()
+			    .withTableName(principal.getName().replaceAll(" ","_"));
 
-			// ScanResult result = DBSetup.currentDB.scan(scanRequest);
+			AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+
+			ScanResult result = client.scan(scanRequest);
 			  
-			// for (Map<String, AttributeValue> item : result.getItems()){
-   //  			for (Entry<String, AttributeValue> entry : item.entrySet()) {
-   //  				if(entry.getValue().getS().equals("10") ) {
-   //  					eventId = entry.getKey();
-   //  					break;
-   //  				}
-		 //            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
-		 //        }
+			for (Map<String, AttributeValue> item : result.getItems()){
+    			for (Entry<String, AttributeValue> entry : item.entrySet()) {
+    				if(entry.getValue().getS().equals("10") ) {
+    					eventId = entry.getKey();
+    					break;
+    				}
+		            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
+		        }
 
-			// }
+			}
 			if (eventId != null) {
 				Event event = service.events().get("primary", eventId).execute();
 
