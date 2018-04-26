@@ -42,7 +42,7 @@ class ReschedulePage extends React.Component {
             var totle = AdviceProvider();
             return (
                 <SweetAlert
-                    title=totle
+                    title={totle}
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>

@@ -36,7 +36,7 @@ class Navigation extends React.Component {
       var totle = AdviceProvider();
       return (
         <SweetAlert
-          title=totle
+          title={totle}
           onConfirm={() => this.setState({ alertVisible: false })}>
           <h4>{advice}</h4>
         </SweetAlert>
