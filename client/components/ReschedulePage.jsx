@@ -6,6 +6,7 @@ import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
 import { Button, Jumbotron } from 'react-bootstrap'
 import UserPage from './UserPage'
+import {AdviceProvider} from "./AdviceProvider";
 
 class ReschedulePage extends React.Component {
   
@@ -38,9 +39,10 @@ class ReschedulePage extends React.Component {
     renderAlert() {
         const { alert } = this.props
         if (alert) {
+            var totle = AdviceProvider();
             return (
                 <SweetAlert
-                    title="Loading User Data"
+                    title=totle
                     onConfirm={() => this.setState({alert:false})}
                     >
                     <div className="loader"></div>

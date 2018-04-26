@@ -16,6 +16,7 @@ import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
 import {Collapse} from './Collapse'
+import {AdviceProvider} from "./AdviceProvider";
 
 
 class Navigation extends React.Component {
@@ -32,9 +33,10 @@ class Navigation extends React.Component {
     const { alertVisible } = this.state
 
     if (alertVisible) {
+      var totle = AdviceProvider();
       return (
         <SweetAlert
-          title="Advice"
+          title=totle
           onConfirm={() => this.setState({ alertVisible: false })}>
           <h4>{advice}</h4>
         </SweetAlert>
