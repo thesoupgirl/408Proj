@@ -167,15 +167,19 @@ class UserPage extends React.Component {
         return (
             <div className='container'>
                 {this.renderAlert()}
+                <img  width={1000} height={300} alt="1000x300"  src={require('../image/Legend3.png')} style={{position: "right",  left: 100, right: 100, bottom: 100, top: 100}} />
                 {this.renderCalendar()}
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
-                <img  width={300} height={300} alt="300x300"  src={require('../image/Legend.png')} style={{position: "relative",  left: 125, right: 125}} />
-
                  </Jumbotron>
-
+            </div>
+            )
+            return (
+            <div className='calendar'>
+            {this.renderCalendar(), <img  width={300} height={300} alt="300x300"  src={require('../image/Legend.png')} style={{position: "right",  left: 100, right: 100, bottom: 100, top: 100}} />}
             </div>
         )
+
     }
 }
 
