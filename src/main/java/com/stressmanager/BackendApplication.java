@@ -6,6 +6,8 @@ import java.util.*;
 import javax.servlet.Filter;
 import javax.servlet.http.*;
 
+import java.text.SimpleDateFormat;
+
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -326,8 +328,16 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			  
 			for (Map<String, AttributeValue> item : result.getItems()){
     			for (Entry<String, AttributeValue> entry : item.entrySet()) {
-    				if(entry.getValue().getS().equals("10") ) {
-    					eventId = entry.getKey();
+    				System.out.println("pls..."+ entry.getValue().getN());
+    				System.out.println("fuck this shit..." + entry.getValue());
+    				String meow = entry.getValue().getN();
+    				if(meow == null) {
+    					continue;
+    				}
+    				if(meow.equals("10")) {
+    					System.out.println("yay me");
+    					System.out.println("in if!!! wooo");
+    					eventId = "4ldevn2p2lq7hoqraoncisodtu";
     					break;
     				}
 		            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
@@ -335,9 +345,36 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 
 			}
 			if (eventId != null) {
-				Event event = service.events().get("primary", eventId).execute();
+				System.out.println("eventID:" + eventId);
+				DateTime now = new DateTime(System.currentTimeMillis());
 
-				event.setSummary("Appointment at Somewhere");
+				Events events = service.events().list("primary")
+					.setMaxResults(50)
+					.setTimeMin(now)
+					.setSingleEvents(false)
+					.execute();
+
+				List<Event> items = events.getItems();
+				Event event = items.get(2);
+				//Event event = service.events().get("otesting69@gmail.com", eventId).execute();
+				EventDateTime dt = event.getStart();
+				System.out.println("tostringo: " + dt.toString());
+				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				//String outputDate = outputFormat.format(dt.getDateTime());
+				String outputDate = dt.toString();
+				String day = outputDate.substring(8,9);
+				System.out.println("day is..." + day);
+				int dayo = Integer.parseInt(day);
+				++dayo;
+				outputDate = outputDate.substring(0,7) + dayo + outputDate.substring(10);
+				System.out.println("output date:" + outputDate);
+				DateTime par = new DateTime(outputDate);
+
+				EventDateTime dt1 = new EventDateTime();
+
+				dt1.setDateTime(par);
+				event.setStart(dt1);
+				// event.setSummary("Appointment at Somewhere");
 				Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
 
 				System.out.println(updatedEvent.getUpdated());
