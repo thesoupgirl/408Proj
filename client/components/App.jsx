@@ -63,6 +63,23 @@ class App extends React.Component {
 
   // API Methods
 
+   getApplyReschedule() {
+    ajax({
+      url: '/reschedule',
+      type: 'get',
+      success: (data, status, xhr) => {
+        
+  			//this.getEventList();
+  			//this.setActiveView(UserPage);
+  			 console.log("reschedule endpoint success")
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log(response)
+      }
+    })
+}
+
 
 getReschedule() {
 	
@@ -448,6 +465,8 @@ getReschedule() {
           postWaitTime={timeTaken => this.postWaitTime()}
           time={this.state.time}
           setTime={time => this.setTime(time)}
+          getApplyReschedule = {() => this.getApplyReschedule() }
+          
 
 
         />
