@@ -68,10 +68,12 @@ class App extends React.Component {
       url: '/reschedule',
       type: 'get',
       success: (data, status, xhr) => {
-        
-  			//this.getEventList();
-  			//this.setActiveView(UserPage);
-  			 console.log("reschedule endpoint success")
+        	 console.log("reschedule endpoint success")
+        	 this.setState({ eventList: data.items })
+        	 this.setState({alert: true})
+  			 this.getEventList()
+  			// this.setActiveView(UserPage);
+  			
       },
       error: response => {
         // TODO give feedback to user

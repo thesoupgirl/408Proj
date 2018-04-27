@@ -45,7 +45,7 @@ class CalendarPage extends React.Component {
    outlookFunc(){
       const { yesOutlook} = this.props
       this.props.setOutlookState(yesOutlook)
-      this.setState({ yesOutlook: true }, console.log(yesOutlook))
+      //this.setState({ yesOutlook: true }, console.log(yesOutlook))
        console.log("vallue of yesOutlook")
       console.log(yesOutlook)
       this.props.getOutlook()
