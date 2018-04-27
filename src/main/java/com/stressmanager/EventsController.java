@@ -3,8 +3,7 @@ package com.stressmanager;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,15 +20,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class EventsController {
 
   @RequestMapping("/outlook/events")
-  public ResponseEntity<PagedResult<Eventy>> events(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+  public String events(Model model, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
     HttpSession session = request.getSession();
     final HttpHeaders httpHeaders = new HttpHeaders();
     TokenResp tokens = (TokenResp)session.getAttribute("tokens");
     if (tokens == null) {
       // No tokens in session, user needs to sign in
-      redirectAttributes.addFlashAttribute("error", "Please sign in to continue.");
-      System.out.println("You fucked up..." + tokens);
-      return new ResponseEntity<PagedResult<Eventy>>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+      try{
+        redirectAttributes.addFlashAttribute("error", "Please sign in to continue.");
+        System.out.println("You fucked up..." + tokens);
+        response.sendRedirect("/");
+        return "redirect:/index.html";
+      }
+      catch(Exception e) {
+        System.out.println("shit hit the fan");
+      }
+      //return new ResponseEntity<PagedResult<Eventy>>(null, httpHeaders, HttpStatus.BAD_REQUEST);
     }
 
     String tenantId = (String)session.getAttribute("userTenantId");
@@ -55,12 +61,16 @@ public class EventsController {
           .execute().body();
 
       System.out.println(events.getValue());
-      return new ResponseEntity<PagedResult<Eventy>>(events, httpHeaders, HttpStatus.OK);
+      response.sendRedirect("/");
+      return "redirect:/index.html";
+      //return new ResponseEntity<PagedResult<Eventy>>(events, httpHeaders, HttpStatus.OK);
 
-    } catch (IOException e) {
+    } catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", e.getMessage());
       System.out.println(e.getMessage());
-      return new ResponseEntity<PagedResult<Eventy>>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+      //response.sendRedirect("/");
+      return "redirect:/index.html";
+      //return new ResponseEntity<PagedResult<Eventy>>(null, httpHeaders, HttpStatus.BAD_REQUEST);
     }
 
     //return new ResponseEntity<PagedResult<Eventy>>(null, httpHeaders, HttpStatus.BAD_REQUEST);

@@ -362,18 +362,42 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				//String outputDate = outputFormat.format(dt.getDateTime());
 				String outputDate = dt.toString();
-				String day = outputDate.substring(8,9);
+				outputDate = outputDate.substring(13, outputDate.length()-32);
+				String day = outputDate.substring(8,10);
 				System.out.println("day is..." + day);
 				int dayo = Integer.parseInt(day);
 				++dayo;
-				outputDate = outputDate.substring(0,7) + dayo + outputDate.substring(10);
+				outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
 				System.out.println("output date:" + outputDate);
 				DateTime par = new DateTime(outputDate);
 
 				EventDateTime dt1 = new EventDateTime();
 
 				dt1.setDateTime(par);
+				dt1.setTimeZone("America/New_York");
 				event.setStart(dt1);
+
+
+				EventDateTime dtE = event.getEnd();
+				System.out.println("tostringo: " + dtE.toString());
+				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				//String outputDate = outputFormat.format(dt.getDateTime());
+				String outputDateE = dtE.toString();
+				outputDateE = outputDateE.substring(13, outputDateE.length()-32);
+				String dayE = outputDateE.substring(8,10);
+				System.out.println("day is..." + dayE);
+				int dayoE = Integer.parseInt(dayE);
+				++dayoE;
+				outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+				System.out.println("output date:" + outputDateE);
+				DateTime parE = new DateTime(outputDateE);
+
+				EventDateTime dt1E = new EventDateTime();
+
+				dt1E.setDateTime(parE);
+				dt1E.setTimeZone("America/New_York");
+				event.setEnd(dt1E);
+
 				// event.setSummary("Appointment at Somewhere");
 				Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
 
