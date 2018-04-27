@@ -15,7 +15,7 @@ import {
   Navbar,
   NavDropdown
 } from 'react-bootstrap'
-
+import ImportPage from './ImportPage'
 
 BigCalendar.momentLocalizer(moment)
 
@@ -35,16 +35,17 @@ class UserPage extends React.Component {
          this.RescheduleAction = this.RescheduleAction.bind(this);
          this.message = this.message.bind(this);
          this.prompt = this.prompt.bind(this);
-         this.props.getWaitTime()
+        // this.props.getWaitTime()
          this.start =  new Date().getTime()/1000;
-         this.setState({alert:true})
+        // this.setState({alert:true})
 
 
 
 
-        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page."); },20000);
+        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions?\nCheck out all our resources in the toolbar\n "); },20000);
 
-    
+        this.selectEvent = this.selectEvent.bind(this);
+        this.selectSlot = this.selectSlot.bind(this);
 
 
             
@@ -106,6 +107,21 @@ class UserPage extends React.Component {
             <div></div>
         )
     }
+    selectEvent(event){
+      if(confirm("Would you like to reschedule this event:\n\n" + event.summary)){
+        this.RescheduleAction()
+      }
+             
+        
+    }
+    selectSlot(slotInfo){
+         alert(
+                    `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+                    `\nend: ${slotInfo.end.toLocaleString()}` 
+            )
+           
+        
+    }
     renderCalendar() {
         //console.log("arf" + this.props.eventList)
         //console.log("meow" + this.props.eventy)
@@ -121,11 +137,19 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
+
+                    onSelectEvent={event => this.selectEvent(event)}
+                    onSelectSlot={slotInfo => this.selectSlot(slotInfo)}
+
                     />
             )
         }
         return (
-             <div></div>
+             <div>
+
+<img  width={100} height={100} alt="100x100"  src={require('../image/Legend.png')} style={{position: "relative",   left: 125, right: 125}} />
+
+             </div>
          )
     }
     eventPropGetter(event, start, end, isSelected) {
@@ -155,7 +179,7 @@ class UserPage extends React.Component {
 
     }
     message(){
-        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n If so please click the Reschedule button at the bottom of the page.")
+        alert("Looks like you are having a stressful week.\n Would you like some rescheduling suggestions? \n")
     }
     prompt(){
         const { alert } = this.props
@@ -169,6 +193,7 @@ class UserPage extends React.Component {
                 {this.renderAlert()}
                 <img  width={1000} height={300} alt="1000x300"  src={require('../image/Legend.png')} style={{position: "right",  left: 100, right: 100, bottom: 100, top: 100}} />
                 {this.renderCalendar()}
+
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
@@ -181,6 +206,7 @@ class UserPage extends React.Component {
         )
 
     }
+
 }
 
 module.exports = UserPage

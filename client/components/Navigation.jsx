@@ -16,6 +16,12 @@ import ReschedulePage from './ReschedulePage'
 import SettingsPage from './SettingsPage'
 import HomePage from './HomePage'
 import {Collapse} from './Collapse'
+import {AdviceProvider} from "./AdviceProvider";
+import DestressPage from './DestressPage'
+import ApplicationGuide from './ApplicationGuide'
+
+
+
 
 
 class Navigation extends React.Component {
@@ -32,9 +38,10 @@ class Navigation extends React.Component {
     const { alertVisible } = this.state
 
     if (alertVisible) {
+      var totle = AdviceProvider();
       return (
         <SweetAlert
-          title="Advice"
+          title={totle}
           onConfirm={() => this.setState({ alertVisible: false })}>
           <h4>{advice}</h4>
         </SweetAlert>
@@ -51,6 +58,9 @@ class Navigation extends React.Component {
       return (
         <Nav pullRight>
           <NavDropdown title='Tools' id='basic-nav-dropdown'>
+            <MenuItem onClick={() => setActiveView(ApplicationGuide)}>
+              Application Guide
+            </MenuItem>
             <MenuItem onClick={() => setActiveView(HomePage)}>
               Home Page
             </MenuItem>
@@ -66,8 +76,11 @@ class Navigation extends React.Component {
             <MenuItem onClick={() => setActiveView(UserPage)}>
               Calendar
             </MenuItem>
+            <MenuItem onClick={() => setActiveView(DestressPage)}>
+              Destress Page
+            </MenuItem>
             <MenuItem onClick={() => setActiveView(Games)}>
-              Games
+              Entertainment
             </MenuItem>
             <MenuItem onClick={() => this.setState({ alertVisible: true })}>
               Advice

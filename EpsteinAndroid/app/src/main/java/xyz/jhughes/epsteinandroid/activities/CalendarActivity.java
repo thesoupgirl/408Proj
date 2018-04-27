@@ -2,10 +2,13 @@ package xyz.jhughes.epsteinandroid.activities;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.net.Uri;
+import android.provider.CalendarContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,7 +42,6 @@ import xyz.jhughes.epsteinandroid.R;
 import xyz.jhughes.epsteinandroid.models.Advice;
 import xyz.jhughes.epsteinandroid.models.Events.Event;
 import xyz.jhughes.epsteinandroid.models.Events.Events;
-import xyz.jhughes.epsteinandroid.models.MLTime;
 import xyz.jhughes.epsteinandroid.networking.EpsteinApiHelper;
 import xyz.jhughes.epsteinandroid.utilities.SharedPrefsHelper;
 
@@ -56,6 +58,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     public static final int FAILED_IMPORT_CALENDAR = 281;
     public static final int UPDATED_STRESS_LEVELS = 282;
 
+    private boolean hasLaunchedCalendar = false;
+    private boolean hasUpdatedCalendar = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +75,17 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
         weekView.setEventTextColor(SharedPrefsHelper.getSharedPrefs(this).getInt("textColor", Color.WHITE));
 
         getCalendarDataAndUpdateUi();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!hasLaunchedCalendar && hasUpdatedCalendar) {
+            getCalendarDataAndUpdateUi();
+        }
+        if (hasLaunchedCalendar) {
+            hasLaunchedCalendar = false;
+        }
     }
 
     private void getCalendarDataAndUpdateUi() {
@@ -153,6 +169,9 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
     }
 
     private void suggestEvents() {
+        dialog = ProgressDialog.show(this, "", "Loading suggestions. Please wait...", true);
+        dialog.show();
+
         EpsteinApiHelper.getInstance().getEventsToRescheduleSuggestions(
                 SharedPrefsHelper.getSharedPrefs(this).getString("email", null),
                 SharedPrefsHelper.getSharedPrefs(this).getString("idToken", null)
@@ -160,13 +179,26 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             @Override
             public void onResponse(Call<Events> call, Response<Events> response) {
                 if (response.code() == 200 && response.body() != null) {
-                    List<String> eventTitles = new ArrayList<>();
+                    dialog.cancel();
+
+                    List<Event> events = new ArrayList<>();
+                    List<String> eventsThatHaveOccured = new ArrayList<>();
                     for (Event e : response.body().items) {
+                        if (eventsThatHaveOccured.contains(e.recurringEventId)) {
+                            continue;
+                        }
+                        events.add(e);
+                        eventsThatHaveOccured.add(e.recurringEventId);
+                    }
+
+                    List<String> eventTitles = new ArrayList<>();
+                    for (Event e : events) {
                         eventTitles.add(e.summary);
                     }
 
                     ListView lv = new ListView(CalendarActivity.this);
                     lv.setAdapter(new ArrayAdapter<>(CalendarActivity.this, android.R.layout.simple_list_item_1, eventTitles));
+                    lv.setPadding(4, 4, 4, 4);
 
                     android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(CalendarActivity.this)
                             .setTitle("Suggested Events")
@@ -175,7 +207,6 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
-                                    finish();
                                 }
                             });
                     alert.show();
@@ -184,6 +215,7 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
             @Override
             public void onFailure(Call<Events> call, Throwable t) {
+                dialog.cancel();
                 System.out.println("failed");
             }
         });
@@ -251,6 +283,8 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
             );
 
             setCalendarEventColor(calendarEventToAdd, event);
+
+            calendarEventToAdd.setIdentifier(event.htmlLink);
 
             events.add(calendarEventToAdd);
         }
@@ -338,7 +372,15 @@ public class CalendarActivity extends AppCompatActivity implements WeekView.Even
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        // Nothing yet!
+        System.out.println(event.getIdentifier());
+        Intent calIntent = new Intent(Intent.ACTION_VIEW)
+                .setType("vnd.android.cursor.item/event")
+                .setData(Uri.parse(event.getIdentifier()))
+                .putExtra(CalendarContract.Events._ID, event.getIdentifier());
+        calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        hasLaunchedCalendar = true;
+        hasUpdatedCalendar = true;
+        startActivity(calIntent);
     }
 
     private void pickBackgroundColor() {
