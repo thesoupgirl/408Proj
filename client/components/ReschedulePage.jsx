@@ -101,6 +101,7 @@ class ReschedulePage extends React.Component {
     return (
       <div className='container'>
        {this.renderAlert()}
+        <img  width={1000} height={300} alt="1000x300"  src={require('../image/Legend3.png')} style={{position: "right",  left: 100, right: 100, bottom: 100, top: 100}} />
         {this.renderCalendar()}
         <Jumbotron>
           <p>Rescheduling Suggestions</p>
