@@ -313,6 +313,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 		final HttpHeaders httpHeaders = new HttpHeaders();
 
 		Table table = DBSetup.getTable(principal.getName().replaceAll(" ","_"));
+		DateTime par = null;
 		if (table == null) {
 			System.out.println("No upcoming events found.");
 			return new ResponseEntity<String>("no events to change", httpHeaders, HttpStatus.ACCEPTED);
@@ -378,9 +379,11 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					dayo = Integer.parseInt(day);
 					++dayo;
 					if(dayo < 10) {
+						System.out.println("tuesday");
 						outputDate = outputDate.substring(0,7) + "-" + "0" + dayo + outputDate.substring(10);
 					}
 					else {
+						System.out.println("thursday");
 						outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
 					}
 
@@ -395,6 +398,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					dayoE = Integer.parseInt(dayE);
 					++dayoE;
 					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+					par = new DateTime(outputDate);
 				}
 				else {
 
@@ -416,16 +420,21 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					dayoE = Integer.parseInt(dayE);
 					++dayoE;
 					if(dayoE < 10) {
+						System.out.println("friday");
 						outputDateE = outputDateE.substring(0,7) + "-" + "0" + dayoE + outputDateE.substring(10);
 					}
 					else {
+						System.out.println("monday");
 						outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
 					}
+
+					par = new DateTime(outputDateE);
 					//outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+					//parE = new DateTime(outputDateE);
 
 				}
 				System.out.println("output date:" + outputDate);
-				DateTime par = new DateTime(outputDate);
+				
 
 				EventDateTime dt1 = new EventDateTime();
 
@@ -434,12 +443,12 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				event.setStart(dt1);
 
 				
-				System.out.println("output date:" + outputDateE);
-				DateTime parE = new DateTime(outputDateE);
+				System.out.println("output date2:" + outputDateE);
+				//DateTime parE = new DateTime(outputDateE);
 
 				EventDateTime dt1E = new EventDateTime();
 
-				dt1E.setDateTime(parE);
+				dt1E.setDateTime(par);
 				dt1E.setTimeZone("America/New_York");
 				event.setEnd(dt1E);
 
