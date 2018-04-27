@@ -6,7 +6,7 @@ import {
   FormControl,
   FormGroup,
   HelpBlock,
-  Panel
+  Panel,
 } from 'react-bootstrap'
 
 import UserPage from './UserPage'
