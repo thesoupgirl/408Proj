@@ -361,13 +361,58 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				System.out.println("tostringo: " + dt.toString());
 				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				//String outputDate = outputFormat.format(dt.getDateTime());
-				String outputDate = dt.toString();
-				outputDate = outputDate.substring(13, outputDate.length()-32);
-				String day = outputDate.substring(8,10);
-				System.out.println("day is..." + day);
-				int dayo = Integer.parseInt(day);
-				++dayo;
-				outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
+				String outputDate = "";
+				String day = "";
+				int dayo = 0;
+				EventDateTime dtE = null;
+				String outputDateE = "";
+				String dayE = "";
+				int dayoE = 0;
+
+				if(dt.toString().toLowerCase().contains("timezone")) {
+
+					outputDate = dt.toString();
+					outputDate = outputDate.substring(13, outputDate.length()-32);
+					day = outputDate.substring(8,10);
+					System.out.println("day is..." + day);
+					dayo = Integer.parseInt(day);
+					++dayo;
+					outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
+
+					dtE = event.getEnd();
+					System.out.println("tostringo: " + dtE.toString());
+					//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+					//String outputDate = outputFormat.format(dt.getDateTime());
+					outputDateE = dtE.toString();
+					outputDateE = outputDateE.substring(13, outputDateE.length()-32);
+					dayE = outputDateE.substring(8,10);
+					System.out.println("day is..." + dayE);
+					dayoE = Integer.parseInt(dayE);
+					++dayoE;
+					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+				}
+				else {
+
+					outputDate = dt.toString();
+					outputDate = outputDate.substring(13, outputDate.length()-2);
+					day = outputDate.substring(8,10);
+					System.out.println("day is..." + day);
+					dayo = Integer.parseInt(day);
+					++dayo;
+
+					dtE = event.getEnd();
+					System.out.println("tostringo: " + dtE.toString());
+					//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+					//String outputDate = outputFormat.format(dt.getDateTime());
+					outputDateE = dtE.toString();
+					outputDateE = outputDateE.substring(13, outputDateE.length()-2);
+					dayE = outputDateE.substring(8,10);
+					System.out.println("day is..." + dayE);
+					dayoE = Integer.parseInt(dayE);
+					++dayoE;
+					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+
+				}
 				System.out.println("output date:" + outputDate);
 				DateTime par = new DateTime(outputDate);
 
@@ -377,18 +422,7 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 				dt1.setTimeZone("America/New_York");
 				event.setStart(dt1);
 
-
-				EventDateTime dtE = event.getEnd();
-				System.out.println("tostringo: " + dtE.toString());
-				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-				//String outputDate = outputFormat.format(dt.getDateTime());
-				String outputDateE = dtE.toString();
-				outputDateE = outputDateE.substring(13, outputDateE.length()-32);
-				String dayE = outputDateE.substring(8,10);
-				System.out.println("day is..." + dayE);
-				int dayoE = Integer.parseInt(dayE);
-				++dayoE;
-				outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+				
 				System.out.println("output date:" + outputDateE);
 				DateTime parE = new DateTime(outputDateE);
 
