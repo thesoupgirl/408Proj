@@ -1,7 +1,7 @@
 import React from 'react'
 import BigCalendar from 'react-big-calendar'
 import { has } from 'lodash'
-import { ajax } from 'jquery'
+import { ajax, when } from 'jquery'
 import moment from 'moment'
 import SweetAlert from 'react-bootstrap-sweetalert'
 import { Button, Jumbotron } from 'react-bootstrap'
@@ -90,18 +90,20 @@ class ReschedulePage extends React.Component {
 
   applyFunc(){
       console.log("apply fun")
-    // const { apply, getApplyReschedule  } = this.props
-      this.props.setApplyState(this.props.apply)
+     const { apply } = this.props
+      this.props.setApplyState(apply)
       this.setState({ apply: true })
      //  console.log(this.props.apply)
      // this.props.setActiveView(UserPage)
      console.log(this.prop)
      //var aj = this.props.getApplyReschedule().done(this.props.eventList().done(this.props.setActiveView(UserPage)).fail(error)).fail(error);
      ///when(aj).done( console.log("ajax done"));
-    //var aj =  this.props.getApplyReschedule().done(this.props.eventList()).fail(console.log(error));
-    //var changeView = when(aj).done(this.props.setActiveView(UserPage)).fail(error); 
+    //var aj =  this.props.getApplyReschedule().done(this.props.eventList)
+    //var changeView = when(aj).done(this.props.setActiveView(UserPage));
     //when(changeView).done( console.log("ajax done"));
-    this.props.getApplyReschedule();
+   this.props.getApplyReschedule();
+  //this.props.eventList;
+   //this.props.setActiveView(UserPage);
 
     }
 
