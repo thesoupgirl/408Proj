@@ -30,6 +30,8 @@ class HomePage extends React.Component {
   
    console.log("at home page")
     super(props)
+    console.log("outlook at home page");
+    console.log(this.props.yesOutlook)
    
   }
 
