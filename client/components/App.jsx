@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { ajax } from 'jquery'
+import { ajax, when, done } from 'jquery'
 import { isEmpty, filter, uniqBy, isEqual } from 'lodash'
 
 import 'style/bootswatch'
@@ -62,6 +62,23 @@ class App extends React.Component {
   }
 
   // API Methods
+
+   getApplyReschedule() {
+    ajax({
+      url: '/reschedule',
+      type: 'get',
+      success: (data, status, xhr) => {
+        
+  			//this.getEventList();
+  			//this.setActiveView(UserPage);
+  			 console.log("reschedule endpoint success")
+      },
+      error: response => {
+        // TODO give feedback to user
+        console.log(response)
+      }
+    }).done(this.getEventList()).done( this.setActiveView(UserPage))
+}
 
 
 getReschedule() {
@@ -152,12 +169,18 @@ getReschedule() {
       url: '/me',
       type: 'get',
       success: (user, status, xhr) => {
-        if (this.responseIsJson(xhr)) {
-            this.setState({ user, authorized: true })
-            this.setActiveView(HomePage)
-            this.getEventList()
-          return
+      	  if (this.responseIsJson(xhr)) {
+	         	this.setState({ user, authorized: true })
+	            if(this.yesOutlook) {
+	              this.setActiveView(UserPage)
+	            }
+	            else {
+	              this.setActiveView(HomePage)
+	          }
+	            this.getEventList()
+	          return
         }
+
 
         this.setState({ user: {}, authorized: false })
       },
@@ -251,10 +274,10 @@ getReschedule() {
       async: false,
       success: (data) => {
        // this.setActiveView(UserPage)
+       this.setState({ yesOutlook: true })
         console.log("outlook success")
         console.log(data)
         window.location = data
-         this.setState({yesOutlook: true})
        
       },
       error: response => {
@@ -410,6 +433,14 @@ getReschedule() {
   setTime(time) {
     this.setState({ time: time })
   }
+   setOutlookState(yesOutlook){
+    if(yesOutlook){
+      this.setState({ yesOutlook: false })
+    }
+    else {
+      this.setState({ yesOutlook: true })
+    }
+  }
 
   unratedEvents() {
     var temp = filter(this.state.eventList, event =>
@@ -448,6 +479,11 @@ getReschedule() {
           postWaitTime={timeTaken => this.postWaitTime()}
           time={this.state.time}
           setTime={time => this.setTime(time)}
+          getApplyReschedule = {() => this.getApplyReschedule() }
+          yesOutlook={this.state.yesOutlook}
+  		  setOutlookState={yesOutlook => this.setOutlookState(yesOutlook)}
+
+          
 
 
         />

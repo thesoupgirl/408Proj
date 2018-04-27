@@ -32,6 +32,7 @@ class CalendarPage extends React.Component {
       this.calendarType = ''
       this.calendarExist =  false
      this.GoogleFunc = this.GoogleFunc.bind(this);
+      this.outlookFunc = this.outlookFunc.bind(this);
   }
 
   GoogleFunc(){
@@ -41,6 +42,16 @@ class CalendarPage extends React.Component {
 
 
   }
+   outlookFunc(){
+      const { yesOutlook} = this.props
+      this.props.setOutlookState(yesOutlook)
+      this.setState({ yesOutlook: true }, console.log(yesOutlook))
+       console.log("vallue of yesOutlook")
+      console.log(yesOutlook)
+      this.props.getOutlook()
+
+  }
+
   
   // buttons for importing google and outlook calendars
 
@@ -51,7 +62,7 @@ class CalendarPage extends React.Component {
           <p>Choose type of calendar to import.</p>
         <Button bsStyle='primary' className='Googlebtn' onClick={() => this.props.getCalendars()}> Google </Button>
         <p>     </p>
-        <Button bsStyle='primary' className='Outlookbtn' onClick={() => this.props.getOutlook()}> Outlook </Button>
+        <Button bsStyle='primary' className='Outlookbtn' onClick={() => this.outlookFunc()}> Outlook </Button>
         
         </Jumbotron>
         

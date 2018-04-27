@@ -17,6 +17,9 @@ class MainLayout extends React.Component {
           setActiveView={activeView => this.props.setActiveView(activeView)}
           user={this.props.user}
           yesOutlook={this.props.yesOutlook}
+          getApplyReschedule = {() => this.props.getApplyReschedule() }
+          setOutlookState={yesOutlook => this.props.setOutlookState(yesOutlook)}
+
         />
         <this.props.activeView
           calendarList={this.props.calendarList}
@@ -38,6 +41,8 @@ class MainLayout extends React.Component {
           time={this.props.time}
           setTime={time => this.props.setTime(time)}
           getOutlook={() => this.props.getOutlook()}
+          getApplyReschedule = {() => this.props.getApplyReschedule() }
+          setOutlookState={yesOutlook => this.props.setOutlookState(yesOutlook)}
 
         />
       </div>

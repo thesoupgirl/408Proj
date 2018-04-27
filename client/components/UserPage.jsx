@@ -42,7 +42,7 @@ class UserPage extends React.Component {
 
 
 
-        setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions?\nCheck out all our resources in the toolbar\n "); },20000);
+       // setTimeout(function(){ alert("Looks like you are having a stressful week.\nWould you like some rescheduling suggestions?\nCheck out all our resources in the toolbar\n "); },20000);
 
         this.selectEvent = this.selectEvent.bind(this);
         this.selectSlot = this.selectSlot.bind(this);
@@ -53,7 +53,7 @@ class UserPage extends React.Component {
     }
 
     accessor(time, event) {
-        if(this.props.apply){
+      /*  if(this.props.apply){
             console.log("applying resch cal changes")
 
             const dateTimeString = `${time}.dateTime`
@@ -70,7 +70,7 @@ class UserPage extends React.Component {
                 }
 
             }
-        else {
+        else {*/
              console.log("regular cal")
             const dateTimeString = `${time}.dateTime`
             const dateString = `${time}.date`
@@ -80,7 +80,7 @@ class UserPage extends React.Component {
             } else if (has(event, dateString)) {
                 return moment(event[time]['date']).toDate()
             }
-        }
+        //}
          //this.props.setApplyState(this.props.apply)
     }
     

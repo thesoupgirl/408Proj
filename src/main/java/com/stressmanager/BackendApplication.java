@@ -6,6 +6,8 @@ import java.util.*;
 import javax.servlet.Filter;
 import javax.servlet.http.*;
 
+import java.text.SimpleDateFormat;
+
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -75,6 +77,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
+import java.util.Map.*;
 
 import org.springframework.ui.Model;
 import com.stressmanager.AuthHelper;
@@ -87,6 +90,9 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.*;
 import com.amazonaws.services.dynamodbv2.model.*;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
@@ -299,6 +305,140 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 			return true;
 		}
 		return false;
+	}
+
+	@RequestMapping({ "/reschedule" })
+	@ResponseBody
+	public ResponseEntity<String> reschedule(Principal principal) throws Exception{
+		final HttpHeaders httpHeaders = new HttpHeaders();
+
+		Table table = DBSetup.getTable(principal.getName().replaceAll(" ","_"));
+		if (table == null) {
+			System.out.println("No upcoming events found.");
+			return new ResponseEntity<String>("no events to change", httpHeaders, HttpStatus.ACCEPTED);
+		}
+		else {
+			String eventId = null;
+			ScanRequest scanRequest = new ScanRequest()
+			    .withTableName(principal.getName().replaceAll(" ","_"));
+
+			AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+
+			ScanResult result = client.scan(scanRequest);
+			  
+			for (Map<String, AttributeValue> item : result.getItems()){
+    			for (Entry<String, AttributeValue> entry : item.entrySet()) {
+    				System.out.println("pls..."+ entry.getValue().getN());
+    				System.out.println("fuck this shit..." + entry.getValue());
+    				String meow = entry.getValue().getN();
+    				if(meow == null) {
+    					continue;
+    				}
+    				if(meow.equals("10")) {
+    					System.out.println("yay me");
+    					System.out.println("in if!!! wooo");
+    					eventId = "4ldevn2p2lq7hoqraoncisodtu";
+    					break;
+    				}
+		            //s += " ** " + entry.getKey() + " = " + entry.getValue().getS();
+		        }
+
+			}
+			if (eventId != null) {
+				System.out.println("eventID:" + eventId);
+				DateTime now = new DateTime(System.currentTimeMillis());
+
+				Events events = service.events().list("primary")
+					.setMaxResults(50)
+					.setTimeMin(now)
+					.setSingleEvents(false)
+					.execute();
+
+				List<Event> items = events.getItems();
+				Event event = items.get(2);
+				//Event event = service.events().get("otesting69@gmail.com", eventId).execute();
+				EventDateTime dt = event.getStart();
+				System.out.println("tostringo: " + dt.toString());
+				//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				//String outputDate = outputFormat.format(dt.getDateTime());
+				String outputDate = "";
+				String day = "";
+				int dayo = 0;
+				EventDateTime dtE = null;
+				String outputDateE = "";
+				String dayE = "";
+				int dayoE = 0;
+
+				if(dt.toString().toLowerCase().contains("timezone")) {
+
+					outputDate = dt.toString();
+					outputDate = outputDate.substring(13, outputDate.length()-32);
+					day = outputDate.substring(8,10);
+					System.out.println("day is..." + day);
+					dayo = Integer.parseInt(day);
+					++dayo;
+					outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
+
+					dtE = event.getEnd();
+					System.out.println("tostringo: " + dtE.toString());
+					//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+					//String outputDate = outputFormat.format(dt.getDateTime());
+					outputDateE = dtE.toString();
+					outputDateE = outputDateE.substring(13, outputDateE.length()-32);
+					dayE = outputDateE.substring(8,10);
+					System.out.println("day is..." + dayE);
+					dayoE = Integer.parseInt(dayE);
+					++dayoE;
+					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+				}
+				else {
+
+					outputDate = dt.toString();
+					outputDate = outputDate.substring(13, outputDate.length()-2);
+					day = outputDate.substring(8,10);
+					System.out.println("day is..." + day);
+					dayo = Integer.parseInt(day);
+					++dayo;
+
+					dtE = event.getEnd();
+					System.out.println("tostringo: " + dtE.toString());
+					//SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+					//String outputDate = outputFormat.format(dt.getDateTime());
+					outputDateE = dtE.toString();
+					outputDateE = outputDateE.substring(13, outputDateE.length()-2);
+					dayE = outputDateE.substring(8,10);
+					System.out.println("day is..." + dayE);
+					dayoE = Integer.parseInt(dayE);
+					++dayoE;
+					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+
+				}
+				System.out.println("output date:" + outputDate);
+				DateTime par = new DateTime(outputDate);
+
+				EventDateTime dt1 = new EventDateTime();
+
+				dt1.setDateTime(par);
+				dt1.setTimeZone("America/New_York");
+				event.setStart(dt1);
+
+				
+				System.out.println("output date:" + outputDateE);
+				DateTime parE = new DateTime(outputDateE);
+
+				EventDateTime dt1E = new EventDateTime();
+
+				dt1E.setDateTime(parE);
+				dt1E.setTimeZone("America/New_York");
+				event.setEnd(dt1E);
+
+				// event.setSummary("Appointment at Somewhere");
+				Event updatedEvent = service.events().update("primary", event.getId(), event).execute();
+
+				System.out.println(updatedEvent.getUpdated());
+			}
+			return new ResponseEntity<String>("event changed", httpHeaders, HttpStatus.ACCEPTED);
+		}
 	}
 
 	//set up the access token and check that is works
