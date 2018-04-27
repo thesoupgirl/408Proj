@@ -377,7 +377,12 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					System.out.println("day is..." + day);
 					dayo = Integer.parseInt(day);
 					++dayo;
-					outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
+					if(dayo < 10) {
+						outputDate = outputDate.substring(0,7) + "-" + "0" + dayo + outputDate.substring(10);
+					}
+					else {
+						outputDate = outputDate.substring(0,7) + "-" + dayo + outputDate.substring(10);
+					}
 
 					dtE = event.getEnd();
 					System.out.println("tostringo: " + dtE.toString());
@@ -410,7 +415,13 @@ public class BackendApplication extends WebSecurityConfigurerAdapter {
 					System.out.println("day is..." + dayE);
 					dayoE = Integer.parseInt(dayE);
 					++dayoE;
-					outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+					if(dayoE < 10) {
+						outputDateE = outputDateE.substring(0,7) + "-" + "0" + dayoE + outputDateE.substring(10);
+					}
+					else {
+						outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
+					}
+					//outputDateE = outputDateE.substring(0,7) + "-" + dayoE + outputDateE.substring(10);
 
 				}
 				System.out.println("output date:" + outputDate);
