@@ -82,6 +82,7 @@ class dayViewCalendar extends React.Component {
         }
 
         return { className: `event-unrated${selected}` }
+
     }
 //{this.renderAlert()}
     render() {
