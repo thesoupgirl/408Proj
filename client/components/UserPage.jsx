@@ -35,9 +35,9 @@ class UserPage extends React.Component {
          this.RescheduleAction = this.RescheduleAction.bind(this);
          this.message = this.message.bind(this);
          this.prompt = this.prompt.bind(this);
-         this.props.getWaitTime()
+        // this.props.getWaitTime()
          this.start =  new Date().getTime()/1000;
-         this.setState({alert:true})
+        // this.setState({alert:true})
 
 
 
@@ -137,13 +137,19 @@ class UserPage extends React.Component {
                     endAccessor={event => this.accessor('end', event)}
                     allDayAccessor={event => has(event, 'start.date') && has(event, 'end.date')}
                     titleAccessor='summary'
+
                     onSelectEvent={event => this.selectEvent(event)}
                     onSelectSlot={slotInfo => this.selectSlot(slotInfo)}
+
                     />
             )
         }
         return (
-             <div></div>
+             <div>
+
+<img  width={100} height={100} alt="100x100"  src={require('../image/Legend.png')} style={{position: "relative",   left: 125, right: 125}} />
+
+             </div>
          )
     }
     eventPropGetter(event, start, end, isSelected) {
@@ -186,6 +192,7 @@ class UserPage extends React.Component {
             <div className='container'>
                 {this.renderAlert()}
                 {this.renderCalendar()}
+
                 <Jumbotron>
                 <Button bsStyle='primary' className='Reschedulebtn' onClick={() => this.RescheduleAction()}> Reschedule </Button>
                  </Jumbotron>
@@ -193,6 +200,7 @@ class UserPage extends React.Component {
             </div>
         )
     }
+
 }
 
 module.exports = UserPage
